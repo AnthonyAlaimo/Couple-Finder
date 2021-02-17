@@ -32,5 +32,15 @@ Whether you're looking for a romantic partner or new best friend, you can be sur
 
 - Use the app on computer and mobile devices.
 
+## Technologies ##
+
+- Heroku Cloud Application Platform to host the web application
+
+- Nodejs Javascript for the Server
+
+- Angular Javascript for the Front End
+
+- Postgres SQL for the Database
+
 
 
