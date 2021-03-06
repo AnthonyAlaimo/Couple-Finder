@@ -1,0 +1,23 @@
+{
+  "name": "project-double-trouble",
+  "version": "1.0.0",
+  "description": "dating app ",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/UTSCC09/project-double-trouble.git"
+  },
+  "author": "Albert&Anthony",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/UTSCC09/project-double-trouble/issues"
+  },
+  "homepage": "https://github.com/UTSCC09/project-double-trouble#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1"
+  }
+}
