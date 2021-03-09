@@ -1,0 +1,34 @@
+#comments_container {
+    justify-content: space-between;
+    align-items: center;
+}
+
+#comments {
+    font-size: 16px;
+}
+
+.comment{
+    flex-flow:flex-start;
+    align-items:center;
+    width:100%;
+    margin:auto;
+    height:150px;
+    margin-top:20px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid grey; 
+}
+
+.comment_user{
+    justify-content: center;
+    align-items: center;
+    width:100px;
+}
+
+.comment_username{
+    padding-top:5px;
+}
+
+.comment_content{
+    width:500px;
+    font-size: 24px;
+}

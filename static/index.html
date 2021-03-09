@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Web Gallery</title>
+    <link href="style/main.css" rel="stylesheet" type="text/css"/>
+    <link href="style/comments.css" rel="stylesheet" type="text/css"/>
+    <link href="style/form.css" rel="stylesheet" type="text/css"/>
+    <link href="style/images.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+    <header>
+        <a href="/" id="title">Web Gallery</a>
+        <a href="/login.html" id="signin_button" class="btn header_btn hidden">Sign in or Sign Up</a>
+        <a id="signout_button" class="btn header_btn hidden">Sign Out</a>
+    </header>
+     
+    <p id="error_box"></p>
+
+    <div id="user_select_box" class="column_flex_panel">
+        <label class="combo-label">Choose Gallery:</label>
+        <select id="user_select" class="combo user-select"></select>
+    </div>
+
+    <form class="complex_form" id="add_image_form" content>
+      <div class="form_title">Add an Image
+          <button class="btn" type="button" id="toggle_add_image_form"></button>
+      </div>
+      <input type="text" id="image_title" class="form_element" placeholder="Enter image title" name="image_title" required/>
+      <input type="file" id="image_url" class="form_element" name="image_file" accept="image/*"  required></input>
+      <button type="submit" class="btn">Add Image</button>
+    </form>
+    
+    <div id="image_container" class="column_flex_panel"></div>
+
+    <form class="complex_form" id="add_comment_form">
+        <div class="form_title">Add a Comment</div>
+        <input type="text" id="comment_content" class="form_element" placeholder="Enter comment" name="comment_content" required/>
+        <button type="submit" class="btn">Post Comment</button>
+    </form>
+
+    <div id="comments_container" class="row_flex_panel"></div>
+    
+    <footer>
+        <a href='/credits.html'>credits</a>
+    </footer>
+    <script src="js/index.js"></script>
+    <script src="js/api.js"></script>
+</body>
+</html>

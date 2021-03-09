@@ -1,0 +1,85 @@
+html {overflow: -moz-scrollbars-vertical;}
+
+body {
+	background: #FFFFFF;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	color: #3C3D3F;
+    text-align: left;
+    max-width: 800px;
+    margin: auto;
+}
+
+header{
+    display:flex;
+    margin-top:36px;
+    height: 64px;
+    justify-content:flex-end;
+}
+
+header #title{
+    color: black;
+    text-decoration:none;
+    margin: 0px;
+    width:100%;
+    font-size:48px;
+}
+
+.header_btn{
+    text-decoration:none;
+    font-size: 16px;
+    margin-left:5px;
+    margin-right:5px;
+}
+
+.icon{
+    width:50px;
+    height: 50px;
+    background-repeat: no-repeat;
+    background-size:70%;
+    background-position: center;
+    cursor: pointer;
+    flex: 2 0 50px;
+}
+
+.button_delete{
+    background-image: url('../media/delete-icon.png');
+}
+
+.button_left {
+    background-image: url("../media/left-arrow.png");
+}
+
+.button_right {
+    background-image: url("../media/right-arrow.svg");
+}
+
+#close_button{
+    background-image: url('../media/close33.png');
+}
+
+footer{
+    margin-top: 20px;
+    text-align:center;
+}
+
+.alert{
+    color: red;
+}
+
+.column_flex_panel {
+    display: flex;
+    flex-direction: column;
+}
+
+.row_flex_panel {
+    display: flex;
+    flex-direction: row;
+}
+
+.combo-label {
+    display: block;
+    font-size: 20px;
+    font-weight: 100;
+    margin-bottom: 0.25em;
+}

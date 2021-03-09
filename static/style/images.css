@@ -1,0 +1,18 @@
+#image_panel {
+    justify-content: space-between;
+    align-items: center;
+}
+
+#image_container {
+    margin: 5px 0px 5px 0px;
+}
+
+.gallery_image {
+    height: 480px;
+    flex: 0 0 99%;
+    width: 600px;
+}
+
+.image_title {
+    margin: 5px 0px 5px 0px;
+}
