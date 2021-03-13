@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Couple Finder</title>
+    <link href="style/font.css" rel="stylesheet" type="text/css" />
+    <link href="style/main.css" rel="stylesheet" type="text/css" />
+    <link href="style/form.css" rel="stylesheet" type="text/css" />
+    <link href="style/images.css" rel="stylesheet" type="text/css" />
+    <link href="style/matches.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <header>
+      <div id="hub">
+        <a href="/matches.html" id="matches_button" class="btn header_btn"
+          >Matches</a
+        >
+        <a href="/profile.html" id="favourites_button" class="btn header_btn"
+          >Profile</a
+        >
+        <a href="/profile.html" id="title" class="lovers_font">Couple Finder</a>
+        <a href="/favourites.html" id="favourites_button" class="btn header_btn"
+          >Favourites</a
+        >
+        <a href="/" id="signout_button" class="btn header_btn">Sign Out</a>
+      </div>
+    </header>
+    <div class="match_layout">
+      <section class="profile-selection">
+        <label for="profile">Friend Requests</label>
+        <input list="profiles" id="profile" name="profile" />
+        <datalist id="profiles">
+          <option value="profile1"></option>
+          <option value="profile2"></option>
+        </datalist>
+      </section>
+      <div class="matches">
+        <!-- example match -->
+        <div class="img_layout">
+          <div class="image_name">saitama potatotoes</div>
+          <div class="image_age">20</div>
+          <div class="image_gender">male</div>
+        </div>
+        <img src="media/26344-4-hellsing-transparent.png" class="image" />
+        <h3 class="image_description desciption_layout">
+          Im a sexy man la la la la lalallalalala al
+        </h3>
+      </div>
+    </div>
+
+    <footer>
+      <a href="/credits.html" class="credits">credits</a>
+    </footer>
+    <script src="js/api.js"></script>
+  </body>
+</html>

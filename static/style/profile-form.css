@@ -1,0 +1,38 @@
+h1 {
+  text-align: center;
+}
+
+body {
+  background-color: lightblue;
+  font-family: monospace;
+}
+
+form {
+  line-height: 30px;
+  height: 80%;
+  overflow: auto;
+}
+
+#overlay {
+  text-align: center;
+  width: 80%;
+  margin: 3% auto;
+  padding-bottom: 10px;
+  height: auto;
+  background-color: lightcoral;
+  border-radius: 40px;
+  border: 5px black solid;
+}
+
+.text_box {
+  width: 300px;
+}
+
+#profile_header {
+  display: grid;
+  grid-template-columns: 6fr 1fr;
+}
+
+#header_pos {
+  margin-left: 70px;
+}

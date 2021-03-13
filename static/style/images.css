@@ -1,18 +1,36 @@
 #image_panel {
-    justify-content: space-between;
-    align-items: center;
+  justify-content: space-between;
+  align-items: center;
 }
 
-#image_container {
-    margin: 5px 0px 5px 0px;
+#picture {
+  margin: 5px 0px 5px 0px;
+}
+
+.image {
+  width: 350px;
+  height: 350px;
 }
 
 .gallery_image {
-    height: 480px;
-    flex: 0 0 99%;
-    width: 600px;
+  height: 480px;
+  flex: 0 0 99%;
+  width: 600px;
 }
 
 .image_title {
-    margin: 5px 0px 5px 0px;
+  margin: 5px 0px 5px 0px;
+}
+
+.img_layout {
+  border-radius: 10px;
+  padding: 5px 5px;
+  background-color: lightcoral;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.cupid {
+  background-color: lightblue;
+  margin-left: 140px;
 }
