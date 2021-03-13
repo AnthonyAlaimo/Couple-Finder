@@ -5,6 +5,7 @@
     <title>Couple Finder</title>
     <link href="style/font.css" rel="stylesheet" type="text/css" />
     <link href="style/main.css" rel="stylesheet" type="text/css" />
+    <link href="style/login.css" rel="stylesheet" type="text/css" />
     <link href="style/form.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
@@ -14,24 +15,35 @@
 
     <p id="error_box"></p>
 
-    <form class="complex_form">
-      <input
-        type="text"
-        name="username"
-        class="form_element"
-        placeholder="Enter an email"
-        required
-      />
-      <input
-        type="password"
-        name="password"
-        class="form_element"
-        placeholder="Enter a password"
-        required
-      />
-      <div>
-        <button id="signin" name="action" class="btn">Sign in</button>
-        or <button id="signup" name="action" class="btn">Sign up</button>
+    <form id="sign_in_display" class="login_form">
+      <div class="website_description">
+        <h1>Welcome to Couple Finder</h1>
+        <h2>
+          Tired and alone? Introducing , a brand new relationship finder web app
+          for those who need just a little bit of help meeting new people.
+          Whether you're looking for a romantic partner or new best friend, you
+          can be sure to find those who match what you're looking for.
+        </h2>
+      </div>
+      <div class="login_field">
+        <input
+          type="text"
+          name="email"
+          class="form_element"
+          placeholder="Enter an email"
+          required
+        />
+        <input
+          type="password"
+          name="password"
+          class="form_element"
+          placeholder="Enter a password"
+          required
+        />
+        <div>
+          <button id="signin" name="action" class="btn">Sign in</button>
+          or <button id="signup" name="action" class="btn">Sign up</button>
+        </div>
       </div>
     </form>
 

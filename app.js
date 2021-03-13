@@ -1,16 +1,16 @@
 /*jshint esversion: 6*/
 
+/* Node Modules */
 const express = require("express");
 const app = express();
 const path = require("path");
 const datastore = require("nedb");
 const multer = require("multer");
 
-const upload = multer({dest: path.join(__dirname, "uploads")});
-const http = require('http');
-const fs = require('fs');
-const crypto = require('crypto');
-const axios = require('axios');
+const upload = multer({ dest: path.join(__dirname, "uploads") });
+const http = require("http");
+const fs = require("fs");
+const crypto = require("crypto");
 
 const session = require("express-session");
 app.use(
@@ -21,14 +21,15 @@ app.use(
   })
 );
 
-const cookie = require("cookie");
-
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-const PORT = process.env.PORT || 3000;
-
 app.use(express.static("static"));
+
+/* Local Modules */
+const login = require("./authentication/login");
+
+const PORT = process.env.PORT || 3000;
 
 http.createServer(app).listen(PORT, function (err) {
   if (err) console.log(err);
@@ -36,28 +37,18 @@ http.createServer(app).listen(PORT, function (err) {
 });
 
 /* HTTPS Proxy Server */
-app.all("*", function(req, res, next) {
-    if (req.headers['x-forwarded-proto'] != 'https') {
-        res.redirect("https://" + req.headers.host + req.url);
-    }
-    else {
-        next();
-    }
+// From https://stackoverflow.com/questions/24726779/using-https-on-heroku
+app.all("*", function (req, res, next) {
+  if (process.env.PORT && req.headers["x-forwarded-proto"] != "https") {
+    res.redirect("https://" + req.headers.host + req.url);
+  } else {
+    next();
+  }
 });
 
-const databaseUrl = process.env.DATABASE_URL;
-const adminSecret = process.env.DATABASE_KEY;
-
-/* Object Constructors */
-function User(email, password, salt) {
-    this.email = email;
-    this.password = password;
-    this.salt = salt;
-}
-
-/* Initial handler, obtains username from session if one exists */
+/* Initial handler, obtains email from session if one exists */
 app.use(function (req, res, next) {
-  req.username = req.session.username ? req.session.username : null;
+  req.email = req.session.email ? req.session.email : null;
   next();
 });
 
@@ -67,51 +58,14 @@ app.use(function (req, res, next) {
  * Sign up new user
  */
 app.post("/signup/", function (req, res, next) {
-    let username = req.body.username;
-    let password = req.body.password;
-    // Determine if user already exists
-    let salt = crypto.randomBytes(16).toString("base64");
-    let hash = crypto.createHmac("sha512", salt);
-    hash.update(password);
-
-    send("POST", "signup", new User(email, hash.digest("base64"), salt), function(response) {
-        console.log(response);    
-    });
+  login.signup(req, res, next);
 });
 
 /**
  * Sign in existing user
  */
 app.post("/signin/", function (req, res, next) {
-  var username = req.body.username;
-  var password = req.body.password;
-  // Find and match user in database
-  users.findOne({ _id: username }, function (err, user) {
-    if (err) {
-      return res.status(500).end(err);
-    } else if (!user) {
-      return res.status(401).end("Incorrect login credentials");
-    } else {
-      // Compare salted hash to authenticate user
-      let salt = user.salt;
-      let hash = crypto.createHmac("sha512", salt);
-      hash.update(password);
-      if (user.password !== hash.digest("base64")) {
-        return res.status(401).end("Incorrect login credentials");
-      } else {
-        // Setup session and cookies
-        req.session.username = username;
-        res.setHeader(
-          "Set-Cookie",
-          cookie.serialize("username", username, {
-            path: "/",
-            maxAge: 60 * 60 * 24 * 7,
-          })
-        );
-        return res.json("User: " + username + " signed in");
-      }
-    }
-  });
+  login.signin(req, res, next);
 });
 
 /**
@@ -176,15 +130,7 @@ app.post(
  * Sign out currently authenticated user
  */
 app.get("/signout/", function (req, res, next) {
-  req.session.destroy();
-  res.setHeader(
-    "Set-Cookie",
-    cookie.serialize("username", "", {
-      path: "/",
-      maxAge: 60 * 60 * 24 * 7, // 1 week in number of seconds
-    })
-  );
-  return res.json("User has signed out");
+  login.signout(req, res, next);
 });
 
 /**
@@ -433,24 +379,8 @@ app.get("/api/images/:id/image/", isAuthenticated, function (req, res, next) {
 
 // Determines if user is authenticated
 function isAuthenticated(req, res, next) {
-    if (!req.username) {
-        return res.status(401).end("Access Denied");
-    }
-    next();
-}
-
-function send(method, action, data, callback){
-    let req = {user: data};
-    let config = {
-        headers: {
-            "content-type": "application/json",
-            "x-hasura-admin-secret": adminSecret
-        }
-    };
-    if (method === "POST") {
-        axios.post(databaseUrl + action, req, config).then((response) => callback(response))
-        .catch(function (error) {
-            console.log(error);
-        });
-    }
+  if (!req.username) {
+    return res.status(401).end("Access Denied");
+  }
+  next();
 }

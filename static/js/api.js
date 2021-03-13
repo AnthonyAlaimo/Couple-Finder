@@ -63,35 +63,63 @@ let api = (function () {
   }
 
   // Sign up user
-  module.signup = function (username, password) {
+  module.signup = function (email, password) {
     send(
       "POST",
       "/signup/",
-      { username: username, password: password },
+      { email: email, password: password },
       function (err, item) {
         if (err) {
           notifyErrorHandlers(err);
         } else {
-          module.changeUser(module.getUsername());
+          module.changeUser(module.getEmail());
         }
       }
     );
   };
 
   // Sign in user
-  module.signin = function (username, password) {
+  module.signin = function (email, password) {
     send(
       "POST",
       "/signin/",
-      { username: username, password: password },
+      { email: email, password: password },
       function (err, item) {
         if (err) {
           notifyErrorHandlers(err);
         } else {
-          module.changeUser(module.getUsername());
+          module.changeUser(module.getEmail());
         }
       }
     );
+  };
+
+  // Add new event listener to the usersUpdated event
+  module.onUserUpdate = function (handler) {
+    window.addEventListener("userUpdated", handler);
+  };
+
+  // Changes the current user context to the specified username
+  module.changeUser = function (username) {
+    notifyUserHandlers(username);
+  };
+
+  // Fire userUpdatedEvent for all listeners
+  function notifyUserHandlers(email) {
+    module.userUpdatedEvent.email = email;
+    window.dispatchEvent(module.userUpdatedEvent);
+  }
+
+  // instead of cookie call new end point
+  // Get username of current user from browser cookies
+  module.getUsername = function () {
+    // let username = document.cookie.replace(
+    //   /(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/,
+    //   "$1"
+    // );
+    // username = decodeURI(username);
+    // return username;
+    send("GET", "/api/user", {}, function (err, item) {});
   };
 
   // Signout current user
@@ -100,10 +128,11 @@ let api = (function () {
       if (err) {
         notifyErrorHandlers(err);
       } else {
-        module.changeUser(module.getUsername());
+        module.changeUser(module.getEmail());
       }
     });
   };
+
   // change to landing page
   module.changeWindow = function () {
     window.location.href = "/profile.html";
@@ -224,39 +253,13 @@ let api = (function () {
   //     );
   //   };
 
-  // Add new event listener to the usersUpdated event
-  module.onUserUpdate = function (handler) {
-    window.addEventListener("userUpdated", handler);
-  };
-
-  // Changes the current user context to the specified username
-  module.changeUser = function (username) {
-    notifyUserHandlers(username);
-  };
-
-  // Fire userUpdatedEvent for all listeners
-  function notifyUserHandlers(username) {
-    module.userUpdatedEvent.username = username;
-    window.dispatchEvent(module.userUpdatedEvent);
-  }
-
-  // Get username of current user from browser cookies
-  module.getUsername = function () {
-    let username = document.cookie.replace(
-      /(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/,
-      "$1"
-    );
-    username = decodeURI(username);
-    return username;
-  };
-
   // send completed profile survey to server, so information
   // can be used to find potential matches
-  module.profileSurvey = function (username) {
-    send("POST", "/profile/", { username }, function (err, res) {
-      return res;
-    });
-  };
+  // module.profileSurvey = function (username) {
+  //   send("POST", "/profile/", { username }, function (err, res) {
+  //     return res;
+  //   });
+  // };
   // call handler when new image is requested
   module.onImageUpdate = function (handler) {
     window.addEventListener("imageRequested", handler);
