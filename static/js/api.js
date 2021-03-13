@@ -25,8 +25,13 @@ let api = (function () {
   let imageRequestedEvent = new CustomEvent("imageRequested");
   module.imageRequestedEvent = imageRequestedEvent;
 
+<<<<<<< HEAD
   //   let commentPageRequestedEvent = new CustomEvent("commentPageRequested");
   //   module.commentPageRequestedEvent = commentPageRequestedEvent;
+=======
+  let commentPageRequestedEvent = new CustomEvent("commentPageRequested");
+  module.commentPageRequestedEvent = commentPageRequestedEvent;
+>>>>>>> 7c120fc477a8e5072742273cc22a0ef19e631359
 
   let userUpdatedEvent = new CustomEvent("userUpdated");
   module.userUpdatedEvent = userUpdatedEvent;
@@ -104,10 +109,13 @@ let api = (function () {
       }
     });
   };
+<<<<<<< HEAD
   // change to landing page
   module.changeWindow = function () {
     window.location.href = "/profile.html";
   };
+=======
+>>>>>>> 7c120fc477a8e5072742273cc22a0ef19e631359
 
   // Get list of all users from server
   module.getAllUsers = function (callback) {
@@ -121,11 +129,19 @@ let api = (function () {
   };
 
   // add an image to the gallery
+<<<<<<< HEAD
   module.addImage = function (imageFile) {
     sendFiles(
       "POST",
       "/api/images/",
       { picture: imageFile },
+=======
+  module.addImage = function (title, imageFile) {
+    sendFiles(
+      "POST",
+      "/api/images/",
+      { title: title, picture: imageFile },
+>>>>>>> 7c120fc477a8e5072742273cc22a0ef19e631359
       function (err, item) {
         if (err) {
           notifyErrorHandlers(err);
@@ -136,6 +152,7 @@ let api = (function () {
     );
   };
 
+<<<<<<< HEAD
   //   // Delete an image from the gallery given its imageId.
   //   module.deleteImage = function (imageId) {
   //     send("DELETE", "/api/images/" + imageId + "/", {}, function (err, item) {
@@ -149,6 +166,21 @@ let api = (function () {
 
   //   // Get default image of user from the server.
   //   // Serves as an entrypoint into the user's gallery.
+=======
+  // Delete an image from the gallery given its imageId.
+  module.deleteImage = function (imageId) {
+    send("DELETE", "/api/images/" + imageId + "/", {}, function (err, item) {
+      if (err) {
+        notifyErrorHandlers(err);
+      } else {
+        notifyImageHandlers(item);
+      }
+    });
+  };
+
+  // Get default image of user from the server.
+  // Serves as an entrypoint into the user's gallery.
+>>>>>>> 7c120fc477a8e5072742273cc22a0ef19e631359
   module.getImageGallery = function (username) {
     send("GET", "/api/images/" + username + "/", null, function (err, item) {
       if (err) {
@@ -159,6 +191,7 @@ let api = (function () {
     });
   };
 
+<<<<<<< HEAD
   //   // Get prev or next image from server
   //   module.getLinkedImage = function (imageId, action) {
   //     send(
@@ -223,6 +256,72 @@ let api = (function () {
   //       }
   //     );
   //   };
+=======
+  // Get prev or next image from server
+  module.getLinkedImage = function (imageId, action) {
+    send(
+      "GET",
+      "/api/images/" + imageId + "/" + action + "/",
+      {},
+      function (err, item) {
+        if (err) {
+          notifyErrorHandlers(err);
+        } else {
+          notifyImageHandlers(item);
+        }
+      }
+    );
+  };
+
+  // add a comment to an image
+  module.addComment = function (imageId, content) {
+    send(
+      "POST",
+      "/api/comments/" + imageId + "/",
+      { content: content },
+      function (err, item) {
+        if (err) {
+          notifyErrorHandlers(err);
+        } else {
+          module.getCommentPageForImage(imageId, 0);
+        }
+      }
+    );
+  };
+
+  // Get page of 10 comments from image given by imageId
+  // or the last page available if requested page does not exist.
+  module.getCommentPageForImage = function (imageId, page) {
+    send(
+      "GET",
+      "/api/comments/" + imageId + "/?page=" + page + "/",
+      {},
+      function (err, items) {
+        if (err) {
+          notifyErrorHandlers(err);
+        } else {
+          notifyCommentHandlers(items);
+        }
+      }
+    );
+  };
+
+  // Deletes a comment from an image
+  module.deleteComment = function (commentId) {
+    send(
+      "DELETE",
+      "/api/comments/" + commentId + "/",
+      {},
+      function (err, items) {
+        if (err) {
+          notifyErrorHandlers(err);
+        } else {
+          notifyCommentHandlers(items);
+        }
+      }
+    );
+  };
+>>>>>>> 7c120fc477a8e5072742273cc22a0ef19e631359
 
   // Add new event listener to the usersUpdated event
   module.onUserUpdate = function (handler) {
@@ -250,6 +349,7 @@ let api = (function () {
     return username;
   };
 
+<<<<<<< HEAD
   // send completed profile survey to server, so information
   // can be used to find potential matches
   module.profileSurvey = function (username) {
@@ -257,6 +357,8 @@ let api = (function () {
       return res;
     });
   };
+=======
+>>>>>>> 7c120fc477a8e5072742273cc22a0ef19e631359
   // call handler when new image is requested
   module.onImageUpdate = function (handler) {
     window.addEventListener("imageRequested", handler);
@@ -268,6 +370,7 @@ let api = (function () {
     window.dispatchEvent(module.imageRequestedEvent);
   }
 
+<<<<<<< HEAD
   //   // call handler when a comment is added or deleted to an image
   //   module.onCommentUpdate = function (handler) {
   //     window.addEventListener("commentPageRequested", handler);
@@ -278,6 +381,18 @@ let api = (function () {
   //     module.commentPageRequestedEvent.comments = comments;
   //     window.dispatchEvent(module.commentPageRequestedEvent);
   //   }
+=======
+  // call handler when a comment is added or deleted to an image
+  module.onCommentUpdate = function (handler) {
+    window.addEventListener("commentPageRequested", handler);
+  };
+
+  // Fires onCommentPageRequested event for all listeners with the given imageIndex and page as parameters
+  function notifyCommentHandlers(comments) {
+    module.commentPageRequestedEvent.comments = comments;
+    window.dispatchEvent(module.commentPageRequestedEvent);
+  }
+>>>>>>> 7c120fc477a8e5072742273cc22a0ef19e631359
 
   // Logs error to console and displays in UI for 2 seconds
   function notifyErrorHandlers(err) {
