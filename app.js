@@ -7,10 +7,10 @@ const path = require("path");
 const datastore = require("nedb");
 const multer = require("multer");
 
-const upload = multer({dest: path.join(__dirname, "uploads")});
-const http = require('http');
-const fs = require('fs');
-const crypto = require('crypto');
+const upload = multer({ dest: path.join(__dirname, "uploads") });
+const http = require("http");
+const fs = require("fs");
+const crypto = require("crypto");
 
 const session = require("express-session");
 app.use(
@@ -28,6 +28,7 @@ app.use(express.static("static"));
 
 /* Local Modules */
 const login = require("./authentication/login");
+const profile = require("./profile/profile");
 
 const PORT = process.env.PORT || 3000;
 
@@ -38,13 +39,12 @@ http.createServer(app).listen(PORT, function (err) {
 
 /* HTTPS Proxy Server */
 // From https://stackoverflow.com/questions/24726779/using-https-on-heroku
-app.all("*", function(req, res, next) {
-    if (process.env.PORT && req.headers['x-forwarded-proto'] != 'https') {
-        res.redirect("https://" + req.headers.host + req.url);
-    }
-    else {
-        next();
-    }
+app.all("*", function (req, res, next) {
+  if (process.env.PORT && req.headers["x-forwarded-proto"] != "https") {
+    res.redirect("https://" + req.headers.host + req.url);
+  } else {
+    next();
+  }
 });
 
 /* Initial handler, obtains email from session if one exists */
@@ -59,14 +59,14 @@ app.use(function (req, res, next) {
  * Sign up new user
  */
 app.post("/signup/", function (req, res, next) {
-    login.signup(req, res, next);
+  login.signup(req, res, next);
 });
 
 /**
  * Sign in existing user
  */
 app.post("/signin/", function (req, res, next) {
-    login.signin(req, res, next);
+  login.signin(req, res, next);
 });
 
 /**
@@ -131,23 +131,14 @@ app.post(
  * Sign out currently authenticated user
  */
 app.get("/signout/", function (req, res, next) {
-    login.signout(req, res, next);
+  login.signout(req, res, next);
 });
 
 /**
- * Gets list of all users
+ * Get profile for current user
  */
-app.get("/api/users/", isAuthenticated, function (req, res, next) {
-  users
-    .find({}, { password: 0, salt: 0 })
-    .sort({ _id: req.username })
-    .exec(function (err, items) {
-      if (err) {
-        return res.status(500).end(err);
-      } else {
-        return res.json(items);
-      }
-    });
+app.get("/api/profile/", isAuthenticated, function (req, res, next) {
+    profile.getUserProfile(req, res, next);
 });
 
 // Gets most recent image of specified user
@@ -380,7 +371,7 @@ app.get("/api/images/:id/image/", isAuthenticated, function (req, res, next) {
 
 // Determines if user is authenticated
 function isAuthenticated(req, res, next) {
-    if (!req.username) {
+    if (!req.email) {
         return res.status(401).end("Access Denied");
     }
     next();

@@ -13,7 +13,7 @@ function User(email, password, salt) {
  * Sign up new user
  */
 function signup(req, res, next) {
-    let email = req.body.username;
+    let email = req.body.email;
     let password = req.body.password;
     // Determine if user already exists
     database.get("login/" + email, function(resp) {  

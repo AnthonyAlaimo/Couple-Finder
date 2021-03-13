@@ -12,7 +12,7 @@
     function submit() {
       console.log(document.querySelector("form").checkValidity());
       if (document.querySelector("form").checkValidity()) {
-        var username = document.querySelector("form [name=username]").value;
+        var username = document.querySelector("form [name=email]").value;
         var password = document.querySelector("form [name=password]").value;
         var action = document.querySelector("form [name=action]").value;
         api[action](username, password, function (err) {
