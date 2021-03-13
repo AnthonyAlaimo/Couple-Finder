@@ -32,6 +32,7 @@ function signup(req, res, next) {
                 return res.status(resp.response.status).end(resp.response.data.error);
             }
             else {
+                req.session.email = email;
                 return res.sendStatus(200);
             }
         });
@@ -42,7 +43,7 @@ function signup(req, res, next) {
  * Sign in existing user
  */
 function signin(req, res, next) {
-  var email = req.body.username;
+  var email = req.body.email;
   var password = req.body.password;
   // Find and match user in database
   database.get("login/" + email, function (resp) {
@@ -53,7 +54,7 @@ function signin(req, res, next) {
         return res.status(401).end("Incorrect login credentials");
     }
     // Compare salted hash to authenticate user
-    let user = resp.response.users[0];
+    let user = resp.data.users[0];
     let salt = user.salt;
     let hash = crypto.createHmac("sha512", salt);
     hash.update(password);
