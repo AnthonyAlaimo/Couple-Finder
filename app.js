@@ -5,10 +5,12 @@ const app = express();
 const path = require("path");
 const datastore = require("nedb");
 const multer = require("multer");
-const upload = multer({ dest: path.join(__dirname, "uploads") });
-const http = require("http");
-const fs = require("fs");
-const crypto = require("crypto");
+
+const upload = multer({dest: path.join(__dirname, "uploads")});
+const http = require('http');
+const fs = require('fs');
+const crypto = require('crypto');
+const axios = require('axios');
 
 const session = require("express-session");
 app.use(
@@ -33,30 +35,24 @@ http.createServer(app).listen(PORT, function (err) {
   else console.log("HTTP server on http://localhost:%s", PORT);
 });
 
-var images = new datastore({
-  filename: "db/images.db",
-  autoload: true,
-  timestampData: true,
+/* HTTPS Proxy Server */
+app.all("*", function(req, res, next) {
+    if (req.headers['x-forwarded-proto'] != 'https') {
+        res.redirect("https://" + req.headers.host + req.url);
+    }
+    else {
+        next();
+    }
 });
-// var comments = new datastore({filename: 'db/comments.db', autoload: true, timestampData: true});
-var users = new datastore({ filename: "db/users.db", autoload: true });
+
+const databaseUrl = process.env.DATABASE_URL;
+const adminSecret = process.env.DATABASE_KEY;
 
 /* Object Constructors */
-function Image(author, imageData) {
-  this.author = author;
-  this.image = imageData;
-}
-
-// function Comment(author, content, imageId) {
-//   this.author = author;
-//   this.content = content;
-//   this.imageId = imageId;
-// }
-
-function User(username, password, salt) {
-  this._id = username;
-  this.password = password;
-  this.salt = salt;
+function User(email, password, salt) {
+    this.email = email;
+    this.password = password;
+    this.salt = salt;
 }
 
 /* Initial handler, obtains username from session if one exists */
@@ -71,42 +67,16 @@ app.use(function (req, res, next) {
  * Sign up new user
  */
 app.post("/signup/", function (req, res, next) {
-  var username = req.body.username;
-  var password = req.body.password;
-  // Determine if user already exists
-  users.findOne({ _id: username }, function (err, user) {
-    if (err) {
-      return res.status(500).end(err);
-    } else if (user) {
-      return res.status(409).end("username: " + username + " already exists");
-    } else {
-      // Salt and hash password
-      let salt = crypto.randomBytes(16).toString("base64");
-      let hash = crypto.createHmac("sha512", salt);
-      hash.update(password);
-      users.update(
-        { _id: username },
-        new User(username, hash.digest("base64"), salt),
-        { upsert: true },
-        function (err) {
-          if (err) {
-            return res.status(500).end(err);
-          } else {
-            // Update session and cookies
-            req.session.username = username;
-            res.setHeader(
-              "Set-Cookie",
-              cookie.serialize("username", username, {
-                path: "/",
-                maxAge: 60 * 60 * 24 * 7,
-              })
-            );
-            return res.json("User: " + username + " signed up");
-          }
-        }
-      );
-    }
-  });
+    let username = req.body.username;
+    let password = req.body.password;
+    // Determine if user already exists
+    let salt = crypto.randomBytes(16).toString("base64");
+    let hash = crypto.createHmac("sha512", salt);
+    hash.update(password);
+
+    send("POST", "signup", new User(email, hash.digest("base64"), salt), function(response) {
+        console.log(response);    
+    });
 });
 
 /**
@@ -463,8 +433,24 @@ app.get("/api/images/:id/image/", isAuthenticated, function (req, res, next) {
 
 // Determines if user is authenticated
 function isAuthenticated(req, res, next) {
-  if (!req.username) {
-    return res.status(401).end("Access Denied");
-  }
-  next();
+    if (!req.username) {
+        return res.status(401).end("Access Denied");
+    }
+    next();
+}
+
+function send(method, action, data, callback){
+    let req = {user: data};
+    let config = {
+        headers: {
+            "content-type": "application/json",
+            "x-hasura-admin-secret": adminSecret
+        }
+    };
+    if (method === "POST") {
+        axios.post(databaseUrl + action, req, config).then((response) => callback(response))
+        .catch(function (error) {
+            console.log(error);
+        });
+    }
 }
