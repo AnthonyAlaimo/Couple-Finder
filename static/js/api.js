@@ -22,14 +22,14 @@ let api = (function () {
     
     ****************************** */
 
-  let imageRequestedEvent = new CustomEvent("imageRequested");
-  module.imageRequestedEvent = imageRequestedEvent;
+  // let imageRequestedEvent = new CustomEvent("imageRequested");
+  // module.imageRequestedEvent = imageRequestedEvent;
 
   //   let commentPageRequestedEvent = new CustomEvent("commentPageRequested");
   //   module.commentPageRequestedEvent = commentPageRequestedEvent;
 
-  let userUpdatedEvent = new CustomEvent("userUpdated");
-  module.userUpdatedEvent = userUpdatedEvent;
+  // let userUpdatedEvent = new CustomEvent("userUpdated");
+  // module.userUpdatedEvent = userUpdatedEvent;
 
   function send(method, url, data, callback) {
     var xhr = new XMLHttpRequest();
@@ -62,236 +62,103 @@ let api = (function () {
     xhr.send(formdata);
   }
 
-  // Sign up user
-  module.signup = function (email, password) {
-    send(
-      "POST",
-      "/signup/",
-      { email: email, password: password },
-      function (err, item) {
-        if (err) {
-          notifyErrorHandlers(err);
-        } else {
-          module.changeUser(module.getEmail());
-        }
-      }
-    );
+  let userListeners = [];
+
+  // User login setup
+  let getUserProfile = function () {
+    send("GET", "/api/profile/", null, function (err, res) {
+      if (err) return notifyErrorListeners(err);
+      console.log(res);
+      notifyUserListeners(res.email);
+    });
   };
 
-  // Sign in user
+  function notifyUserListeners(email) {
+    userListeners.forEach(function (listener) {
+      listener(email);
+    });
+  }
+
+  module.onUserUpdate = function (listener) {
+    userListeners.push(listener);
+    listener(getUserProfile());
+  };
+
+  // post request for signing in
   module.signin = function (email, password) {
     send(
       "POST",
       "/signin/",
       { email: email, password: password },
-      function (err, item) {
-        if (err) {
-          notifyErrorHandlers(err);
-        } else {
-          module.changeUser(module.getEmail());
-        }
+      function (err, res) {
+        if (err) return notifyErrorListeners(err);
+        getUserProfile();
       }
     );
   };
 
-  // Add new event listener to the usersUpdated event
-  module.onUserUpdate = function (handler) {
-    window.addEventListener("userUpdated", handler);
-  };
-
-  // Changes the current user context to the specified username
-  module.changeUser = function (username) {
-    notifyUserHandlers(username);
-  };
-
-  // Fire userUpdatedEvent for all listeners
-  function notifyUserHandlers(email) {
-    module.userUpdatedEvent.email = email;
-    window.dispatchEvent(module.userUpdatedEvent);
-  }
-
-  // instead of cookie call new end point
-  // Get username of current user from browser cookies
-  module.getUsername = function () {
-    // let username = document.cookie.replace(
-    //   /(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/,
-    //   "$1"
-    // );
-    // username = decodeURI(username);
-    // return username;
-    send("GET", "/api/user", {}, function (err, item) {});
-  };
-
-  // Signout current user
-  module.signout = function () {
-    send("GET", "/signout/", {}, function (err, item) {
-      if (err) {
-        notifyErrorHandlers(err);
-      } else {
-        module.changeUser(module.getEmail());
-      }
-    });
-  };
-
-  // change to landing page
-  module.changeWindow = function () {
-    window.location.href = "/profile.html";
-  };
-
-  // Get list of all users from server
-  module.getAllUsers = function (callback) {
-    send("GET", "/api/users/", {}, function (err, items) {
-      if (err) {
-        notifyErrorHandlers(err);
-      } else {
-        callback(items);
-      }
-    });
-  };
-
-  // add an image to the gallery
-  module.addImage = function (imageFile) {
-    sendFiles(
+  // post request for signing up
+  module.signup = function (email, password) {
+    send(
       "POST",
-      "/api/images/",
-      { picture: imageFile },
-      function (err, item) {
-        if (err) {
-          notifyErrorHandlers(err);
-        } else {
-          module.getImageGallery(item.author);
-        }
+      "/signup/",
+      { email: email, password: password },
+      function (err, res) {
+        if (err) return notifyErrorListeners(err);
+        getUserProfile();
       }
     );
   };
 
-  //   // Delete an image from the gallery given its imageId.
-  //   module.deleteImage = function (imageId) {
-  //     send("DELETE", "/api/images/" + imageId + "/", {}, function (err, item) {
-  //       if (err) {
-  //         notifyErrorHandlers(err);
-  //       } else {
-  //         notifyImageHandlers(item);
-  //       }
-  //     });
-  //   };
-
-  //   // Get default image of user from the server.
-  //   // Serves as an entrypoint into the user's gallery.
-  module.getImageGallery = function (username) {
-    send("GET", "/api/images/" + username + "/", null, function (err, item) {
-      if (err) {
-        notifyErrorHandlers(err);
-      } else {
-        notifyImageHandlers(item);
+  // save user profile information
+  module.updateProfile = function (name, gender, age, bio, picture) {
+    send(
+      "PUT",
+      "/api/profile/",
+      {
+        name: name,
+        gender: gender,
+        age: age,
+        bio: bio,
+      },
+      function (err, res) {
+        if (err) return notifyErrorListeners(err);
+        notifyProfileListeners();
       }
+    );
+  };
+
+  let getProfile = function (callback) {
+    send("GET", "/api/profile/", null, callback);
+  };
+  let profileListeners = [];
+  function notifyProfileListeners() {
+    getProfile(function (err, profile) {
+      if (err) return notifyErrorListeners(err);
+      profileListeners.forEach(function (listener) {
+        listener([profile]);
+      });
+    });
+  }
+  module.onProfileUpdate = function (listener) {
+    profileListeners.push(listener);
+    getProfile(function (err, profile) {
+      if (err) return notifyErrorListeners(err);
+      listener([profile]);
     });
   };
 
-  //   // Get prev or next image from server
-  //   module.getLinkedImage = function (imageId, action) {
-  //     send(
-  //       "GET",
-  //       "/api/images/" + imageId + "/" + action + "/",
-  //       {},
-  //       function (err, item) {
-  //         if (err) {
-  //           notifyErrorHandlers(err);
-  //         } else {
-  //           notifyImageHandlers(item);
-  //         }
-  //       }
-  //     );
-  //   };
+  let errorListeners = [];
 
-  //   // add a comment to an image
-  //   module.addComment = function (imageId, content) {
-  //     send(
-  //       "POST",
-  //       "/api/comments/" + imageId + "/",
-  //       { content: content },
-  //       function (err, item) {
-  //         if (err) {
-  //           notifyErrorHandlers(err);
-  //         } else {
-  //           module.getCommentPageForImage(imageId, 0);
-  //         }
-  //       }
-  //     );
-  //   };
+  //error functions
+  function notifyErrorListeners(err) {
+    errorListeners.forEach(function (listener) {
+      listener(err);
+    });
+  }
 
-  //   // Get page of 10 comments from image given by imageId
-  //   // or the last page available if requested page does not exist.
-  //   module.getCommentPageForImage = function (imageId, page) {
-  //     send(
-  //       "GET",
-  //       "/api/comments/" + imageId + "/?page=" + page + "/",
-  //       {},
-  //       function (err, items) {
-  //         if (err) {
-  //           notifyErrorHandlers(err);
-  //         } else {
-  //           notifyCommentHandlers(items);
-  //         }
-  //       }
-  //     );
-  //   };
-
-  //   // Deletes a comment from an image
-  //   module.deleteComment = function (commentId) {
-  //     send(
-  //       "DELETE",
-  //       "/api/comments/" + commentId + "/",
-  //       {},
-  //       function (err, items) {
-  //         if (err) {
-  //           notifyErrorHandlers(err);
-  //         } else {
-  //           notifyCommentHandlers(items);
-  //         }
-  //       }
-  //     );
-  //   };
-
-  // send completed profile survey to server, so information
-  // can be used to find potential matches
-  // module.profileSurvey = function (username) {
-  //   send("POST", "/profile/", { username }, function (err, res) {
-  //     return res;
-  //   });
-  // };
-  // call handler when new image is requested
-  module.onImageUpdate = function (handler) {
-    window.addEventListener("imageRequested", handler);
+  module.onError = function (listener) {
+    errorListeners.push(listener);
   };
-
-  // Notifies all image listeners that an image has been retrieved
-  function notifyImageHandlers(image) {
-    module.imageRequestedEvent.image = image;
-    window.dispatchEvent(module.imageRequestedEvent);
-  }
-
-  //   // call handler when a comment is added or deleted to an image
-  //   module.onCommentUpdate = function (handler) {
-  //     window.addEventListener("commentPageRequested", handler);
-  //   };
-
-  //   // Fires onCommentPageRequested event for all listeners with the given imageIndex and page as parameters
-  //   function notifyCommentHandlers(comments) {
-  //     module.commentPageRequestedEvent.comments = comments;
-  //     window.dispatchEvent(module.commentPageRequestedEvent);
-  //   }
-
-  // Logs error to console and displays in UI for 2 seconds
-  function notifyErrorHandlers(err) {
-    console.error("[error]", err);
-    var error_box = document.querySelector("#error_box");
-    error_box.innerHTML = err;
-    error_box.style.visibility = "visible";
-    window.setTimeout(function () {
-      error_box.innerHTML = "";
-      error_box.style.visiblity = "hidden";
-    }, 2000);
-  }
   return module;
 })();

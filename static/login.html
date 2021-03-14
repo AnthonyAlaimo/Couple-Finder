@@ -15,7 +15,7 @@
 
     <p id="error_box"></p>
 
-    <form id="sign_in_display" class="login_form">
+    <div id="sign_in_display" class="login_form">
       <div class="website_description">
         <h1>Welcome to Couple Finder</h1>
         <h2>
@@ -25,7 +25,7 @@
           can be sure to find those who match what you're looking for.
         </h2>
       </div>
-      <div class="login_field">
+      <form class="login_field">
         <input
           type="text"
           name="email"
@@ -34,7 +34,7 @@
           required
         />
         <input
-          type="password"
+          type="text"
           name="password"
           class="form_element"
           placeholder="Enter a password"
@@ -44,8 +44,8 @@
           <button id="signin" name="action" class="btn">Sign in</button>
           or <button id="signup" name="action" class="btn">Sign up</button>
         </div>
-      </div>
-    </form>
+      </form>
+    </div>
 
     <footer>
       <a href="/credits.html">credits</a>

@@ -25,14 +25,16 @@
         <a href="/favourites.html" id="favourites_button" class="btn header_btn"
           >Favourites</a
         >
-        <a href="/" id="signout_button" class="btn header_btn">Sign Out</a>
+        <a href="/signout/" id="signout_button" class="btn header_btn"
+          >Sign Out</a
+        >
       </div>
     </header>
 
     <section id="overlay">
       <div id="profile_setup">
         <h1>Complete Your Profile!</h1>
-        <form class="complex_form" content>
+        <form id="create_profile_form" class="complex_form" content>
           <div id="font">Profile Picture</div>
           <input
             type="file"
@@ -45,7 +47,7 @@
           <hr />
           <input
             type="text"
-            id="name"
+            id="profile_name"
             class="form_element"
             placeholder="Enter your name"
             name="name"
@@ -54,7 +56,7 @@
           <hr />
           <input
             type="text"
-            id="age"
+            id="profile_age"
             class="form_element"
             placeholder="Enter your age"
             name="user_name"
@@ -63,7 +65,7 @@
           <hr />
           <input
             type="text"
-            id="gender"
+            id="profile_gender"
             class="form_element"
             placeholder="Enter your gender"
             name="gender"
@@ -71,7 +73,7 @@
           />
           <hr />
           <textarea
-            id="description"
+            id="profile_bio"
             class="text_box"
             required
             placeholder="Write your profile description here"
@@ -87,15 +89,9 @@
           <button id="profile_edit_btn" class="btn">Edit</button>
         </div>
         <div id="picture" class="picture"></div>
-        <!-- example profile design -->
-        <img src="media/26344-4-hellsing-transparent.png" class="image" />
-        <h1 class="image_name">saitama</h1>
-        <h3 class="image_age">20</h3>
-        <h3 class="image_gender">male</h3>
-        <h3 class="image_description">Im a sexy man</h3>
       </div>
       <!-- survey for matching users will show up here -->
-      <form id="profile_survey" class="complex_form font">
+      <form id="profile_survey" class="complex_form font" hidden>
         <h1>Complete Matching Survey</h1>
         <hr />
         <span>Follow this link to complete a personality test.</span>

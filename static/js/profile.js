@@ -1,78 +1,49 @@
-/*jshint esversion: 6*/
-
-let index = (function () {
+/*jshint esversion: 6 */
+(function () {
   "use strict";
 
-  let module = {};
+  window.addEventListener("load", function () {
+    //error checking
+    api.onError(function (err) {
+      console.error("[error]", err);
+    });
 
-  window.onload = function () {
-    // Hook up logic for signing out
-    let signoutButton = document.querySelector("#signout_button");
-    signoutButton.addEventListener("click", api.signout);
-
-    // upload users profile picture
-    let addImageForm = document.querySelector("#profile_setup");
-    addImageForm.addEventListener("submit", onAddImage);
-
-    // Hook up logic for displaying images
-    // api.onUserUpdate(onUserUpdated);
-    // api.onImageUpdate(onImageRequested);
-    // Start initial rendering of UI
-    api.changeUser(api.getUsername());
-
-    // submit profile survey
-    // document
-    //   .querySelector(".profile_setup")
-    //   .addEventListener("click", function () {
-    //     api.profileSurvey(api.getUsername());
-    //   });
-  };
-
-  function onImageRequested(e) {
-    let image = e.image;
-    // Clean up ui
-    let imageContainer = document.querySelector("#picture");
-
-    if (image) {
-      // Image Container
-      imageContainer.innerHTML = `
-            <h1 class="image_name">saitama</h1>
-            <h3 class="image_age">20</h3>
-            <h3 class="image_gender">male</h3>
-            <h3 class="image_description">Im a sexy man</h3>
+    api.onError(function (err) {
+      var error_box = document.querySelector("#error_box");
+      error_box.innerHTML = err;
+      error_box.style.visibility = "visible";
+    });
+    api.onProfileUpdate(function (items) {
+      document.querySelector("#picture").innerHTML = "";
+      items.forEach(function (img) {
+        let imgElmt = document.createElement("div");
+        imgElmt.className = "picture";
+        imgElmt.innerHTML = `
+          <img src="media/26344-4-hellsing-transparent.png" class="image" />
+          <h1 class="image_name">${img.name}</h1>
+          <h3 class="image_age">${img.age}</h3>
+          <h3 class="image_gender">${image.gender}</h3>
+          <h3 class="image_description">${image.bio}</h3>
             `;
-
-      // Image elem
-      let imageElmn = document.createElement("img");
-      imageElmn.className = "gallery_image";
-      imageElmn.src = "/api/images/" + image._id + "/image/";
-      // add this element to the document
-      document.querySelector("#picture").prepend(imageElmn);
-    }
-  }
-
-  function editProfile(e) {
-    e.preventDefault();
-    document.querySelector("#profile_setup").style.display = "visible";
-    document.querySelector("#profile_design").style.display = "hidden";
-    document.querySelector("#profile_survey").style.display = "hidden";
-  }
-  /**
-   * Event handler for when the user submits the add_image_form
-   */
-  function onAddImage(e) {
-    // e.preventDefault();
-    // let form = e.target;
-    // let imageFile = form.elements.image_file.files[0];
-    // api.addImage(imageFile);
-    document.querySelector("#profile_setup").style.display = "hidden";
-    document.querySelector("#profile_design").style.display = "visible";
-    document.querySelector("#profile_survey").style.display = "visible";
+        // add this element to the document
+        document.querySelector("#picture").prepend(imgElmt);
+      });
+    });
+    // Adding images to our webpage
     document
-      .querySelector("#profile_edit_btn")
-      .addEventListener("click", editProfile);
-    // form.reset();
-  }
-
-  return module;
+      .querySelector("#create_profile_form")
+      .addEventListener("submit", function (e) {
+        e.preventDefault();
+        let name = document.querySelector("#profile_name").value;
+        let age = document.querySelector("#profile_age").value;
+        let gender = document.querySelector("#profile_gender").value;
+        let bio = document.querySelector("#profile_bio").value;
+        // let picture = document.querySelector(
+        //   '#create_profile_form input[name="picture"]'
+        // ).files[0];
+        document.querySelector("#create_profile_form").reset();
+        api.updateProfile(name, age, gender, bio, picture);
+        document.getElementById("profile_design").style.visibility = "visible";
+      });
+  });
 })();
