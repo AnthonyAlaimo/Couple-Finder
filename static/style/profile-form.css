@@ -13,24 +13,25 @@ form {
   overflow: auto;
 }
 
-#overlay {
+.create_profile_form{
+  background-color: aliceblue;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 20px;
+}
+.overlay {
   text-align: center;
   width: 80%;
   margin: 3% auto;
   padding-bottom: 10px;
   height: auto;
-  background-color: lightcoral;
+  background-color: white;
   border-radius: 40px;
   border: 5px black solid;
 }
 
 .text_box {
   width: 300px;
-}
-
-#profile_header {
-  display: grid;
-  grid-template-columns: 6fr 1fr;
 }
 
 #header_pos {

@@ -23,14 +23,19 @@
 }
 
 .img_layout {
-  border-radius: 10px;
-  padding: 5px 5px;
-  background-color: lightcoral;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  justify-content: space-between;
+  background-color: white;
+  display: flex;
+  flex-direction: row;
+  box-shadow: -0.2em 0 .6em black;
+  width: auto;
+  height: auto;
+  margin: 0;
+  margin-left: 20px;
+  margin-right: 20px;
 }
 
 .cupid {
-  background-color: lightblue;
+  background-color: burlywood;
   margin-left: 140px;
 }

@@ -5,34 +5,9 @@ let api = (function () {
 
   let module = {};
 
-  /*  ******* Data types *******
-        image objects must have at least the following attributes:
-            - (String) imageId 
-            - (String) title
-            - (String) author
-            - (String) url
-            - (Date) date
-    
-        comment objects must have the following attributes
-            - (String) commentId
-            - (String) imageId
-            - (String) author
-            - (String) content
-            - (Date) date
-    
-    ****************************** */
-
-  // let imageRequestedEvent = new CustomEvent("imageRequested");
-  // module.imageRequestedEvent = imageRequestedEvent;
-
-  //   let commentPageRequestedEvent = new CustomEvent("commentPageRequested");
-  //   module.commentPageRequestedEvent = commentPageRequestedEvent;
-
-  // let userUpdatedEvent = new CustomEvent("userUpdated");
-  // module.userUpdatedEvent = userUpdatedEvent;
-
+  //Ajax function to send request to server
   function send(method, url, data, callback) {
-    var xhr = new XMLHttpRequest();
+    let xhr = new XMLHttpRequest();
     xhr.onload = function () {
       if (xhr.status !== 200)
         callback("[" + xhr.status + "]" + xhr.responseText, null);
@@ -64,15 +39,6 @@ let api = (function () {
 
   let userListeners = [];
 
-  // User login setup
-  let getUserProfile = function () {
-    send("GET", "/api/profile/", null, function (err, res) {
-      if (err) return notifyErrorListeners(err);
-      console.log(res);
-      notifyUserListeners(res.email);
-    });
-  };
-
   function notifyUserListeners(email) {
     userListeners.forEach(function (listener) {
       listener(email);
@@ -81,7 +47,10 @@ let api = (function () {
 
   module.onUserUpdate = function (listener) {
     userListeners.push(listener);
-    listener(getUserProfile());
+    send("GET", "/api/profile/", null, function (err, res) {
+      if (err) return notifyErrorListeners(err);
+      listener(res.email);
+    });
   };
 
   // post request for signing in
@@ -92,7 +61,7 @@ let api = (function () {
       { email: email, password: password },
       function (err, res) {
         if (err) return notifyErrorListeners(err);
-        getUserProfile();
+        notifyUserListeners(email);
       }
     );
   };
@@ -105,13 +74,13 @@ let api = (function () {
       { email: email, password: password },
       function (err, res) {
         if (err) return notifyErrorListeners(err);
-        getUserProfile();
+        notifyUserListeners(email);
       }
     );
   };
 
   // save user profile information
-  module.updateProfile = function (name, gender, age, bio, picture) {
+  module.updateProfile = function (name, gender, age, bio) {
     send(
       "PUT",
       "/api/profile/",

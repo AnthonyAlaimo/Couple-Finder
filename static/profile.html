@@ -13,7 +13,7 @@
     <header>
       <div id="hub">
         <a href="/matches.html" id="matches_button" class="btn header_btn"
-          >Matches</a
+          >Potential Matches</a
         >
         <a
           href="/match_request.html"
@@ -23,7 +23,7 @@
         >
         <a href="/profile.html" id="title" class="lovers_font">Couple Finder</a>
         <a href="/favourites.html" id="favourites_button" class="btn header_btn"
-          >Favourites</a
+          >Favourite Matches</a
         >
         <a href="/signout/" id="signout_button" class="btn header_btn"
           >Sign Out</a
@@ -31,68 +31,70 @@
       </div>
     </header>
 
-    <section id="overlay">
-      <div id="profile_setup">
-        <h1>Complete Your Profile!</h1>
-        <form id="create_profile_form" class="complex_form" content>
-          <div id="font">Profile Picture</div>
-          <input
-            type="file"
-            id="image_url"
-            class="form_element"
-            name="image_file"
-            accept="image/*"
-            required
-          />
-          <hr />
-          <input
-            type="text"
-            id="profile_name"
-            class="form_element"
-            placeholder="Enter your name"
-            name="name"
-            required
-          />
-          <hr />
-          <input
-            type="text"
-            id="profile_age"
-            class="form_element"
-            placeholder="Enter your age"
-            name="user_name"
-            required
-          />
-          <hr />
-          <input
-            type="text"
-            id="profile_gender"
-            class="form_element"
-            placeholder="Enter your gender"
-            name="gender"
-            required
-          />
-          <hr />
-          <textarea
-            id="profile_bio"
-            class="text_box"
-            required
-            placeholder="Write your profile description here"
-          ></textarea>
-          <hr />
-          <button type="submit" class="btn">Enter</button>
-        </form>
+    <section id="profile_setup" class="overlay">
+      <h1>Complete Your Profile!</h1>
+      <form class="complex_form create_profile_form" content>
+        <div id="font">Profile Picture</div>
+        <input
+          type="file"
+          id="image_url"
+          class="form_element"
+          name="image_file"
+          accept="image/*"
+          required
+        />
+        <hr />
+        <input
+          type="text"
+          id="profile_name"
+          class="form_element"
+          placeholder="Enter your name"
+          name="name"
+          required
+        />
+        <hr />
+        <input
+          type="text"
+          id="profile_age"
+          class="form_element"
+          placeholder="Enter your age"
+          name="user_name"
+          required
+        />
+        <hr />
+        <input
+          type="text"
+          id="profile_gender"
+          class="form_element"
+          placeholder="Enter your gender"
+          name="gender"
+          required
+        />
+        <hr />
+        <textarea
+          id="profile_bio"
+          class="text_box"
+          required
+          placeholder="Write your profile description here"
+        ></textarea>
+        <hr />
+        <button type="submit" class="btn">Submit</button>
+      </form>
+    </section>
+
+    <!-- profile design will show up here -->
+    <section id="profile_design" class="overlay" hidden>
+      <h1>Profile</h1>
+      <div id="profile_header" class="complex_form create_profile_form">
+        <button id="profile_edit_btn" class="btn">Edit</button>
       </div>
-      <!-- profile design will show up here -->
-      <div id="profile_design" class="complex_form">
-        <div id="profile_header">
-          <h1 id="header_pos">View Your Profile</h1>
-          <button id="profile_edit_btn" class="btn">Edit</button>
-        </div>
-        <div id="picture" class="picture"></div>
-      </div>
-      <!-- survey for matching users will show up here -->
-      <form id="profile_survey" class="complex_form font" hidden>
-        <h1>Complete Matching Survey</h1>
+      <div id="picture" class="picture"></div>
+    </section>
+
+    <!-- survey for matching users will show up here -->
+    <section id="profile_survey" class="overlay" hidden>
+      <h1>Complete Matching Survey</h1>
+      <form class="complex_form create_profile_form font">
         <hr />
         <span>Follow this link to complete a personality test.</span>
         <a href="https://www.16personalities.com/free-personality-test"

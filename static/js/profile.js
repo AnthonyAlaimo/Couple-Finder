@@ -29,7 +29,7 @@
         document.querySelector("#picture").prepend(imgElmt);
       });
     });
-    // Adding images to our webpage
+    // Setting up profile
     document
       .querySelector("#create_profile_form")
       .addEventListener("submit", function (e) {
@@ -42,8 +42,10 @@
         //   '#create_profile_form input[name="picture"]'
         // ).files[0];
         document.querySelector("#create_profile_form").reset();
-        api.updateProfile(name, age, gender, bio, picture);
+        api.updateProfile(name, age, gender, bio);
+        document.getElementById("profile_setup").style.visibility = "hidden";
         document.getElementById("profile_design").style.visibility = "visible";
+        document.getElementById("profile_survey").style.visibility = "visible";
       });
   });
 })();

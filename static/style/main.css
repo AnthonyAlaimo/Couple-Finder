@@ -22,7 +22,7 @@ body {
 header {
   display: flex;
   margin-top: 36px;
-  margin-bottom: 36px;
+  margin-bottom: 50px;
   height: 64px;
   justify-content: flex-end;
 }
@@ -101,3 +101,4 @@ footer {
 .credits {
   padding-bottom: 30px;
 }
+

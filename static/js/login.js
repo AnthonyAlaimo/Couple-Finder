@@ -1,5 +1,3 @@
-/*jshint esversion: 6*/
-
 (function () {
   "use strict";
 
@@ -14,8 +12,8 @@
       error_box.style.visibility = "visible";
     });
 
-    api.onUserUpdate(function (username) {
-      if (username) {
+    api.onUserUpdate(function (email) {
+      if (email) {
         window.location.href = "/profile.html";
       }
     });
