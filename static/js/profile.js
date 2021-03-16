@@ -19,10 +19,17 @@
         let userElmt = document.createElement("div");
         userElmt.innerHTML = `
           <img class="img" src="/api/image/${user._id}/image" alt="Image can't be displayed, please try another URL">
+<<<<<<< HEAD
           <h1 class="name">${user.name} </h1>
           <h3 class="birth_date">${user.birth_date} </h3>
           <h3 class="gender">${user.gender} </h3>
           <h3 class="bio">${user.bio} </h3>
+=======
+          <h1 class="image_name">${user.name}</h1>
+          <h3 class="image_age">${user.age}</h3>
+          <h3 class="image_gender">${user.gender}</h3>
+          <h3 class="image_description">${user.bio}</h3>
+>>>>>>> c9d9d6c1ee363cb62128cd71f30cf02780b1ec92
             `;
         // add this element to the document
         document.querySelector("#profile").prepend(userElmt);
