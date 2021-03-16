@@ -79,8 +79,8 @@ let api = (function () {
   };
 
   // save user profile information
-  module.updateProfile = function (name, gender, age, bio, image_file) {
-    send(
+  module.updateProfile = function (name, gender, age, bio, profile_picture) {
+    sendFiles(
       "PUT",
       "/api/profile/",
       {
@@ -88,7 +88,7 @@ let api = (function () {
         gender: gender,
         age: age,
         bio: bio,
-        image_file: image_file,
+        profile_picture: profile_picture,
       },
       function (err, res) {
         if (err) return notifyErrorListeners(err);
@@ -100,12 +100,13 @@ let api = (function () {
   let getProfile = function (callback) {
     send("GET", "/api/profile/", null, callback);
   };
+
   let profileListeners = [];
   function notifyProfileListeners() {
     getProfile(function (err, profile) {
       if (err) return notifyErrorListeners(err);
       profileListeners.forEach(function (listener) {
-        listener([profile]);
+        listener(profile);
       });
     });
   }
@@ -113,7 +114,7 @@ let api = (function () {
     profileListeners.push(listener);
     getProfile(function (err, profile) {
       if (err) return notifyErrorListeners(err);
-      listener([profile]);
+      listener(profile);
     });
   };
 
