@@ -79,14 +79,14 @@ let api = (function () {
   };
 
   // save user profile information
-  module.updateProfile = function (name, age, gender, bio, profile_picture) {
+  module.updateProfile = function (name, birth_date, gender, bio, profile_picture) {
     sendFiles(
       "PUT",
       "/api/profile/",
       {
         name: name,
         gender: gender,
-        age: age,
+        birth_date: birth_date,
         bio: bio,
         profile_picture: profile_picture,
       },
@@ -129,6 +129,13 @@ let api = (function () {
 
   module.onError = function (listener) {
     errorListeners.push(listener);
+  };
+  // for toggling views
+  module.toggle_visibility = function (id) {
+    console.log("working");
+    var elmt = document.getElementById(id);
+    if (elmt.style.display == "flex") elmt.style.display = "none";
+    else elmt.style.display = "flex";
   };
   return module;
 })();

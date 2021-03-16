@@ -29,29 +29,34 @@
       </div>
     </header>
 
-    <div class="filter_display">
-      <div class="filters btn">Configure Match Filters</div>
-      <h1>Your Potential Matches</h1>
+    <!-- toggle filter button to display filters which user can fill out when pairing with matches -->
+    <div id="filters" class="btn">Configure Match Filters</div>
+    <div id="filter_options_display">
+      <div id="filter_options"></div>
     </div>
+
+    <!-- list of matches users has been paired too -->
+    <h1>Your Potential Matches</h1>
     <div class="match_layout">
       <img src="media/like.png" class="icon" />
       <!-- example match -->
       <div class="img_layout">
         <img src="media/26344-4-hellsing-transparent.png" class="image" />
         <div class="profile_info">
-          <h1 class="image_name">saitama potatotoes</h1>
-          <h2 class="image_age">20</h2>
-          <h2 class="image_gender">male</h2>
-          <h3 class="image_description desciption_layout">
+          <h2 class="image_name">saitama potatotoes</h2>
+          <h3 class="image_age">20</h3>
+          <h3 class="image_gender">male</h3>
+          <h4 class="image_description desciption_layout">
             Im a sexy man la la la la lalallalalala al Im a sexy man la la la la
             lalallalalala al dakshdsa kds ksdns d jwnd jebqwebjwq jwebwjheqw
             jrqbrbqbrjeqr wrjbwhrqwkj rjerbejwrbjewr jr wrjbjewrjewrewjbrewbr
             jerhwejrhwe
-          </h3>
+          </h4>
         </div>
       </div>
       <img src="media/dislike.png" class="icon" />
     </div>
+    <script src="js/matches.js"></script>
     <script src="js/api.js"></script>
   </body>
 </html>
