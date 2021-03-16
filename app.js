@@ -117,39 +117,9 @@ app.get("/api/profile/", isAuthenticated, function (req, res, next) {
     profile.getUserProfile(req, res, next);
 });
 
-// Gets most recent image of specified user
-app.get("/api/images/:author", isAuthenticated, function (req, res, next) {
-  images
-    .find({ author: req.params.author })
-    .sort({ createdAt: -1 })
-    .exec(function (err, items) {
-      if (err) {
-        return res.status(500).end(err);
-      } else if (items.length > 0) {
-        let image = items[0];
-        // image.hasPrev = false;
-        // image.hasNext = items.length > 1;
-        return res.json(image);
-      } else {
-        return res.json(null);
-      }
-    });
-});
-
 // Gets image file for specified image
-app.get("/api/images/:id/image/", isAuthenticated, function (req, res, next) {
-  images.findOne({ _id: req.params.id }, function (err, item) {
-    if (err) {
-      return res.status(500).end(err);
-    } else if (!item) {
-      return res
-        .status(404)
-        .end("No image with id " + req.params.id + " could be found.");
-    } else {
-      res.setHeader("Content-Type", item.image.mimetype);
-      res.sendFile(item.image.path);
-    }
-  });
+app.get("/api/pictures/:id/picture/", isAuthenticated, function (req, res, next) {
+  profile.getPictureFile(req, res, next);
 });
 
 // Gets either next or prev image of specified one

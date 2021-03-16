@@ -30,7 +30,7 @@ function updateUserProfile(req, res, next) {
                 if (resp.isAxiosError) {
                     return res.status(resp.response.status).end(resp.response.data.error);
                 }
-                res.json(resp.data);
+                res.json(resp.data.insert_profiles_one);
             });
         }
         // Else allow modification of all fields
@@ -65,4 +65,19 @@ function updateUserProfile(req, res, next) {
     });
 }
 
-module.exports = {getUserProfile, updateUserProfile};
+function getPictureFile(req, res, next) {
+    // Query database for picture
+    database.get("pictures/" + req.params.id, function(resp) {
+        if (resp.isAxiosError) {
+            return res.status(resp.response.status).end(resp.response.data.error);
+        }
+        else if (resp.data.pictures.length == 0) {
+            return res.status(404).end("No picture with given id could be found");
+        }
+        let picture = resp.data.pictures[0];
+        res.setHeader("Content-Type", picture.mimetype);
+        res.sendFile(picture.path);
+    });
+}
+
+module.exports = {getUserProfile, updateUserProfile, getPictureFile};
