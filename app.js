@@ -237,6 +237,9 @@ app.get("/api/images/:id/image/", isAuthenticated, function (req, res, next) {
 // });
 
 /* Update */
+app.put("/api/profile/", isAuthenticated, upload.single("picture"), function(req, res, next) {
+  profile.updateUserProfile(req, res, next);
+});
 
 /* Delete */
 

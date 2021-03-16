@@ -2,6 +2,8 @@
 const crypto = require('crypto');
 const database = require('../database/database');
 
+/* Logic for authentication */
+
 /* Object Constructors */
 function User(email, password, salt) {
     this.email = email;
@@ -33,7 +35,7 @@ function signup(req, res, next) {
             }
             else {
                 req.session.email = email;
-                return res.sendStatus(200);
+                return res.json("OK");
             }
         });
     });
@@ -63,7 +65,7 @@ function signin(req, res, next) {
     }
     // Setup session and cookies
     req.session.email = email;
-    return res.sendStatus(200);
+    return res.json("OK");
   });
 }
 
@@ -72,7 +74,7 @@ function signin(req, res, next) {
  */
 function signout(req, res, next) {
   req.session.destroy();
-  return res.sendStatus(200);
+  return res.json("OK");
 }
 
 module.exports = {signin, signup, signout};
