@@ -25,15 +25,17 @@
         <a href="/favourites.html" id="favourites_button" class="btn header_btn"
           >Favourite Matches</a
         >
-        <a href="/signout/" id="signout_button" class="btn header_btn"
-          >Sign Out</a
-        >
+        <a href="/" id="signout_button" class="btn header_btn">Sign Out</a>
       </div>
     </header>
 
     <section id="profile_setup" class="overlay">
       <h1>Complete Your Profile!</h1>
-      <form class="complex_form create_profile_form" content>
+      <form
+        id="profile_submit"
+        class="complex_form create_profile_form"
+        content
+      >
         <div id="font">Profile Picture</div>
         <input
           type="file"
@@ -83,16 +85,16 @@
     </section>
 
     <!-- profile design will show up here -->
-    <section id="profile_design" class="overlay" hidden>
+    <section id="profile_design" class="overlay">
       <h1>Profile</h1>
-      <div id="profile_header" class="complex_form create_profile_form">
+      <div class="complex_form create_profile_form">
         <button id="profile_edit_btn" class="btn">Edit</button>
       </div>
       <div id="picture" class="picture"></div>
     </section>
 
     <!-- survey for matching users will show up here -->
-    <section id="profile_survey" class="overlay" hidden>
+    <section id="profile_survey" class="overlay">
       <h1>Complete Matching Survey</h1>
       <form class="complex_form create_profile_form font">
         <hr />
@@ -139,9 +141,6 @@
       </form>
     </section>
 
-    <footer>
-      <a href="/credits.html" class="credits">credits</a>
-    </footer>
     <script src="js/profile.js"></script>
     <script src="js/api.js"></script>
   </body>

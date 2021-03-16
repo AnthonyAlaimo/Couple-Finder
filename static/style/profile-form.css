@@ -37,3 +37,10 @@ form {
 #header_pos {
   margin-left: 70px;
 }
+
+#profile_survey{
+  display:none;
+}
+#profile_design{
+  display:none;
+}

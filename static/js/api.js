@@ -5,9 +5,8 @@ let api = (function () {
 
   let module = {};
 
-  //Ajax function to send request to server
   function send(method, url, data, callback) {
-    let xhr = new XMLHttpRequest();
+    var xhr = new XMLHttpRequest();
     xhr.onload = function () {
       if (xhr.status !== 200)
         callback("[" + xhr.status + "]" + xhr.responseText, null);
@@ -80,7 +79,7 @@ let api = (function () {
   };
 
   // save user profile information
-  module.updateProfile = function (name, gender, age, bio) {
+  module.updateProfile = function (name, gender, age, bio, image_file) {
     send(
       "PUT",
       "/api/profile/",
@@ -89,6 +88,7 @@ let api = (function () {
         gender: gender,
         age: age,
         bio: bio,
+        image_file: image_file,
       },
       function (err, res) {
         if (err) return notifyErrorListeners(err);
