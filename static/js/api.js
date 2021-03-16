@@ -79,7 +79,7 @@ let api = (function () {
   };
 
   // save user profile information
-  module.updateProfile = function (name, birth_date, gender, bio, profile_picture) {
+  module.updateProfile = function (name, gender, birth_date, bio, profile_picture) {
     sendFiles(
       "PUT",
       "/api/profile/",
