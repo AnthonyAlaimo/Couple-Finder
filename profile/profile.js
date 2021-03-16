@@ -13,7 +13,10 @@ function getUserProfile(req, res, next) {
         else if (resp.data.profiles.length == 0) {
             return res.json(null);
         }
-        return res.json(resp.data.profiles[0]);
+        let profile = resp.data.profiles[0];
+        profile.age = calculateAge(profile.birthday);
+        delete profile.birthday;
+        return res.json(profile);
     });
 }
 
@@ -30,20 +33,23 @@ function updateUserProfile(req, res, next) {
                 if (resp.isAxiosError) {
                     return res.status(resp.response.status).end(resp.response.data.error);
                 }
-                res.json(resp.data.insert_profiles_one);
+                let profile = resp.data.insert_profiles_one;
+                profile.age = calculateAge(profile.birthday);
+                delete profile.birthday;
+                return res.json(profile);
             });
         }
         // Else allow modification of all fields
         else {
             // Check for missing fields
-            if (!req.file || !req.body.name || !req.body.age || !req.body.gender) {
+            if (!req.file || !req.body.name || !req.body.birth_date || !req.body.gender) {
                 return res.status(400)
                 .end("A required field is missing, please fix request and try again.");
             }
             let data = {profile: {
                 email: req.email,
                 name: req.body.name,
-                age: Number(req.body.age),
+                birthday: req.body.birth_date,
                 gender: req.body.gender,
                 bio: req.body.bio,
                 pictures: {data: [
@@ -59,7 +65,10 @@ function updateUserProfile(req, res, next) {
                 if (resp.isAxiosError) {
                     return res.status(resp.response.status).end(resp.response.data.error);
                 }
-                res.json(resp.data.insert_profiles_one);
+                let profile = resp.data.insert_profiles_one;
+                profile.age = calculateAge(profile.birthday);
+                delete profile.birthday;
+                return res.json(profile);
             });
         }
     });
@@ -78,6 +87,18 @@ function getPictureFile(req, res, next) {
         res.setHeader("Content-Type", picture.mimetype);
         res.sendFile(picture.path);
     });
+}
+
+function calculateAge(birthday) {
+    // From https://stackoverflow.com/questions/4060004/calculate-age-given-the-birth-date-in-the-format-yyyymmdd/7091965#7091965
+    var today = new Date();
+    var birthdate = new Date(birthday);
+    var age = today.getFullYear() - birthdate.getFullYear();
+    var m = today.getMonth() - birthdate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthdate.getDate())) {
+        age--;
+    }
+    return age;
 }
 
 module.exports = {getUserProfile, updateUserProfile, getPictureFile};
