@@ -2,8 +2,8 @@
 const axios = require('axios');
 
 /* Module for accessing and querying data from a HASURA graphQL database */
-const databaseUrl = process.env.DATABASE_URL || "https://tidy-eft-67.hasura.app/api/rest/";
-const adminSecret = process.env.DATABASE_KEY || "B5HMmWK6oSQ3ABb0Jm88QlwLTosgYKm9YpKjikTj2z8h18IlSwACYS4hPluiy1ly";
+const databaseUrl = process.env.DATABASE_URL;
+const adminSecret = process.env.DATABASE_KEY;
 
 function get(url, callback) {
     let config = {

@@ -29,7 +29,7 @@ function signup(req, res, next) {
         let salt = crypto.randomBytes(16).toString("base64");
         let hash = crypto.createHmac("sha512", salt);
         hash.update(password);
-        database.post("signup", {user: new User(email, hash.digest("base64"), salt)}, function(resp) {
+        database.post("signup/", {user: new User(email, hash.digest("base64"), salt)}, function(resp) {
             if (resp.isAxiosError) {
                 return res.status(resp.response.status).end(resp.response.data.error);
             }

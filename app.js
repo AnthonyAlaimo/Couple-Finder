@@ -70,30 +70,6 @@ app.post("/signin/", function (req, res, next) {
 });
 
 /**
- * Upload a new image to user's gallery
- */
-app.post(
-  "/api/images/",
-  isAuthenticated,
-  upload.single("picture"),
-  function (req, res, next) {
-    // Check for missing fields
-    if (!req.file) {
-      return res
-        .status(400)
-        .end("A required field is missing, please fix request and try again.");
-    }
-    images.insert(new Image(req.username, req.file), function (err, item) {
-      if (err) {
-        return res.status(500).end(err);
-      } else {
-        return res.json(item);
-      }
-    });
-  }
-);
-
-/**
  * Add a new comment to an image
  */
 // app.post("/api/comments/:id/", isAuthenticated, function (req, res, next) {
@@ -237,7 +213,9 @@ app.get("/api/images/:id/image/", isAuthenticated, function (req, res, next) {
 // });
 
 /* Update */
-app.put("/api/profile/", isAuthenticated, upload.single("picture"), function(req, res, next) {
+
+/* Update profile for current user */
+app.put("/api/profile/", isAuthenticated, upload.single("profile_picture"), function(req, res, next) {
   profile.updateUserProfile(req, res, next);
 });
 
