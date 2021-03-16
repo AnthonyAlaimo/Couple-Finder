@@ -19,7 +19,7 @@
         let userElmt = document.createElement("div");
         userElmt.className = "picture";
         userElmt.innerHTML = `
-          <img src="media/26344-4-hellsing-transparent.png" class="image" />
+          <img class="img" src="/api/image/${img._id}/image" alt="Image can't be displayed, please try another URL">
           <h1 class="image_name">${user.name}</h1>
           <h3 class="image_age">${user.age}</h3>
           <h3 class="image_gender">${user.gender}</h3>
