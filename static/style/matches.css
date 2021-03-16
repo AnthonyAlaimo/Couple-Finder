@@ -1,9 +1,5 @@
-.filters {
+#filters {
   margin-top: 50px;
-}
-
-.filter_display {
-  text-align: center;
 }
 
 .profile_info{
@@ -11,6 +7,8 @@
   overflow: scroll;
   background-color: aliceblue;
   border-left: 2px black solid;
+  padding-left: 2px;
+  padding-right: 2px;
 }
 
 .match_layout {
@@ -30,4 +28,15 @@
 }
 .icon:hover {
   opacity: 50%;
+}
+
+#filter_options_display{
+  display:none;
+  background-color: orange;
+  width:200px;
+  height:200px;
+}
+
+h1{
+  text-align: center;
 }

@@ -130,5 +130,12 @@ let api = (function () {
   module.onError = function (listener) {
     errorListeners.push(listener);
   };
+  // for toggling views
+  module.toggle_visibility = function (id) {
+    console.log("working");
+    var elmt = document.getElementById(id);
+    if (elmt.style.display == "flex") elmt.style.display = "none";
+    else elmt.style.display = "flex";
+  };
   return module;
 })();

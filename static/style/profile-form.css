@@ -40,7 +40,9 @@ form {
 
 #profile_survey{
   display:none;
+  flex-direction: column;
 }
 #profile_design{
   display:none;
+  flex-direction: column;
 }
