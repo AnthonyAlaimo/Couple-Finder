@@ -1,5 +1,6 @@
 /*jshint esversion: 6*/
 const database = require("../database/database");
+const fs = require("fs");
 
 /* Logic for getting and updating user profiles */
 
@@ -84,8 +85,14 @@ function getPictureFile(req, res, next) {
             return res.status(404).end("No picture with given id could be found");
         }
         let picture = resp.data.pictures[0];
-        res.setHeader("Content-Type", picture.mimetype);
-        res.sendFile(picture.path);
+        // Check file exists on fs
+        if (fs.existsSync(picture.path)) {
+            res.setHeader("Content-Type", picture.mimetype);
+            res.sendFile(picture.path);
+        }
+        else {
+            return res.status(404).end("No file for the given picture could be found");
+        }
     });
 }
 
