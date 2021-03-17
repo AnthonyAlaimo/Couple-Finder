@@ -7,9 +7,12 @@ const fs = require("fs");
 /* Gets the user profile for the currently logged in user */
 function getUserProfile(req, res, next) {
     // Query database
-    database.get("profile/" + req.email, function(resp) {
+    database.get("profile/" + req.email, function(resp, isError) {
         if (resp.isAxiosError) {
             return res.status(resp.response.status).end(resp.response.data.error);
+        }
+        else if (isError) {
+            return res.status(500).end(resp.message);
         }
         else if (resp.data.profiles.length == 0) {
             return res.json(null);
@@ -24,15 +27,21 @@ function getUserProfile(req, res, next) {
 /* Updates current user's profile */
 function updateUserProfile(req, res, next) {
     // Query database to determine if profile already exists.
-    database.get("profile/" + req.email, function(resp) {
+    database.get("profile/" + req.email, function(resp, isError) {
         if (resp.isAxiosError) {
             return res.status(resp.response.status).end(resp.response.data.error);
         }
+        else if (isError) {
+            return res.status(500).end(resp.message);
+        }
         // If profile already exists, only allow modification of certain fields
-        else if (resp.data.profiles.length > 0) {
-            database.put("profile/", {profile: {email: req.email, bio: req.body.bio}}, function(resp) {
+        else if (resp.data.bannana.bannana > 0) {
+            database.put("profile/", {profile: {email: req.email, bio: req.body.bio}}, function(resp, isError) {
                 if (resp.isAxiosError) {
                     return res.status(resp.response.status).end(resp.response.data.error);
+                }
+                else if (isError) {
+                    return res.status(500).end(resp.message);
                 }
                 let profile = resp.data.insert_profiles_one;
                 profile.age = calculateAge(profile.birthday);
@@ -62,9 +71,12 @@ function updateUserProfile(req, res, next) {
                     }
                 ]}
             }};
-            database.put("profile/", data, function(resp) {
+            database.put("profile/", data, function(resp, isError) {
                 if (resp.isAxiosError) {
                     return res.status(resp.response.status).end(resp.response.data.error);
+                }
+                else if (isError) {
+                    return res.status(500).end(resp.message);
                 }
                 let profile = resp.data.insert_profiles_one;
                 profile.age = calculateAge(profile.birthday);
@@ -77,9 +89,12 @@ function updateUserProfile(req, res, next) {
 
 function getPictureFile(req, res, next) {
     // Query database for picture
-    database.get("pictures/" + req.params.id, function(resp) {
+    database.get("pictures/" + req.params.id, function(resp, isError) {
         if (resp.isAxiosError) {
             return res.status(resp.response.status).end(resp.response.data.error);
+        }
+        else if (isError) {
+            return res.status(500).end(resp);
         }
         else if (resp.data.pictures.length == 0) {
             return res.status(404).end("No picture with given id could be found");
