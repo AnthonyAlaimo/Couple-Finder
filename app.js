@@ -28,6 +28,7 @@ app.use(express.static("static"));
 /* Local Modules */
 const login = require("./authentication/login");
 const profile = require("./profile/profile");
+const survey = require("./profile/survey");
 
 const PORT = process.env.PORT || 3000;
 
@@ -68,6 +69,11 @@ app.post("/signin/", function (req, res, next) {
   login.signin(req, res, next);
 });
 
+/* Post survey responses for current user */
+app.post("/api/survey/", isAuthenticated, function (req, res, next) {
+  survey.postSurveyResponses(req, res, next);
+});
+
 /* Read */
 
 /**
@@ -77,6 +83,11 @@ app.get("/signout/", function (req, res, next) {
   login.signout(req, res, next);
 });
 
+
+app.get("api/survey/", isAuthenticated, function (req, res, next) {
+  survey.getSurvey(req, res, next);
+});
+
 /**
  * Get profile for current user
  */
@@ -84,9 +95,14 @@ app.get("/api/profile/", isAuthenticated, function (req, res, next) {
     profile.getUserProfile(req, res, next);
 });
 
-// Gets image file for specified image
+/* Gets image file for specified image */
 app.get("/api/pictures/:id/picture/", isAuthenticated, function (req, res, next) {
   profile.getPictureFile(req, res, next);
+});
+
+/* Get survey responses for current user */
+app.get("/api/survey/response", isAuthenticated, function (req, res, next) {
+  survey.getSurveyResponses(req, res, next);
 });
 
 /* Update */
