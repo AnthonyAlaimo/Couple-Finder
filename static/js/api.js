@@ -92,6 +92,7 @@ let api = (function () {
       },
       function (err, res) {
         if (err) return notifyErrorListeners(err);
+        console.log(res);
         notifyProfileListeners();
       }
     );
@@ -114,9 +115,14 @@ let api = (function () {
     profileListeners.push(listener);
     getProfile(function (err, profile) {
       if (err) return notifyErrorListeners(err);
+      console.log(profile);
       listener(profile);
     });
   };
+
+  module.getSurvey = function (){
+    send("GET", "api/survey/", null, callback);
+  }
 
   let errorListeners = [];
 

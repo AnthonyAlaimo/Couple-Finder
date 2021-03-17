@@ -3,6 +3,7 @@
   "use strict";
 
   window.addEventListener("load", function () {
+
     //error checking
     api.onError(function (err) {
       console.error("[error]", err);
@@ -13,20 +14,19 @@
       error_box.innerHTML = err;
       error_box.style.visibility = "visible";
     });
-    api.onProfileUpdate(function (items) {
+    api.onProfileUpdate(function (user) {
+      console.log(user);
       document.querySelector("#profile").innerHTML = "";
-      items.forEach(function (user) {
-        let userElmt = document.createElement("div");
-        userElmt.innerHTML = `
-          <img class="img" src="/api/image/${user._id}/image" alt="Image can't be displayed, please try another URL">
-          <h1 class="name">${user.name} </h1>
-          <h3 class="birth_date">${user.birth_date} </h3>
-          <h3 class="gender">${user.gender} </h3>
-          <h3 class="bio">${user.bio} </h3>
-            `;
-        // add this element to the document
-        document.querySelector("#profile").prepend(userElmt);
-      });
+      let userElmt = document.createElement("div");
+      userElmt.innerHTML = `
+        <img class="img" src="/api/pictures/${user.pictures[0].id}/picture/" alt="Image can't be displayed, please try another URL">
+        <h1 class="name">${user.name} </h1>
+        <h3 class="birth_date">${user.birth_date} </h3>
+        <h3 class="gender">${user.gender} </h3>
+        <h3 class="bio">${user.bio} </h3>
+          `;
+      // add this element to the document
+      document.querySelector("#profile").prepend(userElmt);
     });
     // Setting up profile
     document
