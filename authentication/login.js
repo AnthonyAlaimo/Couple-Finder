@@ -18,9 +18,12 @@ function signup(req, res, next) {
     let email = req.body.email;
     let password = req.body.password;
     // Determine if user already exists
-    database.get("login/" + email, function(resp) {  
+    database.get("login/" + email, function(resp, isError) {  
         if (resp.isAxiosError) {
             return res.status(resp.response.status).end(resp.response.data.error);
+        }
+        else if (isError) {
+            return res.status(500).end(resp.message);
         }
         else if (resp.data.users.length > 0) {
             return res.status(400).end("Invalid request, email is already in use.");
@@ -29,9 +32,12 @@ function signup(req, res, next) {
         let salt = crypto.randomBytes(16).toString("base64");
         let hash = crypto.createHmac("sha512", salt);
         hash.update(password);
-        database.post("signup/", {user: new User(email, hash.digest("base64"), salt)}, function(resp) {
+        database.post("signup/", {user: new User(email, hash.digest("base64"), salt)}, function(resp, isError) {
             if (resp.isAxiosError) {
                 return res.status(resp.response.status).end(resp.response.data.error);
+            }
+            else if (isError) {
+                return res.status(500).end(resp.message);
             }
             else {
                 req.session.email = email;
@@ -48,9 +54,12 @@ function signin(req, res, next) {
   var email = req.body.email;
   var password = req.body.password;
   // Find and match user in database
-  database.get("login/" + email, function (resp) {
+  database.get("login/" + email, function (resp, isError) {
     if (resp.isAxiosError) {
         return res.status(resp.response.status).end(resp.response.data.error);
+    }
+    else if (isError) {
+        return res.status(500).end(resp.message);
     }
     else if (resp.data.users.length == 0) {
         return res.status(401).end("Incorrect login credentials");

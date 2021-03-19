@@ -11,6 +11,9 @@ function getSurvey(req, res, next) {
         if (resp.isAxiosError) {
             return res.status(resp.response.status).end(resp.response.data.error);
         }
+        else if (isError) {
+            return res.status(500).end(resp.message);
+        }
         return res.json(resp.data.survey_questions);
     });
 }
@@ -21,6 +24,9 @@ function postSurveyResponses(req, res, next) {
         if (resp.isAxiosError) {
             return res.status(resp.response.status).end(resp.response.data.error);
         }
+        else if (isError) {
+            return res.status(500).end(resp.message);
+        }
         return res.json(resp.data.returning);
     });
 }
@@ -30,6 +36,9 @@ function getSurveyResponses(req, res, next) {
     database.get("survey/" + req.email, function(resp) {
         if (resp.isAxiosError) {
             return res.status(resp.response.status).end(resp.response.data.error);
+        }
+        else if (isError) {
+            return res.status(500).end(resp.message);
         }
         return res.json(resp.data.survey_responses);
     });
