@@ -46,3 +46,8 @@ form {
   /* display:none; */
   flex-direction: column;
 }
+
+.survey_element{
+  text-align: center;
+  justify-content: space-between;
+}

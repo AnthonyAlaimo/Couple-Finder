@@ -1,5 +1,4 @@
 /*jshint esversion: 6*/
-
 let api = (function () {
   "use strict";
 
@@ -36,6 +35,8 @@ let api = (function () {
     xhr.send(formdata);
   }
 
+
+  ///////////USER SIGNIN/SIGNUP CODE///////////////
   let userListeners = [];
 
   function notifyUserListeners(email) {
@@ -78,6 +79,7 @@ let api = (function () {
     );
   };
 
+  //////////PROFILE CODE///////////
   // save user profile information
   module.updateProfile = function (name, gender, birth_date, bio, profile_picture) {
     sendFiles(
@@ -115,15 +117,43 @@ let api = (function () {
     profileListeners.push(listener);
     getProfile(function (err, profile) {
       if (err) return notifyErrorListeners(err);
-      console.log(profile);
       listener(profile);
     });
   };
 
-  module.getSurvey = function (){
+  /////////SURVEY CODE/////////
+  // save user profile information
+  module.surveySubmit = function (survey_results) {
+    send("POST", "/api/survey/", survey_results, function (err, res) {
+      if (err) return notifyErrorListeners(err);
+      console.log(res);
+      //notifySurveyListener();
+    });
+  };
+  //getting user survey
+  let getSurvey = function (callback){
     send("GET", "api/survey/", null, callback);
   }
 
+  // function notifySurveyListener() {
+  //   getSurveyResponses(function (err, surveyResponse) {
+  //     if (err) return notifyErrorListeners(err);
+  //     surveyListener.forEach(function (listener) {
+  //       listener(surveyResponse);
+  //     });
+  //   });
+  // }
+  let surveyListener = [];
+  module.onSurveyUpdate = function (listener) {
+    surveyListener.push(listener);
+    getSurvey(function (err, surveyQuestions) {
+      if (err) return notifyErrorListeners(err);
+      listener(surveyQuestions);
+    });
+  };
+
+
+  //////////ERROR CODE///////////
   let errorListeners = [];
 
   //error functions
