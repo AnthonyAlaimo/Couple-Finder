@@ -120,7 +120,7 @@ let api = (function () {
     });
   };
 
-  module.getSurvey = function (){
+  let getSurvey = function (callback){
     send("GET", "api/survey/", null, callback);
   }
 
