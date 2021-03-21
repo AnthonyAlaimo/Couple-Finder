@@ -9,7 +9,7 @@
     api.onError(function (err) {
       var error_box = document.querySelector("#error_box");
       error_box.innerHTML = err;
-      error_box.style.visibility = "hidden";
+      error_box.style.visibility = "visible";
     });
 
     api.onUserUpdate(function (email) {

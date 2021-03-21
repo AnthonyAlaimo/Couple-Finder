@@ -20,6 +20,8 @@ function getSurvey(req, res, next) {
 
 /* Post survey responses to database */
 function postSurveyResponses(req, res, next) {
+    // Format survey responses into list of {email, question_number, answer_number}
+    let data = {survey_responses: []};
     database.put("survey/" + req.email, data, function(resp) {
         if (resp.isAxiosError) {
             return res.status(resp.response.status).end(resp.response.data.error);

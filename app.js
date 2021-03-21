@@ -84,7 +84,7 @@ app.get("/signout/", function (req, res, next) {
 });
 
 
-app.get("/api/survey/", isAuthenticated, function (req, res, next) {
+app.get("api/survey/", isAuthenticated, function (req, res, next) {
   survey.getSurvey(req, res, next);
 });
 
