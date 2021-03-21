@@ -21,7 +21,7 @@ app.use(
     secret: crypto.randomBytes(16).toString("base64"),
     resave: false,
     saveUninitalized: true,
-    cookie: {httpOnly: true, sameSite: true, secure: true}
+    cookie: {httpOnly: true, sameSite: true}
   })
 );
 
@@ -89,7 +89,7 @@ app.get("/signout/", function (req, res, next) {
 });
 
 
-app.get("api/survey/", isAuthenticated, function (req, res, next) {
+app.get("/api/survey/", isAuthenticated, function (req, res, next) {
   survey.getSurvey(req, res, next);
 });
 
