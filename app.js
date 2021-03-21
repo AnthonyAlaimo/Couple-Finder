@@ -8,7 +8,6 @@ const multer = require("multer");
 
 const upload = multer({ dest: path.join(__dirname, "uploads") });
 const http = require("http");
-const fs = require("fs");
 const crypto = require("crypto");
 const validator = require('validator');
 const helmet = require('helmet');
@@ -21,7 +20,7 @@ app.use(
     secret: crypto.randomBytes(16).toString("base64"),
     resave: false,
     saveUninitalized: true,
-    cookie: {httpOnly: true, sameSite: true}
+    cookie: {httpOnly: true, sameSite: true /*secure: true*/}
   })
 );
 
@@ -37,12 +36,15 @@ const survey = require("./profile/survey");
 
 const PORT = process.env.PORT || 3000;
 
+/* Create underlying http server. When deployed Heroku will wrap it in a proxy https server */
 http.createServer(app).listen(PORT, function (err) {
   if (err) console.log(err);
   else console.log("HTTP server on http://localhost:%s", PORT);
 });
 
-/* Redirects HTTP requests to HTTPS */
+/* By default all routes will be https when deployed,
+   however need to prevent underlying http routes from being accessed.
+   Redirects HTTP requests to HTTPS */
 // From https://stackoverflow.com/questions/24726779/using-https-on-heroku
 app.all("*", function (req, res, next) {
   if (process.env.PORT && req.headers["x-forwarded-proto"] != "https") {
@@ -63,14 +65,14 @@ app.use(function (req, res, next) {
 /**
  * Sign up new user
  */
-app.post("/signup/", function (req, res, next) {
+app.post("/signup/", validateEmail, function (req, res, next) {
   login.signup(req, res, next);
 });
 
 /**
  * Sign in existing user
  */
-app.post("/signin/", function (req, res, next) {
+app.post("/signin/", validateEmail, function (req, res, next) {
   login.signin(req, res, next);
 });
 
@@ -113,7 +115,7 @@ app.get("/api/survey/response", isAuthenticated, function (req, res, next) {
 /* Update */
 
 /* Update profile for current user */
-app.put("/api/profile/", isAuthenticated, upload.single("profile_picture"), function(req, res, next) {
+app.put("/api/profile/", isAuthenticated, upload.single("profile_picture"), sanitizeProfileFields, function(req, res, next) {
   profile.updateUserProfile(req, res, next);
 });
 
@@ -135,7 +137,8 @@ function validateEmail(req, res, next) {
   next();
 }
 
-function sanitizeUserInput(req, res, next) {
+function sanitizeProfileFields(req, res, next) {
   req.body.bio = validator.escape(req.body.bio);
+  req.body.name = validator.escape(req.body.name);
   next();
 }
