@@ -35,7 +35,7 @@ function updateUserProfile(req, res, next) {
             return res.status(500).end(resp.message);
         }
         // If profile already exists, only allow modification of certain fields
-        else if (resp.data.bannana.bannana > 0) {
+        else if (resp.data.profiles.length > 0) {
             database.put("profile/", {profile: {email: req.email, bio: req.body.bio}}, function(resp, isError) {
                 if (resp.isAxiosError) {
                     return res.status(resp.response.status).end(resp.response.data.error);

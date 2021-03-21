@@ -7,7 +7,7 @@ const database = require("../database/database");
 
 /* Get survey questions and answers */
 function getSurvey(req, res, next) {
-    database.get("survey/", function(resp) {
+    database.get("survey/", function(resp, isError) {
         if (resp.isAxiosError) {
             return res.status(resp.response.status).end(resp.response.data.error);
         }
@@ -22,7 +22,7 @@ function getSurvey(req, res, next) {
 function postSurveyResponses(req, res, next) {
     // Format survey responses into list of {email, question_number, answer_number}
     let data = {survey_responses: []};
-    database.put("survey/" + req.email, data, function(resp) {
+    database.put("survey/" + req.email, data, function(resp, isError) {
         if (resp.isAxiosError) {
             return res.status(resp.response.status).end(resp.response.data.error);
         }
@@ -35,7 +35,7 @@ function postSurveyResponses(req, res, next) {
 
 /* Get survey responses for user */
 function getSurveyResponses(req, res, next) {
-    database.get("survey/" + req.email, function(resp) {
+    database.get("survey/" + req.email, function(resp, isError) {
         if (resp.isAxiosError) {
             return res.status(resp.response.status).end(resp.response.data.error);
         }

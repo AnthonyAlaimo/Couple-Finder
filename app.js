@@ -10,6 +10,10 @@ const upload = multer({ dest: path.join(__dirname, "uploads") });
 const http = require("http");
 const fs = require("fs");
 const crypto = require("crypto");
+const validator = require('validator');
+const helmet = require('helmet');
+
+app.use(helmet());
 
 const session = require("express-session");
 app.use(
@@ -17,6 +21,7 @@ app.use(
     secret: crypto.randomBytes(16).toString("base64"),
     resave: false,
     saveUninitalized: true,
+    cookie: {httpOnly: true, sameSite: true, secure: true}
   })
 );
 
@@ -84,7 +89,7 @@ app.get("/signout/", function (req, res, next) {
 });
 
 
-app.get("/api/survey/", isAuthenticated, function (req, res, next) {
+app.get("api/survey/", isAuthenticated, function (req, res, next) {
   survey.getSurvey(req, res, next);
 });
 
@@ -120,4 +125,17 @@ function isAuthenticated(req, res, next) {
         return res.status(401).end("Access Denied");
     }
     next();
+}
+
+/* Validation for requests */
+function validateEmail(req, res, next) {
+  if (!validator.isEmail(req.body.email)) {
+    return res.status(400).end("Please enter a valid email");
+  }
+  next();
+}
+
+function sanitizeUserInput(req, res, next) {
+  req.body.bio = validator.escape(req.body.bio);
+  next();
 }
