@@ -20,11 +20,18 @@
   font-family: "Courier New", Courier, monospace;
 }
 
-.icon {
-  margin-left: 25px;
+.icon_like {
+  margin-left: 50px;
   margin-top: 140px;
   width: 100px;
   height: 100px;
+}
+.icon_dislike {
+  margin-left: 35px;
+  margin-top: 140px;
+  width: 100px;
+  height: 100px;
+
 }
 .icon:hover {
   opacity: 50%;

@@ -148,9 +148,44 @@ let api = (function () {
     surveyListener.push(listener);
     getSurvey(function (err, surveyQuestions) {
       if (err) return notifyErrorListeners(err);
+      console.log(surveyQuestions)
       listener(surveyQuestions);
     });
   };
+
+
+  /////////////MATCHES CODE////////////////
+  let matchListener = [];
+  module.onMatchUpdate = function (listener) {
+    matchListener.push(listener);
+    getMatches(function (err, matches) {
+      if (err) return notifyErrorListeners(err);
+      listener(matches);
+    });
+  };
+  // returns all the matches for a given user
+  let getMatches = function (callback){
+    send("GET", "/api/matches/", null, callback);
+  }
+  // change users matches based on filters selected
+  module.filterSubmit = function (filter_changes) {
+    send("POST", "/api/matches/filters", filter_changes, function (err, res) {
+      if (err) return notifyErrorListeners(err);
+    });
+  };
+  //add to favourite list
+  module.matchLike = function (matchId){
+    send("PATCH", "/api/favourites/" + matchId + "/", null, function (err, res) {
+      if (err) return notifyErrorListeners(err);
+    });
+  }
+  //remove from match list
+  module.matchDislike = function (matchId){
+    send("PATCH", "/api/matches/" + matchId + "/", null, function (err, res) {
+      if (err) return notifyErrorListeners(err);
+    }); 
+  }
+
 
 
   //////////ERROR CODE///////////

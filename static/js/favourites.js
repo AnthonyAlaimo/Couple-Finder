@@ -16,5 +16,10 @@
         error_box.innerHTML = err;
         error_box.style.visibility = "hidden";
       });
+      api.onProfileUpdate(function (user) {
+        if (!user) {
+          window.location.href = "/";
+        }
+      })
     });
   })();
