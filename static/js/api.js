@@ -77,6 +77,17 @@ let api = (function () {
       }
     );
   };
+  // post request for signing up
+  module.signout = function (email, password) {
+    send(
+      "GET",
+      "/signout/",
+      null,
+      function (err, res) {
+        if (err) return notifyErrorListeners(err);
+      }
+    );
+  };
 
   // save user profile information
   module.updateProfile = function (name, gender, birth_date, bio, profile_picture) {
@@ -120,6 +131,32 @@ let api = (function () {
     });
   };
 
+  /////////SURVEY CODE and Filter Code/////////
+  // save user profile information
+  module.surveySubmit = function (survey_results) {
+    send("POST", "/api/survey/", survey_results, function (err, res) {
+      if (err) return notifyErrorListeners(err);
+      console.log(res);
+      document.querySelector("#profile_survey").innerHTML = "";
+      //notifySurveyListener();
+    });
+  };
+   // change users matches based on filters selected
+   module.filterSubmit = function (filter_changes) {
+    send("POST", "/api/filters", filter_changes, function (err, res) {
+      if (err) return notifyErrorListeners(err);
+    });
+  };
+
+  //post request for changing the biography
+  module.biographEdit = function (biography){
+    send("POST", "/api/profile/biography", biography, function (err, res) {
+      if (err) return notifyErrorListeners(err);
+      //if succesful remove the edit box
+      document.getElementById("profile_survey").style.display = "none";
+    });
+  }
+
   let getSurvey = function (callback){
     send("GET", "api/survey/", null, callback);
   }
@@ -137,7 +174,6 @@ let api = (function () {
     surveyListener.push(listener);
     getSurvey(function (err, surveyQuestions) {
       if (err) return notifyErrorListeners(err);
-      console.log(surveyQuestions)
       listener(surveyQuestions);
     });
   };
@@ -154,14 +190,8 @@ let api = (function () {
   };
   // returns all the matches for a given user
   let getMatches = function (callback){
-    send("GET", "/api/matches/", null, callback);
+    //send("GET", "/api/matches/", null, callback);
   }
-  // change users matches based on filters selected
-  module.filterSubmit = function (filter_changes) {
-    send("POST", "/api/matches/filters", filter_changes, function (err, res) {
-      if (err) return notifyErrorListeners(err);
-    });
-  };
   //add to favourite list
   module.matchLike = function (matchId){
     send("PATCH", "/api/favourites/" + matchId + "/", null, function (err, res) {
@@ -192,10 +222,13 @@ let api = (function () {
   };
   // for toggling views
   module.toggle_visibility = function (id) {
-    console.log("working");
-    var elmt = document.getElementById(id);
+    console.log(document)
+    let elmt = document.getElementById(id);
     if (elmt.style.display == "flex") elmt.style.display = "none";
-    else elmt.style.display = "flex";
+    else {
+      elmt.style.display = "flex";
+      document.getElementById(id).scrollIntoView();
+    }
   };
   return module;
 })();

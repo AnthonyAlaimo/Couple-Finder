@@ -25,6 +25,13 @@
         <h3 class="birth_date">${user.age} </h3>
         <h3 class="gender">${user.gender} </h3>
         <h3 class="bio">${user.bio} </h3>
+        <form id="bio_edit">
+          <textarea
+            id="profile_bio"
+            placeholder="Enter Your New Biography HERE"
+            ></textarea>
+          <button type="submit" class="btn">Submit</button>
+        </form>
           `;
       if (!user) {
           window.location.href = "/";
@@ -34,6 +41,15 @@
       }
       // add this element to the document
       document.querySelector("#profile").prepend(userElmt);
+      //for editting biography
+      document.querySelector("#bio_edit").addEventListener("submit", function (e) {
+        console.log("OKAY")
+        //api.editBiography();
+      });
+      // toggle bio edit
+      document.querySelector("#profile_edit_btn").addEventListener("click", function (e) {
+        api.toggle_visibility("bio_edit");
+      });
     });
     api.onSurveyUpdate(function (survey){
       let surveyElmt = document.createElement("div");
@@ -45,30 +61,58 @@
         question.survey_options.forEach(function (option){
           //add option to survey
           surveyElmt.innerHTML += `
-          <input id="${option.answer_text}" value="${option.answer_text}" type="radio" name="${question.question_text}" class="survey_option">${option.answer_text}</input>
+          <input id="${option.answer_text}" value="${question.question_number} ${option.answer_number}" type="radio" name="${question.question_number}" class="survey_option">${option.answer_text}</input>
           `;
           // add survey to document
         })
       })
       document.querySelector('#survey').prepend(surveyElmt)
     })
-
     // submitting survey result to server
     document
       .querySelector("#survey_submit")
       .addEventListener("submit", function (e) {
         let r1 = Array.from(document.querySelectorAll('#survey_submit input'))
-        let result = []
+        let result = [];
+        let questionNum;
+        let answerNum;
         r1.forEach(function (option){
           if (option.checked === true){
-            result.push(option.defaultValue)
+            questionNum = option.defaultValue.slice(0,1)
+            answerNum = option.defaultValue.slice(2,3)
+            result.push({question_number: parseInt(questionNum), answer_number: parseInt(answerNum)})
           }
         })
         console.log(result);
+        document.getElementById("profile_survey").style.display = "none";
         api.surveySubmit(result);
     });
 
-
+    // submitting filter configuration for given user
+    document
+      .querySelector("#filter_submit")
+      .addEventListener("submit", function (e) {
+        let r1 = Array.from(document.querySelectorAll('#filter_submit input'))
+        console.log(r1);
+        let result = [];
+        let questionNum;
+        let answerNum;
+        r1.forEach(function (option){
+          console.log(option)
+          if (option.checked === true){
+            questionNum = option.defaultValue.slice(0,1)
+            answerNum = option.defaultValue.slice(2,3)
+            result.push({filter_number: parseInt(questionNum), answer_number: parseInt(answerNum)})
+          }
+        })
+        console.log(result);
+        //document.getElementById("profile_survey").style.display = "none";
+        api.filterSubmit(result);
+    });
+    //for signing out
+    document.querySelector("#signout_button").addEventListener("click", function (e) {
+      api.signout();
+    });
     // Setting up profile
     document
       .querySelector("#profile_submit")
@@ -87,5 +131,9 @@
         document.getElementById("profile_design").style.display = "flex";
         document.getElementById("profile_survey").style.display = "flex";
       });
+    // toggle filters
+    document.querySelector("#filters").addEventListener("click", function (e) {
+      api.toggle_visibility("profile_filters");
+    });
   });
 })();

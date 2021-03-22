@@ -14,12 +14,15 @@
       api.onError(function (err) {
         var error_box = document.querySelector("#error_box");
         error_box.innerHTML = err;
-        error_box.style.visibility = "hidden";
+        error_box.style.visibility = "visible";
       });
       api.onProfileUpdate(function (user) {
         if (!user) {
           window.location.href = "/";
         }
       })
+      document.querySelector("#signout_button").addEventListener("click", function (e) {
+        api.signout();
+      });
     });
   })();

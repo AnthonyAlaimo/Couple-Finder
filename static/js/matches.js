@@ -14,7 +14,7 @@
     api.onError(function (err) {
       var error_box = document.querySelector("#error_box");
       error_box.innerHTML = err;
-      error_box.style.visibility = "hidden";
+      error_box.style.visibility = "visible";
     });
     api.onProfileUpdate(function (user) {
       if (!user) {
@@ -49,12 +49,9 @@
         });
         document.querySelector("#img_layout").prepend(matchElmt);
       })
-
     })
-
-    // Setting up profile
-    document.querySelector("#filters").addEventListener("click", function (e) {
-      api.toggle_visibility("#filter_options_display");
+    document.querySelector("#signout_button").addEventListener("click", function (e) {
+      api.signout();
     });
   });
 })();

@@ -86,11 +86,68 @@
     <section id="profile_design" class="overlay">
       <h1>Profile</h1>
       <div class="complex_form create_profile_form">
-        <button id="profile_edit_btn" class="btn">Edit Profile Bio.</button>
+        <div class="prof_buttons">
+          <div id="profile_edit_btn" class="btn">Edit Profile Bio.</div>
+          <div id="filters" class="btn" > Edit Match Filters</div>
+        </div>
         <div id="profile" class="profile"></div>
       </div>
     </section>
 
+    <!-- survey for matching users will show up here -->
+    <section id="profile_filters" class="overlay">
+      <h1>Configure Your Match Filters</h1>
+      <form id="filter_submit" class="complex_form create_profile_form">
+       <!-- filter option age preference -->
+      <h2>Preferred Age Range</h2>
+        <input name="age_filter" type="radio" value="1 1">19-26</input>
+        <input name="age_filter" type="radio" value="1 2">27-35</input>
+        <input name="age_filter" type="radio" value="1 3">36-44</input>
+        <input name="age_filter" type="radio" value="1 4">45-53</input>
+        <input name="age_filter" type="radio" value="1 5">54-62</input>
+        <input name="age_filter" type="radio" value="1 6">63-71</input>
+        <input name="age_filter" type="radio" value="1 7">82-90</input>
+      <!-- filter option gender preference -->
+      <h2>Preferred Gender</h2>
+        <input name="gender_filter" type="radio" value="2 1">Male</input>
+        <input name="gender_filter" type="radio" value="2 2">Female</input>
+        <input name="gender_filter" type="radio" value="2 3">Both</input>
+      <!-- Music preferences-->
+      <h2>Partner's Music Preference</h2>
+          <input name="music_filter" type="radio" value="3 1">Soul Music</input>
+          <input name="music_filter" type="radio" value="3 2">Jazz</input>
+          <input name="music_filter" type="radio" value="3 3">Blues</input>
+          <input name="music_filter" type="radio" value="3 4">Classical Music</input>
+          <input name="music_filter" type="radio" value="3 5">House Music</input>
+      <!-- Food preferences-->
+        <h2>Partner's Food Preference</h2>
+          <input name="food_filter" type="radio" value="4 1">Pizza</input>
+          <input name="food_filter" type="radio" value="4 2">Pasta</input>
+          <input name="food_filter" type="radio" value="4 3">Sushi</input>
+          <input name="food_filter" type="radio" value="4 4">Hamburger</input>
+          <input name="food_filter" type="radio" value="4 5">Chinese</input>
+      <!-- Smoking preference -->
+        <h2>Partner's Smoking Habits</h2>
+          <input name="smoke_filter" type="radio" value="5 1">Not at all</input>
+          <input name="smoke_filter" type="radio" value="5 2">Somewhat</input>
+          <input name="smoke_filter" type="radio" value="5 3">Frequently</input>
+      <!-- Location if possible -->
+      <!-- <section class="location_preference">
+        <label for="location_pref">Preferred Location</label>
+        <input list="location_prefs" id="location_pref" name="location_pref" />
+        <datalist id="location_prefs">
+          <option value="Within 1km"></option>
+          <option value="Within 5km"></option>
+          <option value="Within 10km"></option>
+          <option value="Same City"></option>
+          <option value="Anywhere"></option>
+        </datalist>
+      </section> -->
+    <br>
+      <button type="submit" class="btn">Submit</button>
+      </form>
+    </section>
+          
     <!-- survey for matching users will show up here -->
     <section id="profile_survey" class="overlay">
       <h1>Complete Your Matching Survey</h1>
@@ -99,6 +156,7 @@
       <button type="submit" class="btn">Submit</button>
       </form>
     </section>
+
 
     <script src="js/profile.js"></script>
     <script src="js/api.js"></script>
