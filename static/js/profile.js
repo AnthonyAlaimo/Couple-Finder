@@ -44,7 +44,7 @@
       document.querySelector("#profile").prepend(userElmt);
       //for editting biography
       document.querySelector("#bio_edit").addEventListener("submit", function (e) {
-        console.log("OKAY")
+        console.log("OKAY");
         //api.editBiography();
       });
       // toggle bio edit
