@@ -52,7 +52,7 @@ form {
 }
 
 #profile_filters{
-  /* display:none; */
+  display:none;
   flex-direction: column;
 }
 
