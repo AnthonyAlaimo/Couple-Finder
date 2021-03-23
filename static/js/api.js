@@ -5,32 +5,6 @@ let api = (function () {
 
   let module = {};
 
-  /*  ******* Data types *******
-        image objects must have at least the following attributes:
-            - (String) imageId 
-            - (String) title
-            - (String) author
-            - (String) url
-            - (Date) date
-    
-        comment objects must have the following attributes
-            - (String) commentId
-            - (String) imageId
-            - (String) author
-            - (String) content
-            - (Date) date
-    
-    ****************************** */
-
-  let imageRequestedEvent = new CustomEvent("imageRequested");
-  module.imageRequestedEvent = imageRequestedEvent;
-
-  //   let commentPageRequestedEvent = new CustomEvent("commentPageRequested");
-  //   module.commentPageRequestedEvent = commentPageRequestedEvent;
-
-  let userUpdatedEvent = new CustomEvent("userUpdated");
-  module.userUpdatedEvent = userUpdatedEvent;
-
   function send(method, url, data, callback) {
     var xhr = new XMLHttpRequest();
     xhr.onload = function () {
@@ -62,233 +36,213 @@ let api = (function () {
     xhr.send(formdata);
   }
 
-  // Sign up user
-  module.signup = function (username, password) {
-    send(
-      "POST",
-      "/signup/",
-      { username: username, password: password },
-      function (err, item) {
-        if (err) {
-          notifyErrorHandlers(err);
-        } else {
-          module.changeUser(module.getUsername());
-        }
-      }
-    );
+  let userListeners = [];
+
+  function notifyUserListeners(email) {
+    userListeners.forEach(function (listener) {
+      listener(email);
+    });
+  }
+
+  module.onUserUpdate = function (listener) {
+    userListeners.push(listener);
+    send("GET", "/api/profile/", null, function (err, res) {
+      if (err) return notifyErrorListeners(err);
+      listener(res.email);
+    });
   };
 
-  // Sign in user
-  module.signin = function (username, password) {
+  // post request for signing in
+  module.signin = function (email, password) {
     send(
       "POST",
       "/signin/",
-      { username: username, password: password },
-      function (err, item) {
-        if (err) {
-          notifyErrorHandlers(err);
-        } else {
-          module.changeUser(module.getUsername());
-        }
+      { email: email, password: password },
+      function (err, res) {
+        if (err) return notifyErrorListeners(err);
+        notifyUserListeners(email);
       }
     );
   };
 
-  // Signout current user
-  module.signout = function () {
-    send("GET", "/signout/", {}, function (err, item) {
-      if (err) {
-        notifyErrorHandlers(err);
-      } else {
-        module.changeUser(module.getUsername());
-      }
-    });
-  };
-  // change to landing page
-  module.changeWindow = function () {
-    window.location.href = "/profile.html";
-  };
-
-  // Get list of all users from server
-  module.getAllUsers = function (callback) {
-    send("GET", "/api/users/", {}, function (err, items) {
-      if (err) {
-        notifyErrorHandlers(err);
-      } else {
-        callback(items);
-      }
-    });
-  };
-
-  // add an image to the gallery
-  module.addImage = function (imageFile) {
-    sendFiles(
+  // post request for signing up
+  module.signup = function (email, password) {
+    send(
       "POST",
-      "/api/images/",
-      { picture: imageFile },
-      function (err, item) {
-        if (err) {
-          notifyErrorHandlers(err);
-        } else {
-          module.getImageGallery(item.author);
-        }
+      "/signup/",
+      { email: email, password: password },
+      function (err, res) {
+        if (err) return notifyErrorListeners(err);
+        notifyUserListeners(email);
+      }
+    );
+  };
+  // post request for signing up
+  module.signout = function (email, password) {
+    send(
+      "GET",
+      "/signout/",
+      null,
+      function (err, res) {
+        if (err) return notifyErrorListeners(err);
       }
     );
   };
 
-  //   // Delete an image from the gallery given its imageId.
-  //   module.deleteImage = function (imageId) {
-  //     send("DELETE", "/api/images/" + imageId + "/", {}, function (err, item) {
-  //       if (err) {
-  //         notifyErrorHandlers(err);
-  //       } else {
-  //         notifyImageHandlers(item);
-  //       }
+  // save user profile information
+  module.updateProfile = function (name, gender, birth_date, bio, profile_picture) {
+    sendFiles(
+      "PUT",
+      "/api/profile/",
+      {
+        name: name,
+        gender: gender,
+        birth_date: birth_date,
+        bio: bio,
+        profile_picture: profile_picture,
+      },
+      function (err, res) {
+        if (err) return notifyErrorListeners(err);
+        console.log(res);
+        notifyProfileListeners();
+      }
+    );
+  };
+
+  let getProfile = function (callback) {
+    send("GET", "/api/profile/", null, callback);
+  };
+
+  let profileListeners = [];
+  function notifyProfileListeners() {
+    getProfile(function (err, profile) {
+      if (err) return notifyErrorListeners(err);
+      profileListeners.forEach(function (listener) {
+        listener(profile);
+      });
+    });
+  }
+  module.onProfileUpdate = function (listener) {
+    profileListeners.push(listener);
+    getProfile(function (err, profile) {
+      if (err) return notifyErrorListeners(err);
+      console.log(profile);
+      listener(profile);
+    });
+  };
+
+  /////////SURVEY CODE and Filter Code/////////
+  // save user profile information
+  module.surveySubmit = function (survey_results) {
+    send("POST", "/api/survey/", survey_results, function (err, res) {
+      if (err) return notifyErrorListeners(err);
+      console.log(res);
+      document.querySelector("#profile_survey").innerHTML = "";
+      notifySurveyListener();
+    });
+  };
+   // change users matches based on filters selected
+   module.filterSubmit = function (filter_changes) {
+    send("PUT", "/api/filters", filter_changes, function (err, res) {
+      if (err) return notifyErrorListeners(err);
+    });
+  };
+
+  //patch request for changing the biography
+  module.biographEdit = function (bio){
+    send("PUT", "/api/profile/", {bio: bio}, function (err, res) {
+      if (err) return notifyErrorListeners(err);
+      //if succesful remove the edit box
+      document.getElementById("profile_survey").style.display = "none";
+    });
+  }
+
+  let getSurvey = function (callback){
+    send("GET", "api/survey/", null, callback);
+  }
+
+  let surveyListener = [];
+  module.onSurveyUpdate = function (listener) {
+    surveyListener.push(listener);
+    getSurvey(function (err, surveyQuestions) {
+      if (err) return notifyErrorListeners(err);
+      listener(surveyQuestions);
+    });
+  };
+/////////////////Survey Response Code///////////
+  // let serveListener = [];
+  // function notifySurveyListener() {
+  //   getSurveyResponse(function (err, surveyResponse) {
+  //     if (err) return notifyErrorListeners(err);
+  //     serveListener.forEach(function (listener) {
+  //       listener(surveyResponse);
   //     });
-  //   };
+  //   });
+  // }
+  // //get users survey answers
+  // let getSurveyResponse = function (){
+  //   send("GET", "/api/survey/response", null, callback);
+  // }
+  // module.onSurveyResultUpdate = function (listener) {
+  //   surveyListener.push(listener);
+  //   getSurveyResponse(function (err, surveyResponse) {
+  //     if (err) return notifyErrorListeners(err);
+  //     listener(surveyResponse);
+  //   });
+  // };
+/////////////////
 
-  //   // Get default image of user from the server.
-  //   // Serves as an entrypoint into the user's gallery.
-  module.getImageGallery = function (username) {
-    send("GET", "/api/images/" + username + "/", null, function (err, item) {
-      if (err) {
-        notifyErrorHandlers(err);
-      } else {
-        notifyImageHandlers(item);
-      }
+
+  /////////////MATCHES CODE////////////////
+  let matchListener = [];
+  module.onMatchUpdate = function (listener) {
+    matchListener.push(listener);
+    getMatches(function (err, matches) {
+      if (err) return notifyErrorListeners(err);
+      listener(matches);
     });
   };
-
-  //   // Get prev or next image from server
-  //   module.getLinkedImage = function (imageId, action) {
-  //     send(
-  //       "GET",
-  //       "/api/images/" + imageId + "/" + action + "/",
-  //       {},
-  //       function (err, item) {
-  //         if (err) {
-  //           notifyErrorHandlers(err);
-  //         } else {
-  //           notifyImageHandlers(item);
-  //         }
-  //       }
-  //     );
-  //   };
-
-  //   // add a comment to an image
-  //   module.addComment = function (imageId, content) {
-  //     send(
-  //       "POST",
-  //       "/api/comments/" + imageId + "/",
-  //       { content: content },
-  //       function (err, item) {
-  //         if (err) {
-  //           notifyErrorHandlers(err);
-  //         } else {
-  //           module.getCommentPageForImage(imageId, 0);
-  //         }
-  //       }
-  //     );
-  //   };
-
-  //   // Get page of 10 comments from image given by imageId
-  //   // or the last page available if requested page does not exist.
-  //   module.getCommentPageForImage = function (imageId, page) {
-  //     send(
-  //       "GET",
-  //       "/api/comments/" + imageId + "/?page=" + page + "/",
-  //       {},
-  //       function (err, items) {
-  //         if (err) {
-  //           notifyErrorHandlers(err);
-  //         } else {
-  //           notifyCommentHandlers(items);
-  //         }
-  //       }
-  //     );
-  //   };
-
-  //   // Deletes a comment from an image
-  //   module.deleteComment = function (commentId) {
-  //     send(
-  //       "DELETE",
-  //       "/api/comments/" + commentId + "/",
-  //       {},
-  //       function (err, items) {
-  //         if (err) {
-  //           notifyErrorHandlers(err);
-  //         } else {
-  //           notifyCommentHandlers(items);
-  //         }
-  //       }
-  //     );
-  //   };
-
-  // Add new event listener to the usersUpdated event
-  module.onUserUpdate = function (handler) {
-    window.addEventListener("userUpdated", handler);
-  };
-
-  // Changes the current user context to the specified username
-  module.changeUser = function (username) {
-    notifyUserHandlers(username);
-  };
-
-  // Fire userUpdatedEvent for all listeners
-  function notifyUserHandlers(username) {
-    module.userUpdatedEvent.username = username;
-    window.dispatchEvent(module.userUpdatedEvent);
+  // returns all the matches for a given user
+  let getMatches = function (callback){
+    //send("GET", "/api/matches/", null, callback);
   }
-
-  // Get username of current user from browser cookies
-  module.getUsername = function () {
-    let username = document.cookie.replace(
-      /(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/,
-      "$1"
-    );
-    username = decodeURI(username);
-    return username;
-  };
-
-  // send completed profile survey to server, so information
-  // can be used to find potential matches
-  module.profileSurvey = function (username) {
-    send("POST", "/profile/", { username }, function (err, res) {
-      return res;
+  //add to favourite list
+  module.matchLike = function (matchId){
+    send("PATCH", "/api/favourites/" + matchId + "/", null, function (err, res) {
+      if (err) return notifyErrorListeners(err);
     });
-  };
-  // call handler when new image is requested
-  module.onImageUpdate = function (handler) {
-    window.addEventListener("imageRequested", handler);
-  };
-
-  // Notifies all image listeners that an image has been retrieved
-  function notifyImageHandlers(image) {
-    module.imageRequestedEvent.image = image;
-    window.dispatchEvent(module.imageRequestedEvent);
+  }
+  //remove from match list
+  module.matchDislike = function (matchId){
+    send("PATCH", "/api/matches/" + matchId + "/", null, function (err, res) {
+      if (err) return notifyErrorListeners(err);
+    }); 
   }
 
-  //   // call handler when a comment is added or deleted to an image
-  //   module.onCommentUpdate = function (handler) {
-  //     window.addEventListener("commentPageRequested", handler);
-  //   };
 
-  //   // Fires onCommentPageRequested event for all listeners with the given imageIndex and page as parameters
-  //   function notifyCommentHandlers(comments) {
-  //     module.commentPageRequestedEvent.comments = comments;
-  //     window.dispatchEvent(module.commentPageRequestedEvent);
-  //   }
 
-  // Logs error to console and displays in UI for 2 seconds
-  function notifyErrorHandlers(err) {
-    console.error("[error]", err);
-    var error_box = document.querySelector("#error_box");
-    error_box.innerHTML = err;
-    error_box.style.visibility = "visible";
-    window.setTimeout(function () {
-      error_box.innerHTML = "";
-      error_box.style.visiblity = "hidden";
-    }, 2000);
+  //////////ERROR CODE///////////
+  let errorListeners = [];
+
+  //error functions
+  function notifyErrorListeners(err) {
+    errorListeners.forEach(function (listener) {
+      listener(err);
+    });
   }
+
+  module.onError = function (listener) {
+    errorListeners.push(listener);
+  };
+  // for toggling views
+  module.toggle_visibility = function (id) {
+    console.log(document)
+    let elmt = document.getElementById(id);
+    if (elmt.style.display == "flex") elmt.style.display = "none";
+    else {
+      elmt.style.display = "flex";
+      document.getElementById(id).scrollIntoView();
+    }
+  };
   return module;
 })();

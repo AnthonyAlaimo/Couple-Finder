@@ -1,16 +1,18 @@
 /*jshint esversion: 6*/
 
+/* Node Modules */
 const express = require("express");
 const app = express();
 const path = require("path");
-const datastore = require("nedb");
 const multer = require("multer");
 
-const upload = multer({dest: path.join(__dirname, "uploads")});
-const http = require('http');
-const fs = require('fs');
-const crypto = require('crypto');
-const axios = require('axios');
+const upload = multer({ dest: path.join(__dirname, "uploads") });
+const http = require("http");
+const crypto = require("crypto");
+const validator = require('validator');
+const helmet = require('helmet');
+
+app.use(helmet());
 
 const session = require("express-session");
 app.use(
@@ -18,46 +20,43 @@ app.use(
     secret: crypto.randomBytes(16).toString("base64"),
     resave: false,
     saveUninitalized: true,
+    cookie: {httpOnly: true, sameSite: true /*secure: true*/}
   })
 );
-
-const cookie = require("cookie");
 
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-const PORT = process.env.PORT || 3000;
-
 app.use(express.static("static"));
 
+/* Local Modules */
+const login = require("./authentication/login");
+const profile = require("./profile/profile");
+const survey = require("./profile/survey");
+
+const PORT = process.env.PORT || 3000;
+
+/* Create underlying http server. When deployed Heroku will wrap it in a proxy https server */
 http.createServer(app).listen(PORT, function (err) {
   if (err) console.log(err);
   else console.log("HTTP server on http://localhost:%s", PORT);
 });
 
-/* HTTPS Proxy Server */
-app.all("*", function(req, res, next) {
-    if (req.headers['x-forwarded-proto'] != 'https') {
-        res.redirect("https://" + req.headers.host + req.url);
-    }
-    else {
-        next();
-    }
+/* By default all routes will be https when deployed,
+   however need to prevent underlying http routes from being accessed.
+   Redirects HTTP requests to HTTPS */
+// From https://stackoverflow.com/questions/24726779/using-https-on-heroku
+app.all("*", function (req, res, next) {
+  if (process.env.PORT && req.headers["x-forwarded-proto"] != "https") {
+    res.redirect("https://" + req.headers.host + req.url);
+  } else {
+    next();
+  }
 });
 
-const databaseUrl = process.env.DATABASE_URL;
-const adminSecret = process.env.DATABASE_KEY;
-
-/* Object Constructors */
-function User(email, password, salt) {
-    this.email = email;
-    this.password = password;
-    this.salt = salt;
-}
-
-/* Initial handler, obtains username from session if one exists */
+/* Initial handler, obtains email from session if one exists */
 app.use(function (req, res, next) {
-  req.username = req.session.username ? req.session.username : null;
+  req.email = req.session.email ? req.session.email : null;
   next();
 });
 
@@ -66,109 +65,21 @@ app.use(function (req, res, next) {
 /**
  * Sign up new user
  */
-app.post("/signup/", function (req, res, next) {
-    let username = req.body.username;
-    let password = req.body.password;
-    // Determine if user already exists
-    let salt = crypto.randomBytes(16).toString("base64");
-    let hash = crypto.createHmac("sha512", salt);
-    hash.update(password);
-
-    send("POST", "signup", new User(email, hash.digest("base64"), salt), function(response) {
-        console.log(response);    
-    });
+app.post("/signup/", validateEmail, function (req, res, next) {
+  login.signup(req, res, next);
 });
 
 /**
  * Sign in existing user
  */
-app.post("/signin/", function (req, res, next) {
-  var username = req.body.username;
-  var password = req.body.password;
-  // Find and match user in database
-  users.findOne({ _id: username }, function (err, user) {
-    if (err) {
-      return res.status(500).end(err);
-    } else if (!user) {
-      return res.status(401).end("Incorrect login credentials");
-    } else {
-      // Compare salted hash to authenticate user
-      let salt = user.salt;
-      let hash = crypto.createHmac("sha512", salt);
-      hash.update(password);
-      if (user.password !== hash.digest("base64")) {
-        return res.status(401).end("Incorrect login credentials");
-      } else {
-        // Setup session and cookies
-        req.session.username = username;
-        res.setHeader(
-          "Set-Cookie",
-          cookie.serialize("username", username, {
-            path: "/",
-            maxAge: 60 * 60 * 24 * 7,
-          })
-        );
-        return res.json("User: " + username + " signed in");
-      }
-    }
-  });
+app.post("/signin/", validateEmail, function (req, res, next) {
+  login.signin(req, res, next);
 });
 
-/**
- * Upload a new image to user's gallery
- */
-app.post(
-  "/api/images/",
-  isAuthenticated,
-  upload.single("picture"),
-  function (req, res, next) {
-    // Check for missing fields
-    if (!req.file) {
-      return res
-        .status(400)
-        .end("A required field is missing, please fix request and try again.");
-    }
-    images.insert(new Image(req.username, req.file), function (err, item) {
-      if (err) {
-        return res.status(500).end(err);
-      } else {
-        return res.json(item);
-      }
-    });
-  }
-);
-
-/**
- * Add a new comment to an image
- */
-// app.post("/api/comments/:id/", isAuthenticated, function (req, res, next) {
-//   // Check for missing fields
-//   if (!req.body.content) {
-//     return res
-//       .status(400)
-//       .end("A required field is missing, please fix request and try again.");
-//   }
-//   images.findOne({ _id: req.params.id }, function (err, item) {
-//     if (err) {
-//       return res.status(500).end(err);
-//     } else if (!item) {
-//       return res
-//         .status(404)
-//         .end("No image with id " + req.params.id + " could be found");
-//     } else {
-//       comments.insert(
-//         new Comment(req.username, req.body.content, req.params.id),
-//         function (err, item) {
-//           if (err) {
-//             return res.status(500).end(err);
-//           } else {
-//             return res.json(item);
-//           }
-//         }
-//       );
-//     }
-//   });
-// });
+/* Post survey responses for current user */
+app.post("/api/survey/", isAuthenticated, function (req, res, next) {
+  survey.postSurveyResponses(req, res, next);
+});
 
 /* Read */
 
@@ -176,281 +87,59 @@ app.post(
  * Sign out currently authenticated user
  */
 app.get("/signout/", function (req, res, next) {
-  req.session.destroy();
-  res.setHeader(
-    "Set-Cookie",
-    cookie.serialize("username", "", {
-      path: "/",
-      maxAge: 60 * 60 * 24 * 7, // 1 week in number of seconds
-    })
-  );
-  return res.json("User has signed out");
+  login.signout(req, res, next);
+});
+
+
+app.get("/api/survey/", isAuthenticated, function (req, res, next) {
+  survey.getSurvey(req, res, next);
 });
 
 /**
- * Gets list of all users
+ * Get profile for current user
  */
-app.get("/api/users/", isAuthenticated, function (req, res, next) {
-  users
-    .find({}, { password: 0, salt: 0 })
-    .sort({ _id: req.username })
-    .exec(function (err, items) {
-      if (err) {
-        return res.status(500).end(err);
-      } else {
-        return res.json(items);
-      }
-    });
+app.get("/api/profile/", isAuthenticated, function (req, res, next) {
+    profile.getUserProfile(req, res, next);
 });
 
-// Gets most recent image of specified user
-app.get("/api/images/:author", isAuthenticated, function (req, res, next) {
-  images
-    .find({ author: req.params.author })
-    .sort({ createdAt: -1 })
-    .exec(function (err, items) {
-      if (err) {
-        return res.status(500).end(err);
-      } else if (items.length > 0) {
-        let image = items[0];
-        // image.hasPrev = false;
-        // image.hasNext = items.length > 1;
-        return res.json(image);
-      } else {
-        return res.json(null);
-      }
-    });
+/* Gets image file for specified image */
+app.get("/api/pictures/:id/picture/", isAuthenticated, function (req, res, next) {
+  profile.getPictureFile(req, res, next);
 });
 
-// Gets image file for specified image
-app.get("/api/images/:id/image/", isAuthenticated, function (req, res, next) {
-  images.findOne({ _id: req.params.id }, function (err, item) {
-    if (err) {
-      return res.status(500).end(err);
-    } else if (!item) {
-      return res
-        .status(404)
-        .end("No image with id " + req.params.id + " could be found.");
-    } else {
-      res.setHeader("Content-Type", item.image.mimetype);
-      res.sendFile(item.image.path);
-    }
-  });
+/* Get survey responses for current user */
+app.get("/api/survey/response", isAuthenticated, function (req, res, next) {
+  survey.getSurveyResponses(req, res, next);
 });
-
-// Gets either next or prev image of specified one
-// app.get("/api/images/:id/:action/", isAuthenticated, function (req, res, next) {
-//   images.findOne({ _id: req.params.id }, function (err, item) {
-//     if (err) {
-//       return res.status(500).end(err);
-//     } else if (!item) {
-//       return res
-//         .status(404)
-//         .end("No image with id " + req.params.id + " could be found");
-//     } else {
-//       images
-//         .find({ author: item.author })
-//         .sort({ createdAt: -1 })
-//         .exec(function (err, items) {
-//           if (err) {
-//             return res.status(500).end(err);
-//           } else {
-//             // Find index of current image being displayed, and return next or prev image depending on
-//             // request action
-//             let index = items.findIndex((x) => x._id === req.params.id);
-//             let imageIndex;
-//             if (req.params.action === "next") {
-//               imageIndex = items[index + 1] ? index + 1 : index;
-//             } else if (req.params.action === "prev") {
-//               imageIndex = items[index - 1] ? index - 1 : index;
-//             } else {
-//               return res
-//                 .status(400)
-//                 .end("Incorrect action, please fix request and try again");
-//             }
-//             // Setup hasPrev and hasNext flags
-//             let returnedImage = items[imageIndex];
-//             if (imageIndex != 0) {
-//               returnedImage.hasPrev = true;
-//             }
-//             if (imageIndex < items.length - 1) {
-//               returnedImage.hasNext = true;
-//             }
-//             return res.json(returnedImage);
-//           }
-//         });
-//     }
-//   });
-// });
-
-// Gets requested comment page for image
-// app.get("/api/comments/:id/", isAuthenticated, function (req, res, next) {
-//   comments
-//     .find({ imageId: req.params.id })
-//     .sort({ createdAt: -1 })
-//     .exec(function (err, items) {
-//       if (err) {
-//         return res.status(500).end(err);
-//       } else {
-//         let index = req.query.page ? req.query.page : 0;
-//         return res.json(getCommentsForPage(parseInt(index), items));
-//       }
-//     });
-// });
 
 /* Update */
 
+/* Update profile for current user */
+app.put("/api/profile/", isAuthenticated, upload.single("profile_picture"), sanitizeProfileFields, function(req, res, next) {
+  profile.updateUserProfile(req, res, next);
+});
+
 /* Delete */
-
-// Deletes requested image and all associated comments
-// app.delete("/api/images/:id/", isAuthenticated, function (req, res, next) {
-//   images.findOne({ _id: req.params.id }, function (err, image) {
-//     if (err) {
-//       return res.status(500).end(err);
-//     } else if (!image) {
-//       return res
-//         .status(404)
-//         .end("No image with id " + req.params.id + " could be found");
-//     } else {
-//       images
-//         .find({ author: image.author })
-//         .sort({ createdAt: -1 })
-//         .exec(function (err, items) {
-//           if (err) {
-//             return res.status(500).end(err);
-//           } else {
-//             // Delete requested image, and return the prev or next image
-//             let index = items.findIndex((x) => x._id === req.params.id);
-
-//             // Check if user is the owner of the image
-//             if (req.username === items[index].author) {
-//               images.remove({ _id: req.params.id }, function (err, num) {
-//                 // Delete associated image file
-//                 fs.unlinkSync(items[index].image.path);
-//                 // Delete all associated comments
-//                 comments.remove(
-//                   { imageId: req.params.id },
-//                   function (err, num) {
-//                     let imageIndex;
-//                     items.splice(index, 1);
-//                     if (index === 0) {
-//                       imageIndex = items[0] ? 0 : null;
-//                     } else {
-//                       imageIndex = items[index - 1] ? index - 1 : null;
-//                     }
-//                     let returnedImage = null;
-//                     if (imageIndex != null) {
-//                       returnedImage = items[imageIndex];
-//                       if (imageIndex != 0) {
-//                         returnedImage.hasPrev = true;
-//                       }
-//                       if (imageIndex < items.length - 1) {
-//                         returnedImage.hasNext = true;
-//                       }
-//                     }
-//                     return res.json(returnedImage);
-//                   }
-//                 );
-//               });
-//             } else {
-//               return res.status(401).end("Access Denied");
-//             }
-//           }
-//         });
-//     }
-//   });
-// });
-
-// Delete requested comment
-// app.delete("/api/comments/:id/", isAuthenticated, function (req, res, next) {
-//   comments.findOne({ _id: req.params.id }, function (err, item) {
-//     if (err) {
-//       return res.status(500).end(err);
-//     } else if (!item) {
-//       return res
-//         .status(404)
-//         .end("No comment with id " + req.params.id + " could be found");
-//     } else {
-//       images.findOne({ _id: item.imageId }, function (err, image) {
-//         if (err) {
-//           return res.status(500).end(err);
-//         } else {
-//           comments
-//             .find({ imageId: item.imageId })
-//             .sort({ createdAt: -1 })
-//             .exec(function (err, items) {
-//               if (err) {
-//                 return res.status(500).end(err);
-//               } else {
-//                 // Determine if authenticated action
-//                 if (
-//                   item.author === req.username ||
-//                   image.author === req.username
-//                 ) {
-//                   // Need to determine the page number of the comment page to display once the comment
-//                   // has been deleted
-//                   let commentIndex = items.findIndex(
-//                     (x) => x._id === req.params.id
-//                   );
-//                   let nextPage = Math.floor(commentIndex / 10);
-//                   items.splice(commentIndex, 1);
-//                   comments.remove({ _id: req.params.id }, function (err, num) {
-//                     return res.json(getCommentsForPage(nextPage, items));
-//                   });
-//                 } else {
-//                   return res.status(401).end("Access Denied");
-//                 }
-//               }
-//             });
-//         }
-//       });
-//     }
-//   });
-// });
-
-// Helper function that obtains comment page given page number and comments collection
-// function getCommentsForPage(page, items) {
-//   let startIndex = page * 10;
-//   let comments = {};
-//   // Case when not enough comments to fill full page, in which case return all
-//   if (items.length <= 10) {
-//     comments.page = 0;
-//     comments.items = items;
-//   }
-//   // Case where last page is requested but last page is not full
-//   else if (startIndex < items.length && startIndex + 10 >= items.length) {
-//     comments.items = items.slice(startIndex, items.length);
-//     comments.page = page;
-//   }
-//   // Otherwise return requested page
-//   else {
-//     comments.items = items.slice(startIndex, startIndex + 10);
-//     comments.hasNext = true;
-//     comments.page = page;
-//   }
-//   return comments;
-// }
 
 // Determines if user is authenticated
 function isAuthenticated(req, res, next) {
-    if (!req.username) {
+    if (!req.email) {
         return res.status(401).end("Access Denied");
     }
     next();
 }
 
-function send(method, action, data, callback){
-    let req = {user: data};
-    let config = {
-        headers: {
-            "content-type": "application/json",
-            "x-hasura-admin-secret": adminSecret
-        }
-    };
-    if (method === "POST") {
-        axios.post(databaseUrl + action, req, config).then((response) => callback(response))
-        .catch(function (error) {
-            console.log(error);
-        });
-    }
+/* Validation for requests */
+function validateEmail(req, res, next) {
+  req.body.email = req.body.email ? req.body.email : "";
+  if (!validator.isEmail(req.body.email)) {
+    return res.status(400).end("Please enter a valid email");
+  }
+  next();
+}
+
+function sanitizeProfileFields(req, res, next) {
+  req.body.bio = req.body.bio ? validator.escape(req.body.bio) : null;
+  req.body.name = req.body.name ? validator.escape(req.body.name) : null;
+  next();
 }

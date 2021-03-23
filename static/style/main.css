@@ -3,7 +3,14 @@ html {
 }
 
 body {
-  background: lightblue;
+  /* code inspired by https://css-tricks.com/perfect-full-page-background-image/*/
+  background: url("../media/freestocks-Y9mWkERHYCU-unsplash.jpg") no-repeat
+    center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  /* background: lightblue; */
   font-family: Arial, Helvetica, sans-serif;
   font-size: 14px;
   color: #3c3d3f;
@@ -15,12 +22,13 @@ body {
 header {
   display: flex;
   margin-top: 36px;
-  margin-bottom: 36px;
+  margin-bottom: 50px;
   height: 64px;
   justify-content: flex-end;
 }
 
 header #hub {
+  font-weight: bolder;
   display: grid;
   grid-template-columns: 1fr 1fr 3fr 1fr 1fr;
 }
@@ -93,3 +101,4 @@ footer {
 .credits {
   padding-bottom: 30px;
 }
+
