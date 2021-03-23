@@ -143,14 +143,14 @@ let api = (function () {
   };
    // change users matches based on filters selected
    module.filterSubmit = function (filter_changes) {
-    send("POST", "/api/filters", filter_changes, function (err, res) {
+    send("PATCH", "/api/filters", filter_changes, function (err, res) {
       if (err) return notifyErrorListeners(err);
     });
   };
 
-  //post request for changing the biography
+  //patch request for changing the biography
   module.biographEdit = function (biography){
-    send("POST", "/api/profile/biography", biography, function (err, res) {
+    send("PATCH", "/api/profile/biography", biography, function (err, res) {
       if (err) return notifyErrorListeners(err);
       //if succesful remove the edit box
       document.getElementById("profile_survey").style.display = "none";
