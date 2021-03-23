@@ -44,7 +44,7 @@
       document.querySelector("#profile").prepend(userElmt);
       //for editting biography
       document.querySelector("#bio_edit").addEventListener("submit", function (e) {
-        console.log("OKAY")
+        console.log("OKAY");
         //api.editBiography();
       });
       // toggle bio edit
@@ -110,24 +110,24 @@
     });
 
     // submitting filter configuration for given user
-    document
-      .querySelector("#filter_submit")
-      .addEventListener("submit", function (e) {
-        e.preventDefault();
-        let r1 = Array.from(document.querySelectorAll('#filter_submit input'))
-        let result = [];
-        let questionNum;
-        let answerNum;
-        r1.forEach(function (option){
-          if (option.checked === true){
-            questionNum = option.defaultValue.slice(0,1)
-            answerNum = option.defaultValue.slice(2,3)
-            result.push({filter_number: parseInt(questionNum), answer_number: parseInt(answerNum)})
-          }
-        })       
-        //document.getElementById("profile_survey").style.display = "none";
-        api.filterSubmit(result);
-    });
+    // document
+    //   .querySelector("#filter_submit")
+    //   .addEventListener("submit", function (e) {
+    //     e.preventDefault();
+    //     let r1 = Array.from(document.querySelectorAll('#filter_submit input'))
+    //     let result = [];
+    //     let questionNum;
+    //     let answerNum;
+    //     r1.forEach(function (option){
+    //       if (option.checked === true){
+    //         questionNum = option.defaultValue.slice(0,1)
+    //         answerNum = option.defaultValue.slice(2,3)
+    //         result.push({filter_number: parseInt(questionNum), answer_number: parseInt(answerNum)})
+    //       }
+    //     })       
+    //     //document.getElementById("profile_survey").style.display = "none";
+    //     api.filterSubmit(result);
+    // });
     //for signing out
     document.querySelector("#signout_button").addEventListener("click", function (e) {
       api.signout();
