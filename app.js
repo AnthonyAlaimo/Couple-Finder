@@ -131,6 +131,7 @@ function isAuthenticated(req, res, next) {
 
 /* Validation for requests */
 function validateEmail(req, res, next) {
+  req.body.email = req.body.email ? req.body.email : "";
   if (!validator.isEmail(req.body.email)) {
     return res.status(400).end("Please enter a valid email");
   }
@@ -138,7 +139,7 @@ function validateEmail(req, res, next) {
 }
 
 function sanitizeProfileFields(req, res, next) {
-  req.body.bio = validator.escape(req.body.bio);
-  req.body.name = validator.escape(req.body.name);
+  req.body.bio = req.body.bio ? validator.escape(req.body.bio) : null;
+  req.body.name = req.body.name ? validator.escape(req.body.name) : null;
   next();
 }

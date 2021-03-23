@@ -47,9 +47,6 @@ function updateUserProfile(req, res, next) {
                 let profile = resp.data.insert_profiles_one;
                 profile.age = calculateAge(profile.birthday);
                 delete profile.birthday;
-
-                // Spawn separate thread to vectorize profile
-                match.vectorizeProfile(profile);
                 return res.json(profile);
             });
         }
@@ -85,7 +82,6 @@ function updateUserProfile(req, res, next) {
                 let profile = resp.data.insert_profiles_one;
                 profile.age = calculateAge(profile.birthday);
                 delete profile.birthday;
-                match.vectorizeProfile(profile);
                 return res.json(profile);
             });
         }
