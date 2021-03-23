@@ -9,12 +9,13 @@
       if  (err === "[401]Access Denied"){
         window.location.href = "/";
       }
+      error_box.style.visibility = "visible";
     });
 
     api.onError(function (err) {
       var error_box = document.querySelector("#error_box");
       error_box.innerHTML = err;
-      error_box.style.visibility = "visible";
+      error_box.style.visibility = "hidden";
     });
     api.onProfileUpdate(function (user) {
       document.querySelector("#profile").innerHTML = "";
@@ -51,6 +52,7 @@
         api.toggle_visibility("bio_edit");
       });
     });
+    //display survey for user to fill out
     api.onSurveyUpdate(function (survey){
       let surveyElmt = document.createElement("div");
       surveyElmt.className = "survey_element"
@@ -61,18 +63,58 @@
         question.survey_options.forEach(function (option){
           //add option to survey
           surveyElmt.innerHTML += `
-          <input id="${option.answer_text}" value="${question.question_number} ${option.answer_number}" type="radio" name="${question.question_number}" class="survey_option">${option.answer_text}</input>
+          <input id="${option.answer_text}" value="${question.question_number} ${option.answer_number}" type="radio" name="${question.question_number}" class="${question.question_text}">${option.answer_text}</input>
           `;
           // add survey to document
         })
       })
       document.querySelector('#survey').prepend(surveyElmt)
     })
+    //display the response for a users survey
+    // api.onSurveyResultUpdate(function (survey_results){
+    //   let responseElmt = document.createElement("div");
+    //   responseElmt.className = "survey_element"
+    //   // create html element for survey
+    //   survey_results.forEach(function (result){
+    //     responseElmt.innerHTML += `<h2>${result}</h2>`
+    //   })
+    //   document.querySelector('#survey_result').prepend(surveyElmt)
+    // });
     // submitting survey result to server
     document
       .querySelector("#survey_submit")
       .addEventListener("submit", function (e) {
+        e.preventDefault();
+        let responseElmt = document.createElement("div");
+        responseElmt.className = "survey_element"
         let r1 = Array.from(document.querySelectorAll('#survey_submit input'))
+        console.log(r1);
+        let result = [];
+        let questionNum;
+        let answerNum;
+        r1.forEach(function (option){
+          if (option.checked === true){
+            console.log(option.className);
+            responseElmt.innerHTML += `<h1>${option.className}</h1>`
+            responseElmt.innerHTML += `<p>${option.id}</p>`
+            questionNum = option.defaultValue.slice(0,1)
+            answerNum = option.defaultValue.slice(2,3)
+            result.push({question_number: parseInt(questionNum), answer_number: parseInt(answerNum)})
+          }
+        })
+        console.log(result);
+        console.log(responseElmt);
+        document.querySelector('#survey_result').prepend(responseElmt)
+        document.getElementById("profile_survey").style.display = "none";
+        api.surveySubmit(result);
+    });
+
+    // submitting filter configuration for given user
+    document
+      .querySelector("#filter_submit")
+      .addEventListener("submit", function (e) {
+        e.preventDefault();
+        let r1 = Array.from(document.querySelectorAll('#filter_submit input'))
         let result = [];
         let questionNum;
         let answerNum;
@@ -80,35 +122,12 @@
           if (option.checked === true){
             questionNum = option.defaultValue.slice(0,1)
             answerNum = option.defaultValue.slice(2,3)
-            result.push({question_number: parseInt(questionNum), answer_number: parseInt(answerNum)})
+            result.push({filter_number: parseInt(questionNum), answer_number: parseInt(answerNum)})
           }
-        })
-        console.log(result);
-        document.getElementById("profile_survey").style.display = "none";
-        api.surveySubmit(result);
+        })       
+        //document.getElementById("profile_survey").style.display = "none";
+        api.filterSubmit(result);
     });
-
-    // submitting filter configuration for given user
-    // document
-    //   .querySelector("#filter_submit")
-    //   .addEventListener("submit", function (e) {
-    //     let r1 = Array.from(document.querySelectorAll('#filter_submit input'))
-    //     console.log(r1);
-    //     let result = [];
-    //     let questionNum;
-    //     let answerNum;
-    //     r1.forEach(function (option){
-    //       console.log(option)
-    //       if (option.checked === true){
-    //         questionNum = option.defaultValue.slice(0,1)
-    //         answerNum = option.defaultValue.slice(2,3)
-    //         result.push({filter_number: parseInt(questionNum), answer_number: parseInt(answerNum)})
-    //       }
-    //     })
-    //     console.log(result);
-    //     //document.getElementById("profile_survey").style.display = "none";
-    //     api.filterSubmit(result);
-    // });
     //for signing out
     document.querySelector("#signout_button").addEventListener("click", function (e) {
       api.signout();

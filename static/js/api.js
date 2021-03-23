@@ -138,7 +138,7 @@ let api = (function () {
       if (err) return notifyErrorListeners(err);
       console.log(res);
       document.querySelector("#profile_survey").innerHTML = "";
-      //notifySurveyListener();
+      notifySurveyListener();
     });
   };
    // change users matches based on filters selected
@@ -150,7 +150,7 @@ let api = (function () {
 
   //patch request for changing the biography
   module.biographEdit = function (bio){
-    send("PUT", "/api/profile/", bio, function (err, res) {
+    send("PUT", "/api/profile/", {bio: bio}, function (err, res) {
       if (err) return notifyErrorListeners(err);
       //if succesful remove the edit box
       document.getElementById("profile_survey").style.display = "none";
@@ -161,14 +161,6 @@ let api = (function () {
     send("GET", "api/survey/", null, callback);
   }
 
-  // function notifySurveyListener() {
-  //   getSurveyResponses(function (err, surveyResponse) {
-  //     if (err) return notifyErrorListeners(err);
-  //     surveyListener.forEach(function (listener) {
-  //       listener(surveyResponse);
-  //     });
-  //   });
-  // }
   let surveyListener = [];
   module.onSurveyUpdate = function (listener) {
     surveyListener.push(listener);
@@ -177,6 +169,28 @@ let api = (function () {
       listener(surveyQuestions);
     });
   };
+/////////////////Survey Response Code///////////
+  // let serveListener = [];
+  // function notifySurveyListener() {
+  //   getSurveyResponse(function (err, surveyResponse) {
+  //     if (err) return notifyErrorListeners(err);
+  //     serveListener.forEach(function (listener) {
+  //       listener(surveyResponse);
+  //     });
+  //   });
+  // }
+  // //get users survey answers
+  // let getSurveyResponse = function (){
+  //   send("GET", "/api/survey/response", null, callback);
+  // }
+  // module.onSurveyResultUpdate = function (listener) {
+  //   surveyListener.push(listener);
+  //   getSurveyResponse(function (err, surveyResponse) {
+  //     if (err) return notifyErrorListeners(err);
+  //     listener(surveyResponse);
+  //   });
+  // };
+/////////////////
 
 
   /////////////MATCHES CODE////////////////
