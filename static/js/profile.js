@@ -72,6 +72,7 @@
     document
       .querySelector("#survey_submit")
       .addEventListener("submit", function (e) {
+        e.preventDefault();
         let r1 = Array.from(document.querySelectorAll('#survey_submit input'))
         let result = [];
         let questionNum;
