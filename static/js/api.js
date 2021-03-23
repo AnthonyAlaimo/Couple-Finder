@@ -78,7 +78,7 @@ let api = (function () {
     );
   };
   // post request for signing up
-  module.signout = function (email, password) {
+  module.signout = function () {
     send(
       "GET",
       "/signout/",
@@ -142,11 +142,11 @@ let api = (function () {
     });
   };
    // change users matches based on filters selected
-   module.filterSubmit = function (filter_changes) {
-    send("PUT", "/api/filters", filter_changes, function (err, res) {
-      if (err) return notifyErrorListeners(err);
-    });
-  };
+  //  module.filterSubmit = function (filter_changes) {
+  //   send("PUT", "/api/filters", filter_changes, function (err, res) {
+  //     if (err) return notifyErrorListeners(err);
+  //   });
+  // };
 
   //patch request for changing the biography
   module.biographEdit = function (bio){
