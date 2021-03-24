@@ -115,7 +115,7 @@ app.get("/api/survey/response", isAuthenticated, function (req, res, next) {
 /* Update */
 
 /* Update profile for current user */
-app.put("/api/profile/", isAuthenticated, upload.single("profile_picture"), sanitizeProfileFields, function(req, res, next) {
+app.post("/api/profile/", isAuthenticated, upload.single("profile_picture"), sanitizeProfileFields, function(req, res, next) {
   profile.updateUserProfile(req, res, next);
 });
 
