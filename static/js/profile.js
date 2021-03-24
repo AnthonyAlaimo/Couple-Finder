@@ -9,13 +9,12 @@
       if  (err === "[401]Access Denied"){
         window.location.href = "/";
       }
-      error_box.style.visibility = "visible";
     });
 
     api.onError(function (err) {
       var error_box = document.querySelector("#error_box");
       error_box.innerHTML = err;
-      error_box.style.visibility = "hidden";
+      error_box.style.visibility = "visible";
     });
     api.onProfileUpdate(function (user) {
       document.querySelector("#profile").innerHTML = "";
@@ -39,12 +38,12 @@
       }
       if (user){
         document.getElementById("profile_setup").style.display = "none";
+        document.getElementById("profile_design").style.display = "flex";
       }
       // add this element to the document
       document.querySelector("#profile").prepend(userElmt);
       //for editting biography
       document.querySelector("#bio_edit").addEventListener("submit", function (e) {
-        console.log("OKAY")
         //api.editBiography();
       });
       // toggle bio edit
@@ -52,60 +51,62 @@
         api.toggle_visibility("bio_edit");
       });
     });
-    //display survey for user to fill out
+  
+    //On load generate the survey or the survey results depending on what user has completed
     api.onSurveyUpdate(function (survey){
-      let surveyElmt = document.createElement("div");
-      surveyElmt.className = "survey_element"
-      // create html element for survey
-      survey.forEach(function (question){
-        //add question to survey
-        surveyElmt.innerHTML += `<h2>${question.question_text}</h2>`
-        question.survey_options.forEach(function (option){
-          //add option to survey
-          surveyElmt.innerHTML += `
-          <input id="${option.answer_text}" value="${question.question_number} ${option.answer_number}" type="radio" name="${question.question_number}" class="${question.question_text}">${option.answer_text}</input>
-          `;
-          // add survey to document
-        })
+      api.onSurveyResultUpdate(function (response) {
+        //if survey has already been completed we display the users results
+        if (response.length > 0){
+          document.querySelector("#survey_result").innerHTML = "";
+          let responseElmt = document.createElement("div");
+          responseElmt.className = "survey_element"
+          survey.forEach(function (question){
+            question.survey_options.forEach(function (option){
+              response.forEach(function (res){
+                if (res.question_number == question.question_number && res.answer_number == option.answer_number){
+                  responseElmt.innerHTML += `<h1>${question.question_text}</h1>`
+                  responseElmt.innerHTML += `<p>${option.answer_text}</p>`
+                }
+              })
+            })
+          })
+          document.getElementById("profile_survey").style.display = "none";
+          document.getElementById("survey_response").style.display = "flex";
+          document.querySelector('#survey_result').prepend(responseElmt)
+        //if survey hasnt been filled out yet we construct the survey
+        } else{
+          let surveyElmt = document.createElement("div");
+          surveyElmt.className = "survey_element"
+          survey.forEach(function (question){
+            surveyElmt.innerHTML += `<h2>${question.question_text}</h2>`
+            question.survey_options.forEach(function (option){
+            surveyElmt.innerHTML += `
+            <input id="${option.answer_text}" value="${question.question_number} ${option.answer_number}" type="radio" name="${question.question_number}" class="${question.question_text}">${option.answer_text}</input>
+            `;
+            })
+          })
+          document.getElementById("profile_survey").style.display = "flex";
+          document.getElementById("survey_response").style.display = "none";
+          document.querySelector('#survey').prepend(surveyElmt)
+        }
       })
-      document.querySelector('#survey').prepend(surveyElmt)
     })
-    //display the response for a users survey
-    // api.onSurveyResultUpdate(function (survey_results){
-    //   let responseElmt = document.createElement("div");
-    //   responseElmt.className = "survey_element"
-    //   // create html element for survey
-    //   survey_results.forEach(function (result){
-    //     responseElmt.innerHTML += `<h2>${result}</h2>`
-    //   })
-    //   document.querySelector('#survey_result').prepend(surveyElmt)
-    // });
     // submitting survey result to server
     document
       .querySelector("#survey_submit")
       .addEventListener("submit", function (e) {
         e.preventDefault();
-        let responseElmt = document.createElement("div");
-        responseElmt.className = "survey_element"
         let r1 = Array.from(document.querySelectorAll('#survey_submit input'))
-        console.log(r1);
         let result = [];
         let questionNum;
         let answerNum;
         r1.forEach(function (option){
           if (option.checked === true){
-            console.log(option.className);
-            responseElmt.innerHTML += `<h1>${option.className}</h1>`
-            responseElmt.innerHTML += `<p>${option.id}</p>`
             questionNum = option.defaultValue.slice(0,1)
             answerNum = option.defaultValue.slice(2,3)
             result.push({question_number: parseInt(questionNum), answer_number: parseInt(answerNum)})
           }
         })
-        console.log(result);
-        console.log(responseElmt);
-        document.querySelector('#survey_result').prepend(responseElmt)
-        document.getElementById("profile_survey").style.display = "none";
         api.surveySubmit(result);
     });
 
@@ -128,10 +129,6 @@
     //     //document.getElementById("profile_survey").style.display = "none";
     //     api.filterSubmit(result);
     // });
-    //for signing out
-    document.querySelector("#signout_button").addEventListener("click", function (e) {
-      api.signout();
-    });
     // Setting up profile
     document
       .querySelector("#profile_submit")
@@ -150,6 +147,10 @@
         document.getElementById("profile_design").style.display = "flex";
         document.getElementById("profile_survey").style.display = "flex";
       });
+    //for signing out
+    document.querySelector("#signout_button").addEventListener("click", function (e) {
+      api.signout();
+    });
     // toggle filters
     document.querySelector("#filters").addEventListener("click", function (e) {
       api.toggle_visibility("profile_filters");

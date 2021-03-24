@@ -170,26 +170,26 @@ let api = (function () {
     });
   };
 /////////////////Survey Response Code///////////
-  // let serveListener = [];
-  // function notifySurveyListener() {
-  //   getSurveyResponse(function (err, surveyResponse) {
-  //     if (err) return notifyErrorListeners(err);
-  //     serveListener.forEach(function (listener) {
-  //       listener(surveyResponse);
-  //     });
-  //   });
-  // }
+  let serveListener = [];
+  function notifySurveyListener() {
+    getSurveyResponse(function (err, surveyResponse) {
+      if (err) return notifyErrorListeners(err);
+      serveListener.forEach(function (listener) {
+        listener(surveyResponse);
+      });
+    });
+  }
   // //get users survey answers
-  // let getSurveyResponse = function (){
-  //   send("GET", "/api/survey/response", null, callback);
-  // }
-  // module.onSurveyResultUpdate = function (listener) {
-  //   surveyListener.push(listener);
-  //   getSurveyResponse(function (err, surveyResponse) {
-  //     if (err) return notifyErrorListeners(err);
-  //     listener(surveyResponse);
-  //   });
-  // };
+ let getSurveyResponse = function (callback){
+    send("GET", "/api/survey/response", null, callback);
+  }
+  module.onSurveyResultUpdate = function (listener) {
+    surveyListener.push(listener);
+    getSurveyResponse(function (err, surveyResponse) {
+      if (err) return notifyErrorListeners(err);
+      listener(surveyResponse);
+    });
+  };
 /////////////////
 
 

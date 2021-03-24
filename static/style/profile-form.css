@@ -43,11 +43,11 @@ form {
 }
 
 #profile_survey{
-  /* display:none; */
+  display:none;
   flex-direction: column;
 }
 #profile_design{
-  /* display:none; */
+  display:none;
   flex-direction: column;
 }
 
@@ -87,5 +87,7 @@ form {
 }
 
 #survey_response{
+  display:none;
   text-align: center;
+  justify-content: center;
 }

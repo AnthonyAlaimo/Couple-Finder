@@ -7,6 +7,7 @@
     //error checking
     api.onError(function (err) {
       console.error("[error]", err);
+      error_box.style.visibility = "visible";
       if  (err === "[401]Access Denied"){
         window.location.href = "/";
       }
@@ -14,7 +15,7 @@
     api.onError(function (err) {
       var error_box = document.querySelector("#error_box");
       error_box.innerHTML = err;
-      error_box.style.visibility = "visible";
+      error_box.style.visibility = "hidden";
     });
     api.onProfileUpdate(function (user) {
       if (!user) {
