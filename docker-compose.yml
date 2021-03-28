@@ -1,0 +1,30 @@
+version: "3"
+
+services:
+  cf-proxy:
+    depends_on:
+      - cf-frontend
+      - cf-backend
+    image: nginx:latest
+    volumes:
+      - ./dev.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - 80:80
+
+  cf-frontend:
+    build: ./frontend
+    env_file: './frontend/.env'
+    volumes:
+      - ./frontend:/app
+      - '/app/node_modules'
+    ports:
+      - 3000:3000
+  
+  cf-backend:
+    build: ./backend
+    env_file: './backend/.env'
+    volumes:
+      - ./backend:/app
+      - '/app/node_modules'
+    ports:
+      - 8000:8000
