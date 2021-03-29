@@ -9,7 +9,7 @@ const genders = ["MALE", "FEMALE", "BOTH"];
 function updateFilters(req, res, next) {
     // Check for missing fields
     if (!req.body.lower_age_range || !req.body.upper_age_range || !req.body.preferred_gender ||
-         !question_three_answer || !req.body.question_four_answer || !req.body.question_five_answer ||
+         !req.body.question_three_answer || !req.body.question_four_answer || !req.body.question_five_answer ||
          !req.body.question_six_answer) {
             return res.status(400)
             .end("A required field is missing, please fix request and try again.");
