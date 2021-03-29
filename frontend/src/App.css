@@ -1,5 +1,5 @@
 :root {
-    --color-primary: 245, 87, 86;
-    --color-primary-hover: 243, 66, 65;
-    --color-primary-active: 242, 46, 45;
+    --color-primary: 86, 87, 245;
+    --color-primary-hover: 65, 66,  243;
+    --color-primary-active: 45, 46, 242;
 }

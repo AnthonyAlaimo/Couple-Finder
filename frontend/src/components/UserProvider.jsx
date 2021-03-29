@@ -70,6 +70,7 @@ export default function UserProvider({ children }) {
 
     const logout = useCallback(async () => {
         // TODO: API request
+        await fetchApi(`/signout/`, `GET`, {});
         setUser(null);
     }, []);
 

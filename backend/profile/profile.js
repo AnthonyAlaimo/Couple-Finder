@@ -53,7 +53,7 @@ function updateUserProfile(req, res, next) {
         // Else allow modification of all fields
         else {
             // Check for missing fields
-            if (!req.file || !req.body.name || !req.body.birth_date || !req.body.gender) {
+            if (/*!req.file || */!req.body.name || !req.body.birth_date || !req.body.gender) {
                 return res.status(400)
                 .end("A required field is missing, please fix request and try again.");
             }
@@ -63,14 +63,14 @@ function updateUserProfile(req, res, next) {
                 birthday: req.body.birth_date,
                 gender: req.body.gender,
                 bio: req.body.bio,
-                pictures: {data: [
+                /*pictures: {data: [
                     {
                         path: req.file.path,
                         mimetype: req.file.mimetype,
                         filename: req.file.filename,
                         is_profile_picture: true
                     }
-                ]}
+                ]}*/
             }};
             database.put("profile/", data, function(resp, isError) {
                 if (resp.isAxiosError) {
