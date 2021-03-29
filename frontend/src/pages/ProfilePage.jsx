@@ -28,23 +28,33 @@ function ProfilePage() {
             dispatch({id: userId})
         }
         if (action === 'survey'){
-            // console.log("okay survey stuff")
-            // console.log(userDetails)
-            await fetchApi("/survey/", "POST", userDetails.surveyResults)
+            await fetchApi("/survey/", "POST", userDetails.surveyResults);
             dispatch({surveyComplete: true});
         }
         if (action === 'filter'){
-            console.log(userDetails)
-            console.log("filters working");
-            // await fetchApi("/survey/", "POST", userDetails.filterResults)
+            // console.log(userDetails);
+            // console.log("filters working");
+            await fetchApi("/filters/", "PUT", userDetails.filterResults)
         }
     };
 
     const setSurveyResults = async (o_num, q_num) =>{
         userDetails.surveyResults[q_num].answer_number = parseInt(o_num);
     }
-    const setFilterResults = async (o_num, q_num) =>{
-        userDetails.filterResults[q_num].answer_number = parseInt(o_num);
+    const setFilterResults = async (o_answer, q_text) =>{
+        console.log(userDetails.filterResults);
+        console.log(userDetails.filterResults[q_text]);
+        if (q_text === "preferred_age"){
+            let lower_age_range = o_answer.slice(0,2);
+            let upper_age_range = o_answer.slice(3,5);
+            userDetails.filterResults.lower_age_range = parseInt(lower_age_range);
+            userDetails.filterResults.upper_age_range = parseInt(upper_age_range);
+        }
+        else if (q_text === "preferred_gender"){
+            userDetails.filterResults[q_text] = o_answer;
+        }else{
+            userDetails.filterResults[q_text] =  parseInt(o_answer);
+        }
     }
 
     const handler = (e) => {
@@ -61,12 +71,13 @@ function ProfilePage() {
                 const user_profile = await fetchApi("/profile/", "GET", null, controller.signal);
                 const survey = await fetchApi("/survey/", "GET", null);
                 const surveyResults = await fetchApi("/survey/response", "GET", null, controller.signal)
-                /*const filterResults = await fetchApi("/filter/response", "GET", null, controller.signal)*/
-                const filterResults = [{ answer_number: "a1", question_number: 1},
-                                        { answer_number: "a2", question_number: 2}, 
-                                        { answer_number: "a3", question_number: 3},
-                                        { answer_number: "a4", question_number: 4}, 
-                                        { answer_number: "a5", question_number: 5}]
+                /*const filterResults = await fetchApi("/filter/", "GET", null, controller.signal)*/
+                // const filterResults = [{ answer_number: "a1", question_number: 1},
+                //                         { answer_number: "a2", question_number: 2}, 
+                //                         { answer_number: "a3", question_number: 3},
+                //                         { answer_number: "a4", question_number: 4}, 
+                //                         { answer_number: "a5", question_number: 5}]
+                const filterResults = {lower_age_range: "", upper_age_range:"", preferred_gender: "", question_three_answer: "", question_four_answer: "", question_six_answer: ""};
                 console.log(surveyResults);
                 if (!controller.signal.aborted){ 
                     if (user_profile === null) {
@@ -82,11 +93,12 @@ function ProfilePage() {
                                             { answer_number: "a4", question_number: 4}, 
                                             { answer_number: "a5", question_number: 5},
                                             { answer_number: "a6", question_number: 6}],
-                            filterResults: [{ answer_number: "a1", question_number: 1},
-                                            { answer_number: "a2", question_number: 2}, 
-                                            { answer_number: "a3", question_number: 3},
-                                            { answer_number: "a4", question_number: 4}, 
-                                            { answer_number: "a5", question_number: 5}], 
+                            // filterResults: [{ answer_number: "a1", question_number: 1},
+                            //                 { answer_number: "a2", question_number: 2}, 
+                            //                 { answer_number: "a3", question_number: 3},
+                            //                 { answer_number: "a4", question_number: 4}, 
+                            //                 { answer_number: "a5", question_number: 5}],
+                            filterResults: {lower_age_range: "", upper_age_range:"", preferred_gender: "", question_three_answer: "", question_four_answer: "", question_six_answer: ""}, 
                             survey: survey,
                             surveyComplete: false});
                     }
@@ -100,11 +112,12 @@ function ProfilePage() {
                                                 { answer_number: "a4", question_number: 4}, 
                                                 { answer_number: "a5", question_number: 5},
                                                 { answer_number: "a6", question_number: 6}],
-                                filterResults: [{ answer_number: "a1", question_number: 1},
-                                                { answer_number: "a2", question_number: 2}, 
-                                                { answer_number: "a3", question_number: 3},
-                                                { answer_number: "a4", question_number: 4}, 
-                                                { answer_number: "a5", question_number: 5}]})
+                                // filterResults: [{ answer_number: "a1", question_number: 1},
+                                //                 { answer_number: "a2", question_number: 2}, 
+                                //                 { answer_number: "a3", question_number: 3},
+                                //                 { answer_number: "a4", question_number: 4}, 
+                                //                 { answer_number: "a5", question_number: 5}]
+                                filterResults: {lower_age_range: "", upper_age_range:"", preferred_gender: "", question_three_answer: "", question_four_answer: "", question_six_answer: ""}})
                     }
                     else{
                         dispatch(user_profile);
@@ -255,6 +268,7 @@ function ProfilePage() {
                 })
                 count += 1;
             })
+            console.log(userDetails.filterResults)
             return <DashboardLayout>
                         <UserDetails user={userDetails}></UserDetails>
                         <HStack>
@@ -271,26 +285,26 @@ function ProfilePage() {
                          <VStack className='lrp__card img_layout profile_info' borderRadius='md' maxW="600px" boxSize="700px">
                         <Heading className='display' as="h3" color="white" bg="black" w="110%" borderRadius="5px" p="10px">Edit Matching Filters</Heading>
                         <Heading as="h2" size="md">Preferred Age Range</Heading>
-                        <RadioGroup value={userDetails.filterResults[0].answer_number} onChange={(q1) => {setFilterResults(q1, 0)}}>
+                        <RadioGroup value={userDetails.filterResults.preferred_age} onChange={(q1) => {setFilterResults(q1, "preferred_age")}}>
                             <HStack spacing="24px">
-                                <Radio value="0" name="q1">19-30</Radio>
-                                <Radio value="1" name="q1">31-42</Radio>
-                                <Radio value="2" name="q1">43-54</Radio>
-                                <Radio value="3" name="q1">55-66</Radio>
-                                <Radio value="4" name="q1">67-78</Radio>
-                                <Radio value="4" name="q1">79-90</Radio>
+                                <Radio value="19 30" name="q1">19-30</Radio>
+                                <Radio value="31 42" name="q1">31-42</Radio>
+                                <Radio value="43 54" name="q1">43-54</Radio>
+                                <Radio value="55 66" name="q1">55-66</Radio>
+                                <Radio value="67 78" name="q1">67-78</Radio>
+                                <Radio value="79 90" name="q1">79-90</Radio>
                             </HStack>
                         </RadioGroup>
                         <Heading as="h2" size="md">Preferred Gender</Heading>
-                        <RadioGroup value={userDetails.filterResults[1].answer_number} onChange={(q2) => {setFilterResults(q2, 1)}}>
+                        <RadioGroup value={userDetails.filterResults.preferred_gender} onChange={(q2) => {setFilterResults(q2, "preferred_gender")}}>
                             <HStack spacing="24px">
-                                <Radio value="0" name="q2">Male</Radio>
-                                <Radio value="1" name="q2">Female</Radio>
-                                <Radio value="2" name="q2">Both</Radio>
+                                <Radio value="Male" name="q2">Male</Radio>
+                                <Radio value="Female" name="q2">Female</Radio>
+                                <Radio value="Both" name="q2">Both</Radio>
                             </HStack>
                         </RadioGroup>
                         <Heading as="h2" size="md">Partner's Music Preference</Heading>
-                        <RadioGroup value={userDetails.filterResults[2].answer_number} onChange={(q3) => {setFilterResults(q3, 2)}}>
+                        <RadioGroup value={userDetails.filterResults.question_three_answer} onChange={(q3) => {setFilterResults(q3, "question_three_answer")}}>
                             <HStack spacing="24px">
                                 <Radio value="0" name="q3">Soul Music</Radio>
                                 <Radio value="1" name="q3">Jazz</Radio>
@@ -300,7 +314,7 @@ function ProfilePage() {
                             </HStack>
                         </RadioGroup>
                         <Heading as="h2" size="md">Partner's Food Preference</Heading>
-                        <RadioGroup value={userDetails.filterResults[3].answer_number} onChange={(q4) => {setFilterResults(q4, 3)}}>
+                        <RadioGroup value={userDetails.filterResults.question_four_answer} onChange={(q4) => {setFilterResults(q4, "question_four_answer")}}>
                             <HStack spacing="24px">
                                 <Radio value="0" name="q4">Pizza</Radio>
                                 <Radio value="1" name="q4">Pasta</Radio>
@@ -309,12 +323,22 @@ function ProfilePage() {
                                 <Radio value="4" name="q4">Chinese</Radio>
                             </HStack>
                         </RadioGroup>
-                        <Heading as="h2" size="md">Partner's Smoking Habit</Heading>
-                        <RadioGroup value={userDetails.filterResults[4].answer_number} onChange={(q5) => {setFilterResults(q5, 4)}}>
+                        <Heading as="h2" size="md">Partner's Animal Preference</Heading>
+                        <RadioGroup value={userDetails.filterResults.question_five_answer} onChange={(q5) => {setFilterResults(q5, "question_five_answer")}}>
                             <HStack spacing="24px">
-                                <Radio value="0" name="q5">Not at all</Radio>
-                                <Radio value="1" name="q5">Somewhat</Radio>
-                                <Radio value="2" name="q5">Frequently</Radio>
+                                <Radio value="0" name="q5">Not very much</Radio>
+                                <Radio value="1" name="q5">Not much</Radio>
+                                <Radio value="2" name="q5">Neutral</Radio>
+                                <Radio value="3" name="q5">Somewhat like</Radio>
+                                <Radio value="4" name="q5">Adore</Radio>
+                            </HStack>
+                        </RadioGroup>
+                        <Heading as="h2" size="md">Partner's Smoking Habit</Heading>
+                        <RadioGroup value={userDetails.filterResults.question_six_answer} onChange={(q6) => {setFilterResults(q6, "question_six_answer")}}>
+                            <HStack spacing="24px">
+                                <Radio value="0" name="q6">Not at all</Radio>
+                                <Radio value="1" name="q6">Somewhat</Radio>
+                                <Radio value="2" name="q6">Frequently</Radio>
                             </HStack>
                         </RadioGroup>
                         <Button onClick={() => onSubmit(`filter`)}>Submit</Button>
