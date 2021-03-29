@@ -27,14 +27,14 @@ app.use(
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-//app.use(express.static("static"));
 
 /* Local Modules */
 const login = require("./authentication/login");
 const profile = require("./profile/profile");
 const survey = require("./profile/survey");
+const match  = require("./profile/match");
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 
 /* Create underlying http server. When deployed Heroku will wrap it in a proxy https server */
 http.createServer(app).listen(PORT, function (err) {
@@ -46,13 +46,14 @@ http.createServer(app).listen(PORT, function (err) {
    however need to prevent underlying http routes from being accessed.
    Redirects HTTP requests to HTTPS */
 // From https://stackoverflow.com/questions/24726779/using-https-on-heroku
-// app.all("*", function (req, res, next) {
-//   if (process.env.PORT && req.headers["x-forwarded-proto"] != "https") {
-//     res.redirect("https://" + req.headers.host + req.url);
-//   } else {
-//     next();
-//   }
-// });
+app.all("*", function (req, res, next) {
+  if ((process.env.NODE_ENV != "dev") && req.headers["x-forwarded-proto"] != "https") {     
+    res.redirect("https://" + req.headers.host + req.url);
+  }
+  else {
+    next();
+  }
+});
 
 /* Initial handler, obtains email from session if one exists */
 app.use(function (req, res, next) {
@@ -81,6 +82,11 @@ app.post("/api/survey/", isAuthenticated, function (req, res, next) {
   survey.postSurveyResponses(req, res, next);
 });
 
+/* Like or dislike a potential profile */
+app.post("/api/match/", isAuthenticated, function (req, res, next) {
+  next();
+});
+
 /* Read */
 
 /**
@@ -99,7 +105,7 @@ app.get("/api/survey/", isAuthenticated, function (req, res, next) {
  * Get profile for current user
  */
 app.get("/api/profile/", isAuthenticated, function (req, res, next) {
-    profile.getUserProfile(req, res, next);
+  profile.getUserProfile(req, res, next);
 });
 
 /* Gets image file for specified image */
@@ -112,6 +118,16 @@ app.get("/api/survey/response", isAuthenticated, function (req, res, next) {
   survey.getSurveyResponses(req, res, next);
 });
 
+/* Get 5 matches based on user's filters */
+app.get("/api/new-matches/", isAuthenticated, function (req, res, next) {
+    next();
+});
+
+/* Get match history for the user */
+app.get("/api/matches/", isAuthenticated, function (req, res, next) {
+    next();
+});
+
 /* Update */
 
 /* Update profile for current user */
@@ -119,11 +135,15 @@ app.post("/api/profile/", isAuthenticated, upload.single("profile_picture"), san
   profile.updateUserProfile(req, res, next);
 });
 
+app.put("/api/filters/", isAuthenticated, function(req, res, next) {
+  match.updateFilters(req, res, next);
+});
+
 /* Delete */
 
 app.use("/", function (req, res, next){
   res.redirect("/");
-})
+});
 
 // Determines if user is authenticated
 function isAuthenticated(req, res, next) {
