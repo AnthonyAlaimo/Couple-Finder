@@ -47,14 +47,14 @@ http.createServer(app).listen(PORT, function (err) {
    however need to prevent underlying http routes from being accessed.
    Redirects HTTP requests to HTTPS */
 // From https://stackoverflow.com/questions/24726779/using-https-on-heroku
-// app.all("*", function (req, res, next) {
-//   if ((process.env.NODE_ENV != "dev") && req.headers["x-forwarded-proto"] != "https") {     
-//     res.redirect("https://" + req.headers.host + req.url);
-//   }
-//   else {
-//     next();
-//   }
-// });
+app.all("*", function (req, res, next) {
+  if ((process.env.NODE_ENV != "development") && req.headers["x-forwarded-proto"] != "https") {     
+    res.redirect("https://" + req.headers.host + req.url);
+  }
+  else {
+    next();
+  }
+});
 
 /* Initial handler, obtains email from session if one exists */
 app.use(function (req, res, next) {
@@ -114,11 +114,6 @@ app.get("/api/pictures/:id/picture/", isAuthenticated, function (req, res, next)
   profile.getPictureFile(req, res, next);
 });
 
-/* Get survey responses for current user */
-app.get("/api/survey/response", isAuthenticated, function (req, res, next) {
-  survey.getSurveyResponses(req, res, next);
-});
-
 /* Get 5 matches based on user's filters */
 app.get("/api/new-matches/", isAuthenticated, function (req, res, next) {
   match.getNewMatches(req, res, next);
@@ -126,7 +121,7 @@ app.get("/api/new-matches/", isAuthenticated, function (req, res, next) {
 
 /* Get match history for the user */
 app.get("/api/matches/", isAuthenticated, function (req, res, next) {
-    next();
+    match.getMatchRequests(req, res, next);
 });
 
 /* Update */

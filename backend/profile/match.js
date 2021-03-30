@@ -29,8 +29,12 @@ function updateFilters(req, res, next) {
     }
 
     // Post to database
-    let data = {filters: req.body};
+    let data = {filters: {}};
     data.filters.email = req.email;
+    requiredFields.foreach(x => {
+        data.filters[x] = req.body[x];
+    });
+
     database.put("filters/", data, function(resp, isError) {
         if (isError) {
             let result = resp.isAxiosError ? 

@@ -19,8 +19,7 @@ function getUserProfile(req, res, next) {
             return res.json(null);
         }
         let profile = resp.data.profiles[0];
-        profile.age = calculateAge(profile.birthday);
-        delete profile.birthday;
+        console.log(profile);
         return res.json(profile);
     });
 }
@@ -45,8 +44,7 @@ function updateUserProfile(req, res, next) {
                     return res.status(500).end(resp.message);
                 }
                 let profile = resp.data.insert_profiles_one;
-                profile.age = calculateAge(profile.birthday);
-                delete profile.birthday;
+                console.log(profile);
                 return res.json(profile);
             });
         }
@@ -61,7 +59,8 @@ function updateUserProfile(req, res, next) {
                 email: req.email,
                 name: req.body.name,
                 birthday: req.body.birth_date,
-                gender: req.body.gender,
+                age: calculateAge(req.body.birth_date),
+                gender: req.body.gender.toLocaleUpperCase("en-US"),
                 bio: req.body.bio,
                 /*pictures: {data: [
                     {
@@ -72,6 +71,7 @@ function updateUserProfile(req, res, next) {
                     }
                 ]}*/
             }};
+            console.log(data);
             database.put("profile/", data, function(resp, isError) {
                 if (resp.isAxiosError) {
                     return res.status(resp.response.status).end(resp.response.data.error);
@@ -80,8 +80,7 @@ function updateUserProfile(req, res, next) {
                     return res.status(500).end(resp.message);
                 }
                 let profile = resp.data.insert_profiles_one;
-                profile.age = calculateAge(profile.birthday);
-                delete profile.birthday;
+                console.log(profile);
                 return res.json(profile);
             });
         }
