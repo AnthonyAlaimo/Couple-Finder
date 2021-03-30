@@ -2,6 +2,7 @@
 const database = require("../database/database");
 
 /* Module for managing the initial signup survey */
+const questionMapping = {1: "personality_resp", 2: "traits_resp", 3: "music_resp", 4: "foods_resp", 5: "pets_resp", 6: "smokes_resp"};
 
 /* Survey questions from https://www.jotform.com/form/210715626685258 */
 
@@ -20,33 +21,23 @@ function getSurvey(req, res, next) {
 
 /* Post survey responses to database */
 function postSurveyResponses(req, res, next) {
-    // Format survey responses into list of {email, question_number, answer_number}
-    let data = {survey_responses: req.body};
-    data.survey_responses.forEach(x => {
-        x.email = req.email;
+    // Convert from {question_number, answer_number} into corresponding column in profiles table
+    let data = {};
+    req.body.foreach(x => {
+        let fieldName = questionMapping[x.question_number];
+        if (fieldName) {
+            data[fieldName] = x.answer_number;
+        }
     });
 
-    database.postQuery("upsert_survey_responses", upsert_survey_responses, data, function(resp, isError) {
+    database.put("survey/" + req.email, data, function(resp, isError) {
         if (resp.isAxiosError) {
             return res.status(resp.response.status).end(resp.response.data.error);
         }
         else if (isError) {
             return res.status(500).end(resp.message);
         }
-        return res.json(resp.data.data.insert_survey_responses.returning);
-    });
-}
-
-/* Get survey responses for user */
-function getSurveyResponses(req, res, next) {
-    database.get("survey/" + req.email, function(resp, isError) {
-        if (resp.isAxiosError) {
-            return res.status(resp.response.status).end(resp.response.data.error);
-        }
-        else if (isError) {
-            return res.status(500).end(resp.message);
-        }
-        return res.json(resp.data.survey_responses);
+        return res.json(resp.data.update_profiles_by_pk);
     });
 }
 
@@ -62,4 +53,4 @@ mutation upsert_survey_responses($survey_responses: [survey_responses_insert_inp
 }
 `;
 
-module.exports = {getSurvey, postSurveyResponses, getSurveyResponses};
+module.exports = {getSurvey, postSurveyResponses};

@@ -84,7 +84,7 @@ app.post("/api/survey/", isAuthenticated, function (req, res, next) {
 
 /* Like or dislike a potential profile */
 app.post("/api/match/", isAuthenticated, function (req, res, next) {
-  next();
+  match.postMatchRequest(req, res, next);
 });
 
 /* Read */
@@ -120,7 +120,7 @@ app.get("/api/survey/response", isAuthenticated, function (req, res, next) {
 
 /* Get 5 matches based on user's filters */
 app.get("/api/new-matches/", isAuthenticated, function (req, res, next) {
-    next();
+  match.getNewMatches(req, res, next);
 });
 
 /* Get match history for the user */
