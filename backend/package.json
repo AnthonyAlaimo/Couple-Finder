@@ -4,7 +4,9 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon"
+    "dev": "nodemon",
+    "start": "node app.js",
+    "postinstall": "cd ../frontend && npm run build"
   },
   "author": "",
   "license": "ISC",

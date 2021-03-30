@@ -28,6 +28,7 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+app.use(express.static("../frontend/build"));
 /* Local Modules */
 const login = require("./authentication/login");
 const profile = require("./profile/profile");
@@ -46,14 +47,14 @@ http.createServer(app).listen(PORT, function (err) {
    however need to prevent underlying http routes from being accessed.
    Redirects HTTP requests to HTTPS */
 // From https://stackoverflow.com/questions/24726779/using-https-on-heroku
-app.all("*", function (req, res, next) {
-  if ((process.env.NODE_ENV != "dev") && req.headers["x-forwarded-proto"] != "https") {     
-    res.redirect("https://" + req.headers.host + req.url);
-  }
-  else {
-    next();
-  }
-});
+// app.all("*", function (req, res, next) {
+//   if ((process.env.NODE_ENV != "dev") && req.headers["x-forwarded-proto"] != "https") {     
+//     res.redirect("https://" + req.headers.host + req.url);
+//   }
+//   else {
+//     next();
+//   }
+// });
 
 /* Initial handler, obtains email from session if one exists */
 app.use(function (req, res, next) {
