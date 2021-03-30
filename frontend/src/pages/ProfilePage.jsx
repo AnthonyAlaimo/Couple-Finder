@@ -7,7 +7,9 @@ import { FormLabel, RadioGroup, VStack, HStack, Input, Heading, Radio, Button, T
 import './ProfilePage/ProfilePage.css';
 import fetchApi from "../utils/fetchApi";
 import { Wrap, WrapItem } from "@chakra-ui/react"
-
+import {
+    AlertDialog,
+  } from "@chakra-ui/react"
 function reducer(state = {}, action) {
     if (action === null){
         return action;
@@ -32,8 +34,7 @@ function ProfilePage() {
             dispatch({surveyComplete: true});
         }
         if (action === 'filter'){
-            // console.log(userDetails);
-            // console.log("filters working");
+            console.log(userDetails.filterResults);
             await fetchApi("/filters/", "PUT", userDetails.filterResults)
         }
     };
@@ -42,8 +43,6 @@ function ProfilePage() {
         userDetails.surveyResults[q_num].answer_number = parseInt(o_num);
     }
     const setFilterResults = async (o_answer, q_text) =>{
-        console.log(userDetails.filterResults);
-        console.log(userDetails.filterResults[q_text]);
         if (q_text === "preferred_age"){
             let lower_age_range = o_answer.slice(0,2);
             let upper_age_range = o_answer.slice(3,5);
@@ -77,8 +76,7 @@ function ProfilePage() {
                 //                         { answer_number: "a3", question_number: 3},
                 //                         { answer_number: "a4", question_number: 4}, 
                 //                         { answer_number: "a5", question_number: 5}]
-                const filterResults = {lower_age_range: "", upper_age_range:"", preferred_gender: "", question_three_answer: "", question_four_answer: "", question_six_answer: ""};
-                console.log(surveyResults);
+                const filterResults = user_profile.filters;
                 if (!controller.signal.aborted){ 
                     if (user_profile === null) {
                         dispatch({id: null, 
@@ -127,6 +125,7 @@ function ProfilePage() {
             } catch (err) {
                 if (err.name === `AbortError`) {
                     // No problem, we did this
+                    //maybe put redirect code here for when user is unauthorized
                     return;
                 }
                 throw err;
@@ -142,12 +141,14 @@ function ProfilePage() {
 
 
     if ( userDetails === null ){
+        // if (userId === undefined){
+        //     return <Redirect to="/"></Redirect>
+        // }
         return <DashboardLayout>loading</DashboardLayout>
     }
     if (userDetails.surveyResults === undefined){
         return <DashboardLayout>loading</DashboardLayout>
     }
-    console.log(userDetails)
     if ( userDetails.id !== null){
         // SURVEY RESPONSE CASE: SURVEY HASN'T BEEN COMPLETED
         if (userDetails.surveyComplete === false){
@@ -268,7 +269,6 @@ function ProfilePage() {
                 })
                 count += 1;
             })
-            console.log(userDetails.filterResults)
             return <DashboardLayout>
                         <UserDetails user={userDetails}></UserDetails>
                         <HStack>
