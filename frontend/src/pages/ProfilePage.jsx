@@ -14,12 +14,6 @@ import {
     NumberIncrementStepper,
     NumberDecrementStepper,
   } from "@chakra-ui/react"
-  import {
-    Alert,
-    AlertIcon,
-    AlertTitle,
-    AlertDescription,
-  } from "@chakra-ui/react"
 
 function reducer(state = {}, action) {
     if (action === null){
@@ -92,9 +86,10 @@ function ProfilePage() {
                 // TODO: Some fetch for user information
                 const user_profile = await fetchApi("/profile/", "GET", null, controller.signal);
                 const survey = await fetchApi("/survey/", "GET", null);
-                const surveyResults = await fetchApi("/survey/response", "GET", null, controller.signal)
-                const filterResults = user_profile.filters;
-                console.log(filterResults)
+                if (user_profile !== null){
+                    const filterResults = user_profile.filters;
+                }
+                // console.log(surveyResults)
                 if (!controller.signal.aborted){ 
                     if (user_profile === null) {
                         dispatch({id: null, 
@@ -102,7 +97,7 @@ function ProfilePage() {
                             name: "", 
                             birth_date: new Date(), 
                             gender: "", 
-                            profile_bio: "", 
+                            profile_bio: "",
                             surveyResults: [{ answer_number: "a1", question_number: 1},
                                             { answer_number: "a2", question_number: 2}, 
                                             { answer_number: "a3", question_number: 3},
@@ -113,7 +108,8 @@ function ProfilePage() {
                             survey: survey,
                             surveyComplete: false});
                     }
-                    else if (surveyResults.length === 0){
+                    else if (user_profile.traits_resp === 0) {
+                    // else if (surveyResults.length === 0){
                         dispatch(user_profile);
                         dispatch({survey: survey,
                                 surveyComplete: false,
@@ -123,7 +119,7 @@ function ProfilePage() {
                                                 { answer_number: "a4", question_number: 4}, 
                                                 { answer_number: "a5", question_number: 5},
                                                 { answer_number: "a6", question_number: 6}],
-                        filterResults: {lower_age_range: "", upper_age_range:"", preferred_gender: "", smoking: ""/*, question_three_answer: "", question_four_answer: "", question_six_answer: ""*/}})
+                        filterResults: {lower_age_range: "", upper_age_range:"", preferred_gender: "", smoking: ""}})
                     }
                     else{
                         dispatch(user_profile);
@@ -267,22 +263,7 @@ function ProfilePage() {
                          <VStack className='lrp__card img_layout profile_info' borderRadius='md' maxW="600px" boxSize="700px">
                         <Heading className='display' as="h3" color="white" bg="black" w="110%" borderRadius="5px" p="10px">Edit Matching Filters</Heading>
                         <Heading as="h2" size="md">Preferred Age Range</Heading>
-                        {/* <RadioGroup value={userDetails.filterResults.preferred_age} onChange={(q1) => {setFilterResults(q1, "preferred_age")}}>
-                            <HStack spacing="24px">
-                                <Radio value="19 30" name="q1">19-30</Radio>
-                                <Radio value="31 42" name="q1">31-42</Radio>
-                                <Radio value="43 54" name="q1">43-54</Radio>
-                                <Radio value="55 66" name="q1">55-66</Radio>
-                                <Radio value="67 78" name="q1">67-78</Radio>
-                                <Radio value="79 90" name="q1">79-90</Radio>
-                            </HStack>
-                        </RadioGroup> */}
                         <VStack>
-                            {/* {userDetails.filterResults[0].lower_age_range > userDetails.filterResults[0].upper_age_range &&
-                                <Alert status="info">
-                                    <AlertIcon />
-                                    lowest age must be smaller than highest age!
-                                </Alert>} */}
                         <Heading as="h2" size="sm">Lowest</Heading>
                             <NumberInput value={userDetails.filterResults.lower_age_range} defaultValue={18} min={18} max={90} onChange={(lower) => {setFilterResults(lower, "preferred_age_lower")}}>
                             <NumberInputField name="lower"/>
@@ -323,10 +304,6 @@ function ProfilePage() {
                     </DashboardLayout>
         }
     }
-    // if the wrong user is accessing profile redirect to home
-    // if ( userId !== user.id ){
-    //     return <Redirect to="/"></Redirect>
-    // }
     return (
         <DashboardLayout>
             <VStack className='lrp__card' maxW='800px' w='80%' m='auto' p='8' borderRadius='md'>
