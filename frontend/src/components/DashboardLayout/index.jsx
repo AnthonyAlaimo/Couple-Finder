@@ -10,13 +10,13 @@ const santizePath = path => path.replace(/\/:[^/].*/g, '');
 
 export default function DashboardLayout({ children }) {
     const { user } = useContext(UserContext);
+    const { logout } = useContext(UserContext);
     if (process.env.NODE_ENV === 'production') {
         if (!user) {
             return <Redirect path='/'/>;
         }
     }
     
-    const { logout } = useContext(UserContext);
 
     const onSubmit = async (action) => {
         if (action == 'logout'){
