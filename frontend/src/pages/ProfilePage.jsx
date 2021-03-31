@@ -36,8 +36,8 @@ function ProfilePage() {
         }
         if (action === 'survey'){
             console.log(userDetails.surveyResults);
-            // await fetchApi("/survey/", "POST", userDetails.surveyResults);
-            // dispatch({surveyComplete: true});
+            await fetchApi("/survey/", "POST", userDetails.surveyResults);
+            dispatch({surveyComplete: true});
         }
         if (action === 'filter'){
             // if lower is greater than upper, reset values

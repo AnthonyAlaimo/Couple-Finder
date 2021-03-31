@@ -2,7 +2,7 @@
 const database = require("../database/database");
 
 /* Module for managing the initial signup survey */
-const questionMapping = {1: "personality_resp", 2: "traits_resp", 3: "music_resp", 4: "foods_resp", 5: "pets_resp", 6: "smokes_resp"};
+const questionMapping = ["personality_resp", "traits_resp", "music_resp", "foods_resp", "pets_resp", "smokes_resp"];
 
 /* Survey questions from https://www.jotform.com/form/210715626685258 */
 
@@ -23,13 +23,9 @@ function getSurvey(req, res, next) {
 function postSurveyResponses(req, res, next) {
     // Convert from {question_number, answer_number} into corresponding column in profiles table
     let data = {};
-    req.body.foreach(x => {
-        let fieldName = questionMapping[x.question_number];
-        if (fieldName) {
-            data[fieldName] = x.answer_number;
-        }
+    questionMapping.forEach(x => {
+        data[x] = req.body[x];
     });
-
     database.put("survey/" + req.email, data, function(resp, isError) {
         if (resp.isAxiosError) {
             return res.status(resp.response.status).end(resp.response.data.error);

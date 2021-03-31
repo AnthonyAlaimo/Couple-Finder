@@ -27,8 +27,8 @@ app.use(
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
 app.use(express.static("../frontend/build"));
+
 /* Local Modules */
 const login = require("./authentication/login");
 const profile = require("./profile/profile");
@@ -128,6 +128,7 @@ app.get("/api/matches/", isAuthenticated, function (req, res, next) {
 
 /* Update profile for current user */
 app.post("/api/profile/", isAuthenticated, upload.single("profile_picture"), sanitizeProfileFields, function(req, res, next) {
+  console.log(req.file);
   profile.updateUserProfile(req, res, next);
 });
 

@@ -16,7 +16,7 @@ const selfMatchFields = ["foods_resp", "music_resp", "personalit_resp", "pets_re
 function updateFilters(req, res, next) {
     // Check for missing fields
     console.log(req.body);
-    requiredFilters.foreach(x => {
+    requiredFilters.forEach(x => {
         if (req.body[x] == null) {
             return res.status(400)
             .end("A required field is missing. Please add a value for: " + x + " and try again.");
@@ -31,7 +31,7 @@ function updateFilters(req, res, next) {
     // Post to database
     let data = {filters: {}};
     data.filters.email = req.email;
-    requiredFields.foreach(x => {
+    requiredFields.forEach(x => {
         data.filters[x] = req.body[x];
     });
 
@@ -70,7 +70,7 @@ function getNewMatches(req, res, next) {
         }
         where += `, smokes_resp: {_lte: ${filter.smokes}}`;
 
-        selfMatchFields.foreach(x => {
+        selfMatchFields.forEach(x => {
             where += `, ${x}: {_eq: ${profile[x]}}`;
         });
         where += "}";
@@ -96,6 +96,7 @@ function getNewMatches(req, res, next) {
                     upper_age_range
                 }
             }
+
         }`;
 
         // Query for matches
