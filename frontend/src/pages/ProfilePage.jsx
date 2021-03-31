@@ -236,11 +236,17 @@ function ProfilePage() {
                     </DashboardLayout>
         // SURVEY RESPONSE CASE: SURVEY HAS BEEN COMPLETED
         }else{
+            let response=[userDetails.personality_resp, 
+                userDetails.traits_resp, 
+                userDetails.music_resp,
+                userDetails.foods_resp, 
+                userDetails.pets_resp,
+                userDetails.smokes_resp]
             let count=0
-            let stringResponse=[]
+            let stringResponse = [];
             userDetails.survey.forEach((q) =>{
                 q.survey_options.forEach((o) =>{
-                    if (o.answer_number === userDetails.surveyResults[count].answer_number){
+                    if (o.answer_number === response[count]){
                         stringResponse.push({q: q.question_text, o: o.answer_text});
                     }
                 })
