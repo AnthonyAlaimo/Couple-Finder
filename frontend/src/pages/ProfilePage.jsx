@@ -36,8 +36,8 @@ function ProfilePage() {
         }
         if (action === 'survey'){
             console.log(userDetails.surveyResults);
-            await fetchApi("/survey/", "POST", userDetails.surveyResults);
-            dispatch({surveyComplete: true});
+            // await fetchApi("/survey/", "POST", userDetails.surveyResults);
+            // dispatch({surveyComplete: true});
         }
         if (action === 'filter'){
             // if lower is greater than upper, reset values
@@ -50,8 +50,8 @@ function ProfilePage() {
         }
     };
 
-    const setSurveyResults = async (o_num, q_num) =>{
-        userDetails.surveyResults[q_num].answer_number = parseInt(o_num);
+    const setSurveyResults = async (o_num, q_text) =>{
+        userDetails.surveyResults[q_text] = parseInt(o_num);
     }
     const setFilterResults = async (o_answer, q_text) =>{
         console.log(q_text)
@@ -85,12 +85,12 @@ function ProfilePage() {
                 let surveyResults = null;
                 if (user_profile !== null){
                     filterResults = user_profile.filters;
-                    surveyResults = [{ answer_number: user_profile.personality_resp, question_number: 1},
-                    { answer_number: user_profile.traits_resp, question_number: 2}, 
-                    { answer_number: user_profile.music_resp, question_number: 3},
-                    { answer_number: user_profile.foods_resp, question_number: 4}, 
-                    { answer_number: user_profile.pets_resp, question_number: 5},
-                    { answer_number: user_profile.smokes_resp, question_number: 6}];
+                    surveyResults = { personality_resp: user_profile.personality_resp,
+                                    traits_resp: user_profile.traits_resp, 
+                                    music_resp: user_profile.music_resp,
+                                    foods_resp: user_profile.foods_resp, 
+                                    pets_resp: user_profile.pets_resp,
+                                    smokes_resp: user_profile.smokes_resp};
                 }
                 console.log(user_profile);
                 if (!controller.signal.aborted){ 
@@ -101,12 +101,12 @@ function ProfilePage() {
                             birth_date: new Date(), 
                             gender: "", 
                             profile_bio: "",
-                            surveyResults: [{ answer_number: "a1", question_number: 1},
-                                            { answer_number: "a2", question_number: 2}, 
-                                            { answer_number: "a3", question_number: 3},
-                                            { answer_number: "a4", question_number: 4}, 
-                                            { answer_number: "a5", question_number: 5},
-                                            { answer_number: "a6", question_number: 6}],
+                            surveyResults: { personality_resp: 0,
+                                traits_resp: 0, 
+                                music_resp: 0,
+                                foods_resp: 0, 
+                                pets_resp: 0,
+                                smokes_resp: 0},
                             filterResults: {lower_age_range: "", upper_age_range:"", preferred_gender: "", smoking: ""}, 
                             survey: survey,
                             surveyComplete: false});
@@ -116,12 +116,7 @@ function ProfilePage() {
                         dispatch(user_profile);
                         dispatch({survey: survey,
                                 surveyComplete: false,
-                                surveyResults: [{ answer_number: "a1", question_number: 1},
-                                                { answer_number: "a2", question_number: 2}, 
-                                                { answer_number: "a3", question_number: 3},
-                                                { answer_number: "a4", question_number: 4}, 
-                                                { answer_number: "a5", question_number: 5},
-                                                { answer_number: "a6", question_number: 6}],
+                                surveyResults: surveyResults,
                         filterResults: {lower_age_range: "", upper_age_range:"", preferred_gender: "", smoking: ""}})
                     }
                     else{
@@ -165,7 +160,7 @@ function ProfilePage() {
                          <VStack className='lrp__card img_layout profile_info' borderRadius='md' maxW="600px" boxSize="700px">
                         <Heading className='display' as="h3" color="white" bg="black" w="110%" borderRadius="5px" p="10px">Complete Your Matching Survey</Heading>
                         <Heading as="h2" size="md">How would you describe your personality?</Heading>
-                        <RadioGroup value={userDetails.surveyResults[0].answer_number} onChange={(q1) => {setSurveyResults(q1, 0)}}>
+                        <RadioGroup value={userDetails.surveyResults.personality_resp} onChange={(q1) => {setSurveyResults(q1, "personality_resp")}}>
                             <HStack spacing="24px">
                             <Wrap>
                                 <WrapItem>
@@ -180,7 +175,7 @@ function ProfilePage() {
                             </HStack>
                         </RadioGroup>
                         <Heading as="h2" size="md">What traits do you look for in a partner?</Heading>
-                        <RadioGroup value={userDetails.surveyResults[1].answer_number} onChange={(q2) => {setSurveyResults(q2, 1)}}>
+                        <RadioGroup value={userDetails.surveyResults.traits_resp} onChange={(q2) => {setSurveyResults(q2, "traits_resp")}}>
                             <HStack spacing="24px">
                             <Wrap maxW="200">
                                 <WrapItem>
@@ -199,7 +194,7 @@ function ProfilePage() {
                             </HStack>
                         </RadioGroup>
                         <Heading as="h2" size="md">What kind of music puts you in the mood?</Heading>
-                        <RadioGroup value={userDetails.surveyResults[2].answer_number} onChange={(q3) => {setSurveyResults(q3, 2)}}>
+                        <RadioGroup value={userDetails.surveyResults.music_resp} onChange={(q3) => {setSurveyResults(q3, "music_resp")}}>
                             <HStack spacing="24px">
                                 <Radio value="0" name="q3">Soul music</Radio>
                                 <Radio value="1" name="q3">Jazz</Radio>
@@ -209,7 +204,7 @@ function ProfilePage() {
                             </HStack>
                         </RadioGroup>
                         <Heading as="h2" size="md">Out of the following foods, what appeals to you the most?</Heading>
-                        <RadioGroup value={userDetails.surveyResults[3].answer_number} onChange={(q4) => {setSurveyResults(q4, 3)}}>
+                        <RadioGroup value={userDetails.surveyResults.foods_resp} onChange={(q4) => {setSurveyResults(q4, "foods_resp")}}>
                             <HStack spacing="24px">
                                 <Radio value="0" name="q4">Pizza</Radio>
                                 <Radio value="1" name="q4">Pasta</Radio>
@@ -219,7 +214,7 @@ function ProfilePage() {
                             </HStack>
                         </RadioGroup>
                         <Heading as="h2" size="md">How do you feel about pets and animals?</Heading>
-                        <RadioGroup value={userDetails.surveyResults[4].answer_number} onChange={(q5) => {setSurveyResults(q5, 4)}}>
+                        <RadioGroup value={userDetails.surveyResults.pets_resp} onChange={(q5) => {setSurveyResults(q5, "pets_resp")}}>
                             <HStack spacing="24px">
                                 <Radio value="0" name="q5">Not very much</Radio>
                                 <Radio value="1" name="q5">Not much</Radio>
@@ -229,7 +224,7 @@ function ProfilePage() {
                             </HStack>
                         </RadioGroup>
                         <Heading as="h2" size="md">Do you smoke?</Heading>
-                        <RadioGroup value={userDetails.surveyResults[5].answer_number} onChange={(q6) => {setSurveyResults(q6, 5)}}>
+                        <RadioGroup value={userDetails.surveyResults.smokes_resp} onChange={(q6) => {setSurveyResults(q6, "smokes_resp")}}>
                             <HStack spacing="24px">
                                 <Radio value="0" name="q6">Not at all</Radio>
                                 <Radio value="1" name="q6">Somewhat</Radio>
