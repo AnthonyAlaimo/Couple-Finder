@@ -41,12 +41,16 @@ function ProfilePage() {
         }
         if (action === 'filter'){
             // if lower is greater than upper, reset values
-            if (userDetails.filterResults[0].upper_age_range < userDetails.filterResults[0].lower_age_range){
-                userDetails.filterResults[0].upper_age_range = 90;
-                userDetails.filterResults[0].lower_age_range = 18;
+            if (userDetails.filterResults.upper_age_range < userDetails.filterResults.lower_age_range){
+                userDetails.filterResults.upper_age_range = 90;
+                userDetails.filterResults.lower_age_range = 18;
             }
-            console.log(userDetails.filterResults[0]);
-            //await fetchApi("/filters/", "PUT", userDetails.filterResults[0])
+            let result = {lower_age_range: userDetails.filterResults.lower_age_range, 
+                        upper_age_range: userDetails.filterResults.upper_age_range,
+                        preferred_gender: userDetails.filterResults.preferred_gender, 
+                        smokes: userDetails.filterResults.smokes}
+            console.log(result);
+            await fetchApi("/filters/", "PUT", result)
         }
     };
 
@@ -54,17 +58,16 @@ function ProfilePage() {
         userDetails.surveyResults[q_text] = parseInt(o_num);
     }
     const setFilterResults = async (o_answer, q_text) =>{
-        console.log(q_text)
         if (q_text === "preferred_age_upper"){
-            userDetails.filterResults[0].upper_age_range = parseInt(o_answer);
+            userDetails.filterResults.upper_age_range = parseInt(o_answer);
         }
         else if (q_text === "preferred_age_lower"){
-            userDetails.filterResults[0].lower_age_range = parseInt(o_answer);
+            userDetails.filterResults.lower_age_range = parseInt(o_answer);
         }
         else if (q_text === "preferred_gender"){
-            userDetails.filterResults[0].preferred_gender = o_answer;
+            userDetails.filterResults.preferred_gender = o_answer;
         }else if (q_text === "smokes"){
-            userDetails.filterResults[0].smokes =  parseInt(o_answer);
+            userDetails.filterResults.smokes =  parseInt(o_answer);
         }
     }
 
@@ -81,10 +84,8 @@ function ProfilePage() {
                 // TODO: Some fetch for user information
                 const user_profile = await fetchApi("/profile/", "GET", null, controller.signal);
                 const survey = await fetchApi("/survey/", "GET", null);
-                let filterResults = null;
                 let surveyResults = null;
                 if (user_profile !== null){
-                    filterResults = user_profile.filters;
                     surveyResults = { personality_resp: user_profile.personality_resp,
                                     traits_resp: user_profile.traits_resp, 
                                     music_resp: user_profile.music_resp,
@@ -92,7 +93,6 @@ function ProfilePage() {
                                     pets_resp: user_profile.pets_resp,
                                     smokes_resp: user_profile.smokes_resp};
                 }
-                console.log(user_profile);
                 if (!controller.signal.aborted){ 
                     if (user_profile === null) {
                         dispatch({id: null, 
@@ -107,7 +107,7 @@ function ProfilePage() {
                                 foods_resp: 0, 
                                 pets_resp: 0,
                                 smokes_resp: 0},
-                            filterResults: {lower_age_range: "", upper_age_range:"", preferred_gender: "", smoking: ""}, 
+                            filterResults: {lower_age_range: "", upper_age_range:"", preferred_gender: "", smokes: ""}, 
                             survey: survey,
                             surveyComplete: false});
                     }
@@ -117,11 +117,11 @@ function ProfilePage() {
                         dispatch({survey: survey,
                                 surveyComplete: false,
                                 surveyResults: surveyResults,
-                        filterResults: {lower_age_range: "", upper_age_range:"", preferred_gender: "", smoking: ""}})
+                                filterResults: {lower_age_range: "", upper_age_range:"", preferred_gender: "", smokes: ""}})
                     }
                     else{
                         dispatch(user_profile);
-                        dispatch({survey: survey, surveyResults: surveyResults, surveyComplete: true, filterResults: filterResults});
+                        dispatch({survey: survey, surveyResults: surveyResults, surveyComplete: true, filterResults: user_profile.filters});
                     }
                 }
             } catch (err) {
