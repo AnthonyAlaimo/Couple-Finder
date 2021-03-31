@@ -35,6 +35,7 @@ function ProfilePage() {
             dispatch({id: userId})
         }
         if (action === 'survey'){
+            console.log(userDetails.surveyResults);
             await fetchApi("/survey/", "POST", userDetails.surveyResults);
             dispatch({surveyComplete: true});
         }
@@ -53,12 +54,6 @@ function ProfilePage() {
         userDetails.surveyResults[q_num].answer_number = parseInt(o_num);
     }
     const setFilterResults = async (o_answer, q_text) =>{
-        // if (q_text === "preferred_age"){
-        //     let lower_age_range = o_answer.slice(0,2);
-        //     let upper_age_range = o_answer.slice(3,5);
-        //     userDetails.filterResults.lower_age_range = parseInt(lower_age_range);
-        //     userDetails.filterResults.upper_age_range = parseInt(upper_age_range);
-        // }
         console.log(q_text)
         if (q_text === "preferred_age_upper"){
             userDetails.filterResults[0].upper_age_range = parseInt(o_answer);
@@ -86,10 +81,18 @@ function ProfilePage() {
                 // TODO: Some fetch for user information
                 const user_profile = await fetchApi("/profile/", "GET", null, controller.signal);
                 const survey = await fetchApi("/survey/", "GET", null);
+                let filterResults = null;
+                let surveyResults = null;
                 if (user_profile !== null){
-                    const filterResults = user_profile.filters;
+                    filterResults = user_profile.filters;
+                    surveyResults = [{ answer_number: user_profile.personality_resp, question_number: 1},
+                    { answer_number: user_profile.traits_resp, question_number: 2}, 
+                    { answer_number: user_profile.music_resp, question_number: 3},
+                    { answer_number: user_profile.foods_resp, question_number: 4}, 
+                    { answer_number: user_profile.pets_resp, question_number: 5},
+                    { answer_number: user_profile.smokes_resp, question_number: 6}];
                 }
-                // console.log(surveyResults)
+                console.log(user_profile);
                 if (!controller.signal.aborted){ 
                     if (user_profile === null) {
                         dispatch({id: null, 
@@ -144,6 +147,7 @@ function ProfilePage() {
     }, [ userId ]);
 
 
+    console.log(userDetails);
     if ( userDetails === null ){
         // if (userId === undefined){
         //     return <Redirect to="/"></Redirect>

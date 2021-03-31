@@ -3,8 +3,10 @@ import { useHistory } from 'react-router-dom';
 import { useContext, useState } from 'react';
 import { UserContext } from '../../components/UserProvider';
 import './LoginRegisterPage.css';
+import { useToast } from "@chakra-ui/react"
 
 function LoginRegisterPage() {
+    const toast = useToast()
     const [ email, setEmail ] = useState('');
     const [ password, setPassword ] = useState('');
     const { login } = useContext(UserContext);
@@ -13,6 +15,7 @@ function LoginRegisterPage() {
 
     const onSubmit = async (action) => {
         if (action == 'login'){
+            console.log("working?")
             await login(email, password);
         }else if (action == 'register'){
             await register(email, password);
@@ -60,8 +63,28 @@ function LoginRegisterPage() {
                         required
                     />
                     <HStack>
-                        <Button onClick={() => onSubmit(`login`)}>Login</Button>
-                        <Button onClick={() => onSubmit(`register`)}>Register</Button>
+                        <Button onClick={() => onSubmit(`login`)}
+                        // onClick={() =>
+                        //     toast({
+                        //       title: "Login Failed",
+                        //       position: 'top',
+                        //       description: "Password or Email is incorrect",
+                        //       status: "error",
+                        //       duration: 9000,
+                        //       isClosable: true,
+                        //     })}
+                            >Login</Button>
+                        <Button onClick={() => onSubmit(`register`)}
+                        // onClick={() =>
+                        //     toast({
+                        //       title: "Registration Failed",
+                        //       position: 'top',
+                        //       description: "Invalid email address",
+                        //       status: "error",
+                        //       duration: 9000,
+                        //       isClosable: true,
+                        //     })}
+                        >Register</Button>
                     </HStack>
                 </VStack>
             </VStack>
