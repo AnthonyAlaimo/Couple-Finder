@@ -164,12 +164,12 @@ function ProfilePage() {
                             <HStack spacing="24px">
                             <Wrap>
                                 <WrapItem>
-                                <Radio value="0" name="q1">Shy and naive</Radio>
-                                <Radio value="1" name="q1">Brave and talkative</Radio>
-                                <Radio value="2" name="q1">Honest and reliable</Radio>
-                                <Radio value="3" name="q1">Easy-going and cheerful</Radio>
-                                <Radio value="4" name="q1">Sympathetic and tolerant</Radio>
-                                <Radio value="5" name="q1">Energetic and open minded</Radio>
+                                <Radio value="1" name="q1">Shy and naive</Radio>
+                                <Radio value="2" name="q1">Brave and talkative</Radio>
+                                <Radio value="3" name="q1">Honest and reliable</Radio>
+                                <Radio value="4" name="q1">Easy-going and cheerful</Radio>
+                                <Radio value="5" name="q1">Sympathetic and tolerant</Radio>
+                                <Radio value="6" name="q1">Energetic and open minded</Radio>
                                 </WrapItem>
                             </Wrap>
                             </HStack>
@@ -179,16 +179,16 @@ function ProfilePage() {
                             <HStack spacing="24px">
                             <Wrap maxW="200">
                                 <WrapItem>
-                                <Radio value="0" name="q2">Kind</Radio>
-                                <Radio value="1" name="q2">Energetic</Radio>
-                                <Radio value="2" name="q2">Honest</Radio>
-                                <Radio value="3" name="q2">Naive</Radio>
-                                <Radio value="4" name="q2">Talkative</Radio>
-                                <Radio value="5" name="q2">Moody</Radio>
-                                <Radio value="6" name="q2">Open minded</Radio>
-                                <Radio value="7" name="q2">Respectful</Radio>
-                                <Radio value="8" name="q2">Passionate</Radio>
-                                <Radio value="9" name="q2">Good looks</Radio>
+                                <Radio value="1" name="q2">Kind</Radio>
+                                <Radio value="2" name="q2">Energetic</Radio>
+                                <Radio value="3" name="q2">Honest</Radio>
+                                <Radio value="4" name="q2">Naive</Radio>
+                                <Radio value="5" name="q2">Talkative</Radio>
+                                <Radio value="6" name="q2">Moody</Radio>
+                                <Radio value="7" name="q2">Open minded</Radio>
+                                <Radio value="8" name="q2">Respectful</Radio>
+                                <Radio value="9" name="q2">Passionate</Radio>
+                                <Radio value="10" name="q2">Good looks</Radio>
                                 </WrapItem>
                             </Wrap>
                             </HStack>
@@ -196,39 +196,39 @@ function ProfilePage() {
                         <Heading as="h2" size="md">What kind of music puts you in the mood?</Heading>
                         <RadioGroup value={userDetails.surveyResults.music_resp} onChange={(q3) => {setSurveyResults(q3, "music_resp")}}>
                             <HStack spacing="24px">
-                                <Radio value="0" name="q3">Soul music</Radio>
-                                <Radio value="1" name="q3">Jazz</Radio>
-                                <Radio value="2" name="q3">Blues</Radio>
-                                <Radio value="3" name="q3">Classical music</Radio>
-                                <Radio value="4" name="q3">House music</Radio>
+                                <Radio value="1" name="q3">Soul music</Radio>
+                                <Radio value="2" name="q3">Jazz</Radio>
+                                <Radio value="3" name="q3">Blues</Radio>
+                                <Radio value="4" name="q3">Classical music</Radio>
+                                <Radio value="5" name="q3">House music</Radio>
                             </HStack>
                         </RadioGroup>
                         <Heading as="h2" size="md">Out of the following foods, what appeals to you the most?</Heading>
                         <RadioGroup value={userDetails.surveyResults.foods_resp} onChange={(q4) => {setSurveyResults(q4, "foods_resp")}}>
                             <HStack spacing="24px">
-                                <Radio value="0" name="q4">Pizza</Radio>
-                                <Radio value="1" name="q4">Pasta</Radio>
-                                <Radio value="2" name="q4">Sushi</Radio>
-                                <Radio value="3" name="q4">Hamburger</Radio>
-                                <Radio value="4" name="q4">Chinese</Radio>
+                                <Radio value="1" name="q4">Pizza</Radio>
+                                <Radio value="2" name="q4">Pasta</Radio>
+                                <Radio value="3" name="q4">Sushi</Radio>
+                                <Radio value="4" name="q4">Hamburger</Radio>
+                                <Radio value="5" name="q4">Chinese</Radio>
                             </HStack>
                         </RadioGroup>
                         <Heading as="h2" size="md">How do you feel about pets and animals?</Heading>
                         <RadioGroup value={userDetails.surveyResults.pets_resp} onChange={(q5) => {setSurveyResults(q5, "pets_resp")}}>
                             <HStack spacing="24px">
-                                <Radio value="0" name="q5">Not very much</Radio>
-                                <Radio value="1" name="q5">Not much</Radio>
-                                <Radio value="2" name="q5">Neutral</Radio>
-                                <Radio value="3" name="q5">Somewhat like</Radio>
-                                <Radio value="4" name="q5">Adore</Radio>
+                                <Radio value="1" name="q5">Not very much</Radio>
+                                <Radio value="2" name="q5">Not much</Radio>
+                                <Radio value="3" name="q5">Neutral</Radio>
+                                <Radio value="4" name="q5">Somewhat like</Radio>
+                                <Radio value="5" name="q5">Adore</Radio>
                             </HStack>
                         </RadioGroup>
                         <Heading as="h2" size="md">Do you smoke?</Heading>
                         <RadioGroup value={userDetails.surveyResults.smokes_resp} onChange={(q6) => {setSurveyResults(q6, "smokes_resp")}}>
                             <HStack spacing="24px">
-                                <Radio value="0" name="q6">Not at all</Radio>
-                                <Radio value="1" name="q6">Somewhat</Radio>
-                                <Radio value="2" name="q6">Frequently</Radio>
+                                <Radio value="1" name="q6">Not at all</Radio>
+                                <Radio value="2" name="q6">Somewhat</Radio>
+                                <Radio value="3" name="q6">Frequently</Radio>
                             </HStack>
                         </RadioGroup>
                             <Button onClick={() => onSubmit(`survey`)}>Submit</Button>
