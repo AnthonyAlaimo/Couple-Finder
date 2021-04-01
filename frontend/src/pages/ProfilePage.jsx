@@ -6,6 +6,7 @@ import UserProvider, { UserContext } from "../components/UserProvider";
 import { FormLabel, RadioGroup, VStack, HStack, Input, Heading, Radio, Button, Textarea, Stack } from '@chakra-ui/react';
 import './ProfilePage/ProfilePage.css';
 import fetchApi from "../utils/fetchApi";
+import fetchImageApi from "../utils/fetchImageApi";
 import { Wrap, WrapItem } from "@chakra-ui/react"
 import {
     NumberInput,
@@ -31,7 +32,8 @@ function ProfilePage() {
 
     const onSubmit = async (action) => {
         if (action === 'profile'){
-            await fetchApi("/profile/", "POST", {name: userDetails.name, birth_date: userDetails.birth_date, gender: userDetails.gender, bio: userDetails.profile_bio/*, profile_picture: userDetails.image_file.files[0]*/})
+            console.log(document.querySelector(".image_file"));
+            await fetchImageApi("/profile/", "POST", {name: userDetails.name, birth_date: userDetails.birth_date, gender: userDetails.gender, bio: userDetails.profile_bio, profile_picture: userDetails.image_file})
             dispatch({id: userId});
         }
         if (action === 'survey'){
@@ -81,6 +83,11 @@ function ProfilePage() {
     const handler = (e) => {
         console.log(e, e.target);
         dispatch({[e.target.name]: e.target.value});
+    }
+
+    const imageHandler = (e) => {
+        console.log(e, e.target);
+        dispatch({[e.target.name]: e.target.files[0]});
     }
 
     useEffect(() => {
@@ -331,11 +338,11 @@ function ProfilePage() {
                     w='80%'
                 >
                    <Input background="none"
+                        id="image_id"
                         name="image_file"
                         variant='filled'
                         type="file"
-                        value={userDetails.image_file}
-                        onChange={handler}
+                        onChange={imageHandler}
                         placeholder="choose a profile image"
                         accept="image/*"
                         required

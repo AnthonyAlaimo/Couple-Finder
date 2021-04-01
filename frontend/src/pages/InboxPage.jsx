@@ -4,6 +4,9 @@ import UserProvider, { UserContext } from "../components/UserProvider";
 import { useParams } from "react-router";
 import './ProfilePage/ProfilePage.css';
 import fetchApi from "../utils/fetchApi";
+import { FcLike } from '@react-icons/all-files/fc/FcLike';
+import { Icon } from "@chakra-ui/react";
+// import { RiDislikeFill } from '@react-icons/all-files/ri/RiDisLikeFill';
 function reducer(state = {}, action) {
     if (action === null){
         return action;
@@ -54,7 +57,9 @@ function InboxPage() {
     console.log(userDetails);
     return (
         <DashboardLayout>
+            <Icon as={FcLike}/>
             Inbox
+            {/* <Icon as={RiDislikeFill}/> */}
         </DashboardLayout>
     );
 }
