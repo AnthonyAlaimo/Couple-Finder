@@ -10,7 +10,6 @@ export default function fetchImageApi(path, method = `GET`, data, signal) {
         Object.assign(
             {
                 headers: {
-                    'Content-Type': 'multipart/form-data',
                     'Accept': 'application/json'
                 },
                 method,
