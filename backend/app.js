@@ -114,7 +114,7 @@ app.get("/api/pictures/:id/picture/", isAuthenticated, function (req, res, next)
   profile.getPictureFile(req, res, next);
 });
 
-/* Get 5 matches based on user's filters */
+/* Get at most 10 matches based on user's filters */
 app.get("/api/new-matches/", isAuthenticated, function (req, res, next) {
   match.getNewMatches(req, res, next);
 });

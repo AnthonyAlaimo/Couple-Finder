@@ -8,14 +8,13 @@ const genders = ["MALE", "FEMALE", "BOTH"];
 const requiredFilters = ["lower_age_range", "upper_age_range", "preferred_gender", "smokes"];
 
 /* Constant containing self match fields */
-const selfMatchFields = ["foods_resp", "music_resp", "personalit_resp", "pets_resp", "traits_resp"];
+const selfMatchFields = ["foods_resp", "music_resp", "personality_resp", "pets_resp", "traits_resp"];
 
 /* Logic for matching user profiles */
 
 /* Update filters for user in DB */
 function updateFilters(req, res, next) {
     // Check for missing fields
-    console.log(req.body);
     requiredFilters.forEach(x => {
         if (req.body[x] == null) {
             return res.status(400)
@@ -35,14 +34,12 @@ function updateFilters(req, res, next) {
         data.filters[x] = req.body[x];
     });
 
-    console.log(data);
-
     database.put("filters/", data, function(resp, isError) {
-        if (isError) {
-            let result = resp.isAxiosError ? 
-                res.status(resp.response.status).end(resp.response.data.error) :
-                res.status(500).end(resp.message);
-            return result;
+        if (resp.isAxiosError) {
+            return res.status(resp.response.status).end(resp.response.data.error);
+        }
+        else if (isError) {
+            return res.status(500).end(resp.message);
         }
         return res.json(resp.data.insert_filters_one);
     });
@@ -52,11 +49,11 @@ function updateFilters(req, res, next) {
 function getNewMatches(req, res, next) {
     // Retrieve filter and survey responses for user
     database.get("match-criteria/" + req.email, function(resp, isError) {
-        if (isError) {
-            let result = resp.isAxiosError ? 
-                res.status(resp.response.status).end(resp.response.data.error) :
-                res.status(500).end(resp.message);
-            return result;
+        if (resp.isAxiosError) {
+            return res.status(resp.response.status).end(resp.response.data.error);
+        }
+        else if (isError) {
+            return res.status(500).end(resp.message);
         }
         // Construct query criteria
         if (resp.data.profiles.length === 0 || resp.data.profiles[0].filters.length === 0) {
@@ -64,23 +61,18 @@ function getNewMatches(req, res, next) {
         }
         let profile = resp.data.profiles[0];
         let filter = profile.filters[0];
-        let prev_matches = [];
-        console.log(profile);
-        console.log(filter);
-
-        // Convert list of past matches into list of emails
-        resp.data.matched_already.forEach(match => {
-            prev_matches.push(match.email);
-        });
-
-        console.log(prev_matches);
+  
         // Construct match query based on criteria
         let where = `{age: {_gte: ${filter.lower_age_range}, _lte: ${filter.upper_age_range}}`;
         if (filter.preferred_gender !== "BOTH") {
-            where += `, gender: {_eq: ${filter.preferred_gender}}`;
+            where += `, gender: {_eq: "${filter.preferred_gender}"}`;
         }
         where += `, smokes_resp: {_lte: ${filter.smokes}}`;
-        where += `, email: {_neq: ${req.email}}`;
+        where += `, email: {_nin: ["${req.email}"`;
+        resp.data.matched_already.forEach(match => {
+            where += `, "${match.email}"`;
+        });
+        where += "]}";
 
         selfMatchFields.forEach(x => {
             where += `, ${x}: {_eq: ${profile[x]}}`;
@@ -91,36 +83,25 @@ function getNewMatches(req, res, next) {
         let find_matches_query = `query find_matches_query {
             profiles(limit: 10, where: ${where}) {
                 age
-                foods_resp
-                gender
-                music_resp
-                personality_resp
-                pets_resp
-                smokes_resp
-                traits_resp
                 name
                 bio
+                gender
                 email
-                filters {
-                    lower_age_range
-                    preferred_gender
-                    smokes
-                    upper_age_range
-                }
             }
         }`;
 
+        console.log(find_matches_query);
+
         // Query for matches
         database.postQuery("find_matches_query", find_matches_query, {}, function(resp, isError) {
-            if (isError) {
-                let result = resp.isAxiosError ? 
-                    res.status(resp.response.status).end(resp.response.data.error) :
-                    res.status(500).end(resp.message);
-                return result;
+            if (resp.isAxiosError) {
+                return res.status(resp.response.status).end(resp.response.data.error);
             }
-
-            // Need to perform further filtering once we retireve matching profiles.
-            return res.json(resp.data.find_matches_query);
+            else if (isError) {
+                return res.status(500).end(resp.message);
+            }
+            console.log(resp.data);
+            return res.json(resp.data.data.profiles);
         });
     });
 }
@@ -135,11 +116,11 @@ function postMatchRequest(req, res, next) {
     data.invitee = req.body.invitee;
     data.status = req.body.status;
     database.post("matches/" + req.email, data, function(resp, isError) {
-        if (isError) {
-            let result = resp.isAxiosError ? 
-                res.status(resp.response.status).end(resp.response.data.error) :
-                res.status(500).end(resp.message);
-            return result;
+        if (resp.isAxiosError) {
+            return res.status(resp.response.status).end(resp.response.data.error);
+        }
+        else if (isError) {
+            return res.status(500).end(resp.message);
         }
         return res.json(resp.data.insert_match_requests_one);
     });
@@ -148,11 +129,11 @@ function postMatchRequest(req, res, next) {
 /* Get all pending match and matched profiles */
 function getMatchRequests(req, res, next) {
     database.get("matches/" + req.email, function(resp, isError) {
-        if (isError) {
-            let result = resp.isAxiosError ? 
-                res.status(resp.response.status).end(resp.response.data.error) :
-                res.status(500).end(resp.message);
-            return result;
+        if (resp.isAxiosError) {
+            return res.status(resp.response.status).end(resp.response.data.error);
+        }
+        else if (isError) {
+            return res.status(500).end(resp.message);
         }
         return res.json(resp.data.match_requests);
     });
