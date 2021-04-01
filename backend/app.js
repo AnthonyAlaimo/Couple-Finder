@@ -6,7 +6,7 @@ const app = express();
 const path = require("path");
 const multer = require("multer");
 
-const upload = multer({ dest: path.join(__dirname, "uploads") });
+const upload = multer({dest: path.join(__dirname, "uploads")});
 const http = require("http");
 const crypto = require("crypto");
 const validator = require('validator');
@@ -19,13 +19,12 @@ app.use(
   session({
     secret: crypto.randomBytes(16).toString("base64"),
     resave: false,
-    saveUninitalized: true,
     cookie: {httpOnly: true, sameSite: true /*secure: true*/}
   })
 );
 
 const bodyParser = require("body-parser");
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(express.static("../frontend/build"));
 
@@ -78,6 +77,11 @@ app.post("/api/signin/", validateEmail, function (req, res, next) {
   login.signin(req, res, next);
 });
 
+/* Post profile for current user */
+app.post("/api/profile/", isAuthenticated, upload.single("profile_picture"), sanitizeProfileFields, function(req, res, next) {
+  profile.updateUserProfile(req, res, next);
+});
+
 /* Post survey responses for current user */
 app.post("/api/survey/", isAuthenticated, function (req, res, next) {
   survey.postSurveyResponses(req, res, next);
@@ -125,12 +129,6 @@ app.get("/api/matches/", isAuthenticated, function (req, res, next) {
 });
 
 /* Update */
-
-/* Update profile for current user */
-app.post("/api/profile/", isAuthenticated, upload.single("profile_picture"), sanitizeProfileFields, function(req, res, next) {
-  console.log(req.file);
-  profile.updateUserProfile(req, res, next);
-});
 
 app.put("/api/filters/", isAuthenticated, function(req, res, next) {
   match.updateFilters(req, res, next);
