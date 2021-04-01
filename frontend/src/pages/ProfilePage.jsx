@@ -57,6 +57,7 @@ function ProfilePage() {
             }
             console.log(result);
             await fetchApi("/filters/", "PUT", result);
+            //history.push(`/index`);
         }
     };
 
@@ -258,6 +259,7 @@ function ProfilePage() {
                 })
                 count += 1;
             })
+            console.log(userDetails.filterResults);
             return <DashboardLayout>
                         <UserDetails user={userDetails}></UserDetails>
                         <HStack>
@@ -294,7 +296,7 @@ function ProfilePage() {
                         </VStack>
 
                         <Heading as="h2" size="md">Preferred Gender</Heading>
-                        <RadioGroup value={userDetails.filterResults.preferred_gender} onChange={(q2) => {setFilterResults(q2, "preferred_gender")}}>
+                        <RadioGroup value={userDetails.filterResults.preferred_gender} defaultValue={userDetails.filterResults.preferred_gender} onChange={(q2) => {setFilterResults(q2, "preferred_gender")}}>
                             <HStack spacing="24px">
                                 <Radio value="Male" name="q2">Male</Radio>
                                 <Radio value="Female" name="q2">Female</Radio>
@@ -302,7 +304,7 @@ function ProfilePage() {
                             </HStack>
                         </RadioGroup>
                         <Heading as="h2" size="md">Partner's Smoking Habit</Heading>
-                        <RadioGroup value={userDetails.filterResults.smokes} onChange={(q3) => {setFilterResults(q3, "smokes")}}>
+                        <RadioGroup value={userDetails.filterResults.smokes} defaultValue={userDetails.filterResults.smokes} onChange={(q3) => {setFilterResults(q3, "smokes")}}>
                             <HStack spacing="24px">
                                 <Radio value="1" name="q3">Not at all</Radio>
                                 <Radio value="2" name="q3">Somewhat</Radio>
