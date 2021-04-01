@@ -45,11 +45,16 @@ function ProfilePage() {
                 userDetails.filterResults.upper_age_range = 90;
                 userDetails.filterResults.lower_age_range = 18;
             }
-
             let result = {lower_age_range: userDetails.filterResults.lower_age_range, 
                         upper_age_range: userDetails.filterResults.upper_age_range,
                         preferred_gender: userDetails.filterResults.preferred_gender, 
                         smokes: userDetails.filterResults.smokes};
+            if (result.lower_age_range === undefined){
+                result.lower_age_range = 18
+            }
+            if (result.upper_age_range === undefined){
+                result.upper_age_range = 90
+            }
             console.log(result);
             await fetchApi("/filters/", "PUT", result);
         }
@@ -299,9 +304,9 @@ function ProfilePage() {
                         <Heading as="h2" size="md">Partner's Smoking Habit</Heading>
                         <RadioGroup value={userDetails.filterResults.smokes} onChange={(q3) => {setFilterResults(q3, "smokes")}}>
                             <HStack spacing="24px">
-                                <Radio value="0" name="q3">Not at all</Radio>
-                                <Radio value="1" name="q3">Somewhat</Radio>
-                                <Radio value="2" name="q3">Frequently</Radio>
+                                <Radio value="1" name="q3">Not at all</Radio>
+                                <Radio value="2" name="q3">Somewhat</Radio>
+                                <Radio value="3" name="q3">Frequently</Radio>
                             </HStack>
                         </RadioGroup>
                         <Button onClick={() => onSubmit(`filter`)}>Submit</Button>
