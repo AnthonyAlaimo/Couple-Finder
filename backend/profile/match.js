@@ -114,6 +114,7 @@ function postMatchRequest(req, res, next) {
     }
     let data = {};
     data.invitee = req.body.invitee;
+    // Status of -1 means pending, default value. Status of 0 means dislike, status of 1 means like.
     data.status = req.body.status;
     database.post("matches/" + req.email, data, function(resp, isError) {
         if (resp.isAxiosError) {
