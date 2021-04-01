@@ -62,13 +62,23 @@ function getNewMatches(req, res, next) {
         }
         let profile = resp.data.profiles[0];
         let filter = profile.filters[0];
+        let prev_matches = [];
         console.log(profile);
+        console.log(filter);
+
+        // Convert list of past matches into list of emails
+        resp.data.matched_already.forEach(match => {
+            prev_matches.push(match.email);
+        });
+
+        console.log(prev_matches);
         // Construct match query based on criteria
         let where = `{age: {_gte: ${filter.lower_age_range}, _lte: ${filter.upper_age_range}}`;
         if (filter.preferred_gender !== "BOTH") {
             where += `, gender: {_eq: ${filter.preferred_gender}}`;
         }
         where += `, smokes_resp: {_lte: ${filter.smokes}}`;
+        where += `, email: {_neq: ${req.email}}`;
 
         selfMatchFields.forEach(x => {
             where += `, ${x}: {_eq: ${profile[x]}}`;
@@ -77,7 +87,7 @@ function getNewMatches(req, res, next) {
 
         // Construct graphQL query
         let find_matches_query = `query find_matches_query {
-            profiles(limit: 10, offset: where: ${where}) {
+            profiles(limit: 10, where: ${where}) {
                 age
                 foods_resp
                 gender
@@ -96,7 +106,6 @@ function getNewMatches(req, res, next) {
                     upper_age_range
                 }
             }
-
         }`;
 
         // Query for matches
@@ -107,6 +116,8 @@ function getNewMatches(req, res, next) {
                     res.status(500).end(resp.message);
                 return result;
             }
+
+            // Need to perform further filtering once we retireve matching profiles.
             return res.json(resp.data.find_matches_query);
         });
     });

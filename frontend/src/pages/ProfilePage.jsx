@@ -32,7 +32,7 @@ function ProfilePage() {
     const onSubmit = async (action) => {
         if (action === 'profile'){
             await fetchApi("/profile/", "POST", {name: userDetails.name, birth_date: userDetails.birth_date, gender: userDetails.gender, bio: userDetails.profile_bio/*, profile_picture: userDetails.image_file.files[0]*/})
-            dispatch({id: userId})
+            dispatch({id: userId});
         }
         if (action === 'survey'){
             console.log(userDetails.surveyResults);
@@ -46,7 +46,7 @@ function ProfilePage() {
                 userDetails.filterResults[0].lower_age_range = 18;
             }
             console.log(userDetails.filterResults[0]);
-            //await fetchApi("/filters/", "PUT", userDetails.filterResults[0])
+            await fetchApi("/filters/", "PUT", userDetails.filterResults[0]);
         }
     };
 

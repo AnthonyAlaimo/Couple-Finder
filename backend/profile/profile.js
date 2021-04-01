@@ -19,7 +19,6 @@ function getUserProfile(req, res, next) {
             return res.json(null);
         }
         let profile = resp.data.profiles[0];
-        console.log(profile);
         return res.json(profile);
     });
 }
@@ -44,7 +43,6 @@ function updateUserProfile(req, res, next) {
                     return res.status(500).end(resp.message);
                 }
                 let profile = resp.data.insert_profiles_one;
-                console.log(profile);
                 return res.json(profile);
             });
         }
@@ -71,7 +69,6 @@ function updateUserProfile(req, res, next) {
                     }
                 ]}*/
             }};
-            console.log(data);
             database.put("profile/", data, function(resp, isError) {
                 if (resp.isAxiosError) {
                     return res.status(resp.response.status).end(resp.response.data.error);
@@ -80,7 +77,6 @@ function updateUserProfile(req, res, next) {
                     return res.status(500).end(resp.message);
                 }
                 let profile = resp.data.insert_profiles_one;
-                console.log(profile);
                 return res.json(profile);
             });
         }
