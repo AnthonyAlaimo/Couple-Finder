@@ -31,9 +31,11 @@ function updateFilters(req, res, next) {
     // Post to database
     let data = {filters: {}};
     data.filters.email = req.email;
-    requiredFields.forEach(x => {
+    requiredFilters.forEach(x => {
         data.filters[x] = req.body[x];
     });
+
+    console.log(data);
 
     database.put("filters/", data, function(resp, isError) {
         if (isError) {
