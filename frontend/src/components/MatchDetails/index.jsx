@@ -1,6 +1,6 @@
 import { Heading, VStack, HStack, Container, Box, Img } from "@chakra-ui/react"
-import './userDetails.css';
-export default function UserDetails({ user, heading, body }) {
+import './matchDetails.css';
+export default function MatchDetails({ user, heading, body }) {
     // "Pure component
     if (user === undefined){
         return <Heading as="h1" size="4xl">loading</Heading>

@@ -32,12 +32,10 @@ function ProfilePage() {
 
     const onSubmit = async (action) => {
         if (action === 'profile'){
-            console.log(document.querySelector(".image_file"));
             await fetchImageApi("/profile/", "POST", {name: userDetails.name, birth_date: userDetails.birth_date, gender: userDetails.gender, bio: userDetails.profile_bio, profile_picture: userDetails.image_file})
             dispatch({id: userId});
         }
         if (action === 'survey'){
-            console.log(userDetails.surveyResults);
             await fetchApi("/survey/", "POST", userDetails.surveyResults);
             dispatch({surveyComplete: true});
         }
@@ -57,7 +55,6 @@ function ProfilePage() {
             if (result.upper_age_range === undefined){
                 result.upper_age_range = 90
             }
-            console.log(result);
             await fetchApi("/filters/", "PUT", result);
             //history.push(`/index`);
         }
@@ -156,7 +153,6 @@ function ProfilePage() {
     }, [ userId ]);
 
 
-    console.log(userDetails);
     if ( userDetails === null ){
         // if (userId === undefined){
         //     return <Redirect to="/"></Redirect>
@@ -266,7 +262,6 @@ function ProfilePage() {
                 })
                 count += 1;
             })
-            console.log(userDetails.filterResults);
             return <DashboardLayout>
                         <UserDetails user={userDetails}></UserDetails>
                         <HStack>

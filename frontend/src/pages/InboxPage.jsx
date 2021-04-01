@@ -57,9 +57,12 @@ function InboxPage() {
     console.log(userDetails);
     return (
         <DashboardLayout>
-            <Icon as={FcLike}/>
             Inbox
-            {/* <Icon as={RiDislikeFill}/> */}
+            {/* <HStack>
+                <Icon as={FcLike}/>
+                <MatchDetails user={userDetails.matches[0]}></MatchDetails>
+                <Icon as={FcLike}/>
+            </HStack> */}
         </DashboardLayout>
     );
 }
