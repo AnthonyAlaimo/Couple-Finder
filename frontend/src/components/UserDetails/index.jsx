@@ -15,7 +15,7 @@ export default function UserDetails({ user, heading, body }) {
     // }
     // "Pure component
     if (user.pictures === undefined){
-        location.reload();
+        window.location.reload();
         return <Heading as="h1" size="4xl">loading</Heading>
     }
     console.log(user);

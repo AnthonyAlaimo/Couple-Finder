@@ -25,8 +25,6 @@ function InboxPage() {
     const userId = params.userID ?? user?._id;
 
     const [ userDetails, dispatch ] = useReducer(reducer, null);
-    // /* Get 5 matches based on user's filters */
-    // app.get("/api/new-matches/", isAuthenticated, function (req, res, next) {
     
     // /* Get match history for the user */
     // app.get("/api/matches/", isAuthenticated, function (req, res, next) {
@@ -49,8 +47,9 @@ function InboxPage() {
                 if (!controller.signal.aborted){
                     const user_profile = await fetchApi("/profile/", "GET", null, controller.signal);
                     const matches = await fetchApi("/new-matches/", "GET", null, controller.signal);
+                    console.log(matches);
                     dispatch(user_profile);
-                    dispatch({matches});
+                    dispatch({matches: matches});
                 }
             } catch (err) {
                 if (err.name === `AbortError`) {
@@ -68,15 +67,17 @@ function InboxPage() {
         };
     }, [ userId ]);
 
+    console.log(userDetails)
     if ( userDetails === null ){
-        return <DashboardLayout>Loading. Complete Your User Survey and Filters located in the profile page</DashboardLayout>
+        return <DashboardLayout>Loading. Complete your user Survey and fill out Filters located in the profile page</DashboardLayout>
     }
-    else if(userDetails.matches === undefined){
-        return <DashboardLayout>Loading. Complete Your User Survey and Filters located in the profile page</DashboardLayout>
+    else if(userDetails.matches === undefined || userDetails.matches === null){
+        return <DashboardLayout>Loading. Complete your user Survey and fill out Filters located in the profile page</DashboardLayout>
     }
     else if(userDetails.matches.length === 0){
         return <DashboardLayout>You have no matches D:</DashboardLayout>
     }
+    console.log(userDetails)
     return (
         <DashboardLayout>
             <Heading className="centre" as="h1" size="4xl">Inbox</Heading>

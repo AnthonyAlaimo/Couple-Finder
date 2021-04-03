@@ -52,7 +52,6 @@ function ProfilePage() {
                 result.upper_age_range = 90
             }
             await fetchApi("/filters/", "PUT", result);
-            //history.push(`/index`);
         }
     };
 
@@ -235,11 +234,34 @@ function ProfilePage() {
                                 <Radio value="3" name="q6">Frequently</Radio>
                             </HStack>
                         </RadioGroup>
-                            <Button onClick={() => onSubmit(`survey`)}>Submit</Button>
+                            <Button onClick={() => onSubmit(`survey`).then(()=>{
+                            toast({
+                                title: "Survey Complete",
+                                position: 'top',
+                                description: "View Survey Results below",
+                                status: "success",
+                                duration: 4000,
+                                isClosable: true
+                            })
+                        }).catch(()=>{
+                            toast({
+                                title: "Survey Incomplete",
+                                position: 'top',
+                                description: "All survey fields must be filled out",
+                                status: "error",
+                                duration: 4000,
+                                isClosable: true
+                            })
+                        })}>Submit</Button>
                         </VStack>
                     </DashboardLayout>
         // SURVEY RESPONSE CASE: SURVEY HAS BEEN COMPLETED
         }else{
+            console.log(userDetails);
+            if (userDetails.personality_resp === 0){
+                window.location.reload();
+                return <Heading as="h1" size="4xl">loading</Heading>
+            }
             let response=[userDetails.personality_resp, 
                 userDetails.traits_resp, 
                 userDetails.music_resp,
@@ -311,7 +333,7 @@ function ProfilePage() {
                             toast({
                                 title: "Filters Successfully set",
                                 position: 'top',
-                                description: "",
+                                description: "Go to inbox to check for potential matches",
                                 status: "success",
                                 duration: 4000,
                                 isClosable: true
