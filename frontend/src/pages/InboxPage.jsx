@@ -31,11 +31,11 @@ function InboxPage() {
 
     const onSubmit = async (action) => {
         if (action === 'LikeProfile'){
-            console.log("Like")
-            // await fetchApi("/profile/", "POST", {})
+            console.log("Like");
+            await fetchApi("/match/", "POST", {invitee: userDetails.matches[0].email, status: -1});
         }else if (action === 'DisLikeProfile'){
-            // await fetchApi("/profile/", "POST", {})
-            console.log("DisLike")
+            console.log("DisLike");
+            await fetchApi("/match/", "POST", {invitee: userDetails.matches[0].email, status: 0});
         }   
     };
     useEffect(() => {
@@ -69,10 +69,10 @@ function InboxPage() {
 
     console.log(userDetails)
     if ( userDetails === null ){
-        return <DashboardLayout>Loading. Complete your user Survey and fill out Filters located in the profile page</DashboardLayout>
+        return <DashboardLayout>Loading. Complete your user <b>Survey</b> and fill out <b>Filters</b> located in the profile page</DashboardLayout>
     }
     else if(userDetails.matches === undefined || userDetails.matches === null){
-        return <DashboardLayout>Loading. Complete your user Survey and fill out Filters located in the profile page</DashboardLayout>
+        return <DashboardLayout>Loading. Complete your user <b>Survey</b> and fill out <b>Filters</b> located in the profile page</DashboardLayout>
     }
     else if(userDetails.matches.length === 0){
         return <DashboardLayout>You have no matches D:</DashboardLayout>

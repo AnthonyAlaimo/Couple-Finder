@@ -24,6 +24,6 @@
     padding-right: 2px;
   }
 
-  .display{
-      justify-content:center;
-  }
+.display {
+  text-align: center;
+}

@@ -159,9 +159,10 @@ function ProfilePage() {
         // SURVEY RESPONSE CASE: SURVEY HASN'T BEEN COMPLETED
         if (userDetails.surveyComplete === false){
             return <DashboardLayout>
+                <VStack>
                         <UserDetails user={userDetails}></UserDetails>
                          <VStack className='lrp__card img_layout profile_info' borderRadius='md' maxW="600px" boxSize="700px">
-                        <Heading className='display' as="h3" color="white" bg="black" w="110%" borderRadius="5px" p="10px">Complete Your Matching Survey</Heading>
+                        <Heading as="h3" color="white" bg="black" w="110%" borderRadius="5px" p="10px">Complete Your Matching Survey</Heading>
                         <Heading as="h2" size="md">How would you describe your personality?</Heading>
                         <RadioGroup value={userDetails.surveyResults.personality_resp} defaultValue={userDetails.surveyResults.personality_resp}  onChange={(q1) => {setSurveyResults(q1, "personality_resp")}}>
                             <HStack spacing="24px">
@@ -253,6 +254,7 @@ function ProfilePage() {
                                 isClosable: true
                             })
                         })}>Submit</Button>
+                        </VStack>
                         </VStack>
                     </DashboardLayout>
         // SURVEY RESPONSE CASE: SURVEY HAS BEEN COMPLETED
