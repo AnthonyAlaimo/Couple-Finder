@@ -6,7 +6,7 @@ const app = express();
 const path = require("path");
 const multer = require("multer");
 
-const upload = multer({dest: path.join(__dirname, "uploads")});
+const upload = multer({dest: path.join(__dirname, "uploads"), limits: {fileSize: "4MB"}});
 const http = require("http");
 const crypto = require("crypto");
 const validator = require('validator');
@@ -17,6 +17,7 @@ app.use(helmet());
 const session = require("express-session");
 app.use(
   session({
+    saveUninitialized: false,
     secret: crypto.randomBytes(16).toString("base64"),
     resave: false,
     cookie: {httpOnly: true, sameSite: true /*secure: true*/}
