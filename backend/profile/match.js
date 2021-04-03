@@ -72,12 +72,7 @@ function getNewMatches(req, res, next) {
         resp.data.matched_already.forEach(match => {
             where += `, "${match.email}"`;
         });
-        where += "]}";
-
-        selfMatchFields.forEach(x => {
-            where += `, ${x}: {_eq: ${profile[x]}}`;
-        });
-        where += "}";
+        where += "]}}";
 
         // Construct graphQL query
         let find_matches_query = `query find_matches_query {
@@ -90,8 +85,6 @@ function getNewMatches(req, res, next) {
             }
         }`;
 
-        console.log(find_matches_query);
-
         // Query for matches
         database.postQuery("find_matches_query", find_matches_query, {}, function(resp, isError) {
             if (resp.isAxiosError) {
@@ -100,7 +93,6 @@ function getNewMatches(req, res, next) {
             else if (isError) {
                 return res.status(500).end(resp.message);
             }
-            console.log(resp.data);
             return res.json(resp.data.data.profiles);
         });
     });
