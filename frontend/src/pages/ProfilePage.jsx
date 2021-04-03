@@ -32,7 +32,7 @@ function ProfilePage() {
             dispatch({id: userId});
         }
         if (action === 'survey'){
-            await fetchApi("/survey/", "POST", userDetails.surveyResults);
+            await fetchApi("/survey/", "PUT", userDetails.surveyResults);
             dispatch({surveyComplete: true});
         }
         if (action === 'filter'){

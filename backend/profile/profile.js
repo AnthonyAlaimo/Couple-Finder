@@ -24,69 +24,44 @@ function getUserProfile(req, res, next) {
 }
 
 /* Updates current user's profile */
-function updateUserProfile(req, res, next) {
-    // Query database to determine if profile already exists.
-    database.get("profile/" + req.email, function(resp, isError) {
+function postUserProfile(req, res, next) {
+    // Check for missing fields
+    if (!req.file || !req.body.name || !req.body.birth_date || !req.body.gender) {
+        return res.status(400)
+        .end("A required field is missing, please fix request and try again.");
+    }
+    let data = {profile: {
+        email: req.email,
+        name: req.body.name,
+        birthday: req.body.birth_date,
+        age: calculateAge(req.body.birth_date),
+        gender: req.body.gender.toLocaleUpperCase("en-US"),
+        bio: req.body.bio,
+        pictures: {data: [
+            {
+                path: req.file.path,
+                mimetype: req.file.mimetype,
+                filename: req.file.filename,
+                is_profile_picture: true
+            }
+        ]}
+    }};
+    database.put("profile/", data, function(resp, isError) {
         if (resp.isAxiosError) {
+            // Remove uploaded file from FS
+            if (fs.existsSync(req.file.path)) {
+                fs.unlinkSync(req.file.path);
+            }
             return res.status(resp.response.status).end(resp.response.data.error);
         }
         else if (isError) {
+            if (fs.existsSync(req.file.path)) {
+                fs.unlinkSync(req.file.path);
+            }
             return res.status(500).end(resp.message);
         }
-        // If profile already exists, only allow modification of certain fields
-        else if (resp.data.profiles.length > 0) {
-            database.put("profile/", {profile: {email: req.email, bio: req.body.bio}}, function(resp, isError) {
-                if (resp.isAxiosError) {
-                    return res.status(resp.response.status).end(resp.response.data.error);
-                }
-                else if (isError) {
-                    return res.status(500).end(resp.message);
-                }
-                let profile = resp.data.insert_profiles_one;
-                return res.json(profile);
-            });
-        }
-        // Else allow modification of all fields
-        else {
-            // Check for missing fields
-            if (!req.file || !req.body.name || !req.body.birth_date || !req.body.gender) {
-                return res.status(400)
-                .end("A required field is missing, please fix request and try again.");
-            }
-            let data = {profile: {
-                email: req.email,
-                name: req.body.name,
-                birthday: req.body.birth_date,
-                age: calculateAge(req.body.birth_date),
-                gender: req.body.gender.toLocaleUpperCase("en-US"),
-                bio: req.body.bio,
-                pictures: {data: [
-                    {
-                        path: req.file.path,
-                        mimetype: req.file.mimetype,
-                        filename: req.file.filename,
-                        is_profile_picture: true
-                    }
-                ]}
-            }};
-            database.put("profile/", data, function(resp, isError) {
-                if (resp.isAxiosError) {
-                    // Remove uploaded file from FS
-                    if (fs.existsSync(req.file.path)) {
-                        fs.unlinkSync(req.file.path);
-                    }
-                    return res.status(resp.response.status).end(resp.response.data.error);
-                }
-                else if (isError) {
-                    if (fs.existsSync(req.file.path)) {
-                        fs.unlinkSync(req.file.path);
-                    }
-                    return res.status(500).end(resp.message);
-                }
-                let profile = resp.data.insert_profiles_one;
-                return res.json(profile);
-            });
-        }
+        let profile = resp.data.insert_profiles_one;
+        return res.json(profile);
     });
 }
 
@@ -126,4 +101,4 @@ function calculateAge(birthday) {
     return age;
 }
 
-module.exports = {getUserProfile, updateUserProfile, getPictureFile};
+module.exports = {getUserProfile, postUserProfile, getPictureFile};
