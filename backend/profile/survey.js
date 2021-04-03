@@ -20,7 +20,7 @@ function getSurvey(req, res, next) {
 }
 
 /* Post survey responses to database */
-function postSurveyResponses(req, res, next) {
+function putSurveyResponses(req, res, next) {
     // Convert from {question_number, answer_number} into corresponding column in profiles table
     let data = {};
     questionMapping.forEach(x => {
@@ -49,4 +49,4 @@ mutation upsert_survey_responses($survey_responses: [survey_responses_insert_inp
 }
 `;
 
-module.exports = {getSurvey, postSurveyResponses};
+module.exports = {getSurvey, putSurveyResponses};

@@ -15,7 +15,7 @@ const match_statuses = ["PENDING", "DISLIKED", "MATCHED"];
 /* Logic for matching user profiles */
 
 /* Update filters for user in DB */
-function updateFilters(req, res, next) {
+function putFilters(req, res, next) {
     // Check for missing fields
     requiredFilters.forEach(x => {
         if (req.body[x] == null) {
@@ -114,7 +114,7 @@ function getNewMatches(req, res, next) {
 }
 
 /* Like or dislike a match */
-function postMatchRequest(req, res, next) {
+function putMatchRequest(req, res, next) {
     // Check for missing fields
     if (!req.body.invitee || !req.body.status) {
         return res.status(400).end("Inproperly formatted request, please fix and try again.");
@@ -163,7 +163,7 @@ function postMatchRequest(req, res, next) {
 }
 
 /* Get all pending match and matched profiles */
-function getMatchRequests(req, res, next) {
+function getAllMatchRequests(req, res, next) {
     database.get("matches/" + req.email, function(resp, isError) {
         if (resp.isAxiosError) {
             return res.status(resp.response.status).end(resp.response.data.error);
@@ -194,4 +194,4 @@ const upsert_match_requests = `mutation upsert_match_requests($match_requests: [
     }
 }`;
 
-module.exports = {updateFilters, getNewMatches, postMatchRequest, getMatchRequests};
+module.exports = {putFilters, getNewMatches, putMatchRequest, getAllMatchRequests};
