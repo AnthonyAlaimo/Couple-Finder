@@ -78,10 +78,23 @@ function getNewMatches(req, res, next) {
         let find_matches_query = `query find_matches_query {
             profiles(limit: 10, where: ${where}) {
                 age
-                name
                 bio
-                gender
                 email
+                foods_resp
+                gender
+                music_resp
+                name
+                pets_resp
+                personality_resp
+                smokes_resp
+                traits_resp
+                pictures {
+                  filename
+                  id
+                  mimetype
+                  path
+                  is_profile_picture
+                }
             }
         }`;
 
