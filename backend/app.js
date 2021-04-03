@@ -138,7 +138,7 @@ app.put("/api/filters/", isAuthenticated, function(req, res, next) {
 /* Delete */
 
 app.use("/", function (req, res, next){
-  res.redirect("/");
+  res.sendFile("index.html");
 });
 
 // Determines if user is authenticated
