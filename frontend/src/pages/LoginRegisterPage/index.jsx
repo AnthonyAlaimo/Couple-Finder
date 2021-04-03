@@ -14,11 +14,10 @@ function LoginRegisterPage() {
     const history = useHistory();
 
     const onSubmit = async (action) => {
-        if (action == 'login'){
-            console.log("working?")
-            await login(email, password);
-        }else if (action == 'register'){
-            await register(email, password);
+        if (action === 'login'){
+            await login(email, password)
+        }else if (action === 'register'){
+            await register(email, password)
         }
         history.push(`/profile`);
     };
@@ -63,27 +62,47 @@ function LoginRegisterPage() {
                         required
                     />
                     <HStack>
-                        <Button onClick={() => onSubmit(`login`)}
-                        // onClick={() =>
-                        //     toast({
-                        //       title: "Login Failed",
-                        //       position: 'top',
-                        //       description: "Password or Email is incorrect",
-                        //       status: "error",
-                        //       duration: 9000,
-                        //       isClosable: true,
-                        //     })}
+                        <Button onClick={() => {
+                            onSubmit(`login`).then(()=>{
+                                toast({
+                                    title: "Login Successful",
+                                    position: 'top',
+                                    description: "",
+                                    status: "success",
+                                    duration: 4000,
+                                    isClosable: true
+                                })
+                            }).catch(()=>{
+                                toast({
+                                    title: "Login Failed",
+                                    position: 'top',
+                                    description: "Password or Email is incorrect",
+                                    status: "error",
+                                    duration: 4000,
+                                    isClosable: true
+                                })
+                            })
+                        }}
                             >Login</Button>
-                        <Button onClick={() => onSubmit(`register`)}
-                        // onClick={() =>
-                        //     toast({
-                        //       title: "Registration Failed",
-                        //       position: 'top',
-                        //       description: "Invalid email address",
-                        //       status: "error",
-                        //       duration: 9000,
-                        //       isClosable: true,
-                        //     })}
+                        <Button onClick={() => onSubmit(`register`).then(()=>{
+                            toast({
+                                title: "Registration Successful",
+                                position: 'top',
+                                description: "",
+                                status: "success",
+                                duration: 4000,
+                                isClosable: true
+                            })
+                        }).catch(()=>{
+                            toast({
+                                title: "Registration Failed",
+                                position: 'top',
+                                description: "Invalid email address",
+                                status: "error",
+                                duration: 4000,
+                                isClosable: true
+                            })
+                        })}
                         >Register</Button>
                     </HStack>
                 </VStack>

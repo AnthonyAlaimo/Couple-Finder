@@ -3,18 +3,13 @@ import { Redirect, useParams } from "react-router";
 import DashboardLayout from "../components/DashboardLayout";
 import UserDetails from "../components/UserDetails";
 import UserProvider, { UserContext } from "../components/UserProvider";
-import { FormLabel, RadioGroup, VStack, HStack, Input, Heading, Radio, Button, Textarea, Stack } from '@chakra-ui/react';
+import { Field, FormLabel, RadioGroup, VStack, HStack, Input, Heading, Radio, Button, Textarea, Stack } from '@chakra-ui/react';
 import './ProfilePage/ProfilePage.css';
 import fetchApi from "../utils/fetchApi";
 import fetchImageApi from "../utils/fetchImageApi";
 import { Wrap, WrapItem } from "@chakra-ui/react"
-import {
-    NumberInput,
-    NumberInputField,
-    NumberInputStepper,
-    NumberIncrementStepper,
-    NumberDecrementStepper,
-  } from "@chakra-ui/react"
+import { NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper } from "@chakra-ui/react"
+import { useToast } from "@chakra-ui/react"
 
 function reducer(state = {}, action) {
     if (action === null){
@@ -22,8 +17,9 @@ function reducer(state = {}, action) {
     }
     return Object.assign({}, state, action);
 }
-
+  
 function ProfilePage() {
+    const toast = useToast()
     const { user } = useContext(UserContext);
     const params = useParams();
     const userId = params.userID ?? user?._id;
@@ -78,12 +74,12 @@ function ProfilePage() {
     }
 
     const handler = (e) => {
-        console.log(e, e.target);
+        // console.log(e, e.target);
         dispatch({[e.target.name]: e.target.value});
     }
 
     const imageHandler = (e) => {
-        console.log(e, e.target);
+        // console.log(e, e.target);
         dispatch({[e.target.name]: e.target.files[0]});
     }
 
@@ -153,10 +149,8 @@ function ProfilePage() {
     }, [ userId ]);
 
 
+    console.log(userDetails)
     if ( userDetails === null ){
-        // if (userId === undefined){
-        //     return <Redirect to="/"></Redirect>
-        // }
         return <DashboardLayout>loading</DashboardLayout>
     }
     if (userDetails.surveyResults === undefined){
@@ -170,7 +164,7 @@ function ProfilePage() {
                          <VStack className='lrp__card img_layout profile_info' borderRadius='md' maxW="600px" boxSize="700px">
                         <Heading className='display' as="h3" color="white" bg="black" w="110%" borderRadius="5px" p="10px">Complete Your Matching Survey</Heading>
                         <Heading as="h2" size="md">How would you describe your personality?</Heading>
-                        <RadioGroup value={userDetails.surveyResults.personality_resp} onChange={(q1) => {setSurveyResults(q1, "personality_resp")}}>
+                        <RadioGroup value={userDetails.surveyResults.personality_resp} defaultValue={userDetails.surveyResults.personality_resp}  onChange={(q1) => {setSurveyResults(q1, "personality_resp")}}>
                             <HStack spacing="24px">
                             <Wrap>
                                 <WrapItem>
@@ -185,7 +179,7 @@ function ProfilePage() {
                             </HStack>
                         </RadioGroup>
                         <Heading as="h2" size="md">What traits do you look for in a partner?</Heading>
-                        <RadioGroup value={userDetails.surveyResults.traits_resp} onChange={(q2) => {setSurveyResults(q2, "traits_resp")}}>
+                        <RadioGroup value={userDetails.surveyResults.traits_resp} defaultValue={userDetails.surveyResults.traits_resp}  onChange={(q2) => {setSurveyResults(q2, "traits_resp")}}>
                             <HStack spacing="24px">
                             <Wrap maxW="200">
                                 <WrapItem>
@@ -204,7 +198,7 @@ function ProfilePage() {
                             </HStack>
                         </RadioGroup>
                         <Heading as="h2" size="md">What kind of music puts you in the mood?</Heading>
-                        <RadioGroup value={userDetails.surveyResults.music_resp} onChange={(q3) => {setSurveyResults(q3, "music_resp")}}>
+                        <RadioGroup value={userDetails.surveyResults.music_resp} defaultValue={userDetails.surveyResults.music_resp}  onChange={(q3) => {setSurveyResults(q3, "music_resp")}}>
                             <HStack spacing="24px">
                                 <Radio value="1" name="q3">Soul music</Radio>
                                 <Radio value="2" name="q3">Jazz</Radio>
@@ -214,7 +208,7 @@ function ProfilePage() {
                             </HStack>
                         </RadioGroup>
                         <Heading as="h2" size="md">Out of the following foods, what appeals to you the most?</Heading>
-                        <RadioGroup value={userDetails.surveyResults.foods_resp} onChange={(q4) => {setSurveyResults(q4, "foods_resp")}}>
+                        <RadioGroup value={userDetails.surveyResults.foods_resp} defaultValue={userDetails.surveyResults.foods_resp}  onChange={(q4) => {setSurveyResults(q4, "foods_resp")}}>
                             <HStack spacing="24px">
                                 <Radio value="1" name="q4">Pizza</Radio>
                                 <Radio value="2" name="q4">Pasta</Radio>
@@ -224,7 +218,7 @@ function ProfilePage() {
                             </HStack>
                         </RadioGroup>
                         <Heading as="h2" size="md">How do you feel about pets and animals?</Heading>
-                        <RadioGroup value={userDetails.surveyResults.pets_resp} onChange={(q5) => {setSurveyResults(q5, "pets_resp")}}>
+                        <RadioGroup value={userDetails.surveyResults.pets_resp} defaultValue={userDetails.surveyResults.pets_resp}  onChange={(q5) => {setSurveyResults(q5, "pets_resp")}}>
                             <HStack spacing="24px">
                                 <Radio value="1" name="q5">Not very much</Radio>
                                 <Radio value="2" name="q5">Not much</Radio>
@@ -234,7 +228,7 @@ function ProfilePage() {
                             </HStack>
                         </RadioGroup>
                         <Heading as="h2" size="md">Do you smoke?</Heading>
-                        <RadioGroup value={userDetails.surveyResults.smokes_resp} onChange={(q6) => {setSurveyResults(q6, "smokes_resp")}}>
+                        <RadioGroup value={userDetails.surveyResults.smokes_resp} defaultValue={userDetails.surveyResults.smokes_resp}  onChange={(q6) => {setSurveyResults(q6, "smokes_resp")}}>
                             <HStack spacing="24px">
                                 <Radio value="1" name="q6">Not at all</Radio>
                                 <Radio value="2" name="q6">Somewhat</Radio>
@@ -313,7 +307,25 @@ function ProfilePage() {
                                 <Radio value="3" name="q3">Frequently</Radio>
                             </HStack>
                         </RadioGroup>
-                        <Button onClick={() => onSubmit(`filter`)}>Submit</Button>
+                        <Button onClick={() => onSubmit(`filter`).then(()=>{
+                            toast({
+                                title: "Filters Successfully set",
+                                position: 'top',
+                                description: "",
+                                status: "success",
+                                duration: 4000,
+                                isClosable: true
+                            })
+                        }).catch(()=>{
+                            toast({
+                                title: "Filters not set",
+                                position: 'top',
+                                description: "Failed to set filters, make sure to set all fields!",
+                                status: "error",
+                                duration: 4000,
+                                isClosable: true
+                            })
+                        })}>Submit</Button>
                         </VStack>
                         </HStack>
                     </DashboardLayout>
@@ -343,6 +355,7 @@ function ProfilePage() {
                         required
                         /> 
                     <Input
+                        id="name"
                         name="name"
                         variant='filled'
                         value={userDetails.name}
@@ -352,6 +365,7 @@ function ProfilePage() {
                         required
                     />
                     <Input
+                        id="birth_date"
                         name="birth_date"
                         variant='filled'
                         value={userDetails.birth_date}
@@ -360,15 +374,15 @@ function ProfilePage() {
                         type='date'
                         required
                     />
-
                     <FormLabel>Select your gender</FormLabel>
-                    <RadioGroup value={userDetails.gender} onChange={(gender) => {dispatch({gender})}}>
+                    <RadioGroup id="gender" value={userDetails.gender} onChange={(gender) => {dispatch({gender})}}>
                         <HStack spacing="24px">
                         <Radio value="Male" name="gender">Male</Radio>
                         <Radio value="Female" name="gender">Female</Radio>
                         </HStack>
                     </RadioGroup>
                     <Textarea
+                        id="profile_bio"
                         name="profile_bio"
                         variant='filled'
                         value={userDetails.profile_bio}
@@ -378,7 +392,25 @@ function ProfilePage() {
                         required
                 />
                     <HStack>
-                        <Button onClick={() => onSubmit(`profile`)}>Submit</Button>
+                        <Button onClick={() => onSubmit(`profile`).then(()=>{
+                            toast({
+                                title: "Profile Successful Created",
+                                position: 'top',
+                                description: "",
+                                status: "success",
+                                duration: 4000,
+                                isClosable: true
+                            })
+                        }).catch(()=>{
+                            toast({
+                                title: "Profile Not Created",
+                                position: 'top',
+                                description: "Missing profile fields",
+                                status: "error",
+                                duration: 4000,
+                                isClosable: true
+                            })
+                        })}>Submit</Button>
                     </HStack>
                 </VStack>
             </VStack>
