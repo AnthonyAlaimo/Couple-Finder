@@ -10,6 +10,8 @@ const requiredFilters = ["lower_age_range", "upper_age_range", "preferred_gender
 /* Constant containing self match fields */
 const selfMatchFields = ["foods_resp", "music_resp", "personality_resp", "pets_resp", "traits_resp"];
 
+const match_statuses = ["PENDING", "DISLIKED", "MATCHED"];
+
 /* Logic for matching user profiles */
 
 /* Update filters for user in DB */
@@ -117,18 +119,46 @@ function postMatchRequest(req, res, next) {
     if (!req.body.invitee || !req.body.status) {
         return res.status(400).end("Inproperly formatted request, please fix and try again.");
     }
-    let data = {};
-    data.invitee = req.body.invitee;
-    // Status of -1 means pending, default value. Status of 0 means dislike, status of 1 means like.
-    data.status = req.body.status;
-    database.post("matches/" + req.email, data, function(resp, isError) {
+    let match1 = {inviter: req.email, invitee: req.body.invitee};
+    match1.status = req.body.status.toLocaleUpperCase("en-US");
+    if (!match_statuses.includes(match1.status)) {
+        return res.status(400).end("Impropper value for status. Please select one of: PENDING, DISLIKED, MATCHED and try again.");
+    }
+
+    // Query DB to see if the invitee user has also liked the current user
+    database.postQuery("get_match_request", get_match_request, {invitee: req.email, inviter: req.body.invitee}, function(resp, isError) {
         if (resp.isAxiosError) {
             return res.status(resp.response.status).end(resp.response.data.error);
         }
         else if (isError) {
             return res.status(500).end(resp.message);
         }
-        return res.json(resp.data.insert_match_requests_one);
+        let data = [];
+
+        // If match request is found, need to update status of both accordingly
+        if (resp.data.data.match_requests.length > 0) {            
+            let match2 = resp.data.match_requests[0];
+            if (match1.status === "DISLIKED" || match2.status === "DISLIKED") {
+                match1.status = "DISLIKED";
+                match2.status = "DISLIKED";
+            }
+            else {
+                match1.status = "MATCHED";
+                match2.status = "MATCHED";
+            }
+            data.push(match2);
+        }
+        data.push(match1);
+        // Post updated match requests
+        database.postQuery("upsert_match_requests", upsert_match_requests, {match_requests: data}, function(resp, isError) {
+            if (resp.isAxiosError) {
+                return res.status(resp.response.status).end(resp.response.data.error);
+            }
+            else if (isError) {
+                return res.status(500).end(resp.message);
+            }
+            return res.json(resp.data.data.insert_match_requests.returning);
+        });
     });
 }
 
@@ -144,5 +174,24 @@ function getMatchRequests(req, res, next) {
         return res.json(resp.data.match_requests);
     });
 }
+
+/* GraphQL Documents */
+const get_match_request = `query get_match_request($invitee: String!, $inviter: String!) {
+    match_requests(where: {invitee: {_eq: $invitee}, inviter: {_eq: $inviter}}) {
+        invitee
+        inviter
+        status
+    }
+}`;
+
+const upsert_match_requests = `mutation upsert_match_requests($match_requests: [match_requests_insert_input!]!) {
+    insert_match_requests(objects: $match_requests, on_conflict: {constraint: match_requests_pkey, update_columns: status}) {
+        returning {
+        invitee
+        inviter
+        status
+        }
+    }
+}`;
 
 module.exports = {updateFilters, getNewMatches, postMatchRequest, getMatchRequests};
