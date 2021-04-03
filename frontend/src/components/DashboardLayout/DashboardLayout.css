@@ -1,0 +1,38 @@
+.dashboard__logo {
+    transition: background-color 250ms ease-in-out 0s, color 250ms ease-in-out 0s;
+    display: flex;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+}
+
+.dashboard__logo:hover, .dashboard__logo:focus {
+    background-color: rgba(var(--color-primary), 0.06);
+    color: rgb(var(--color-primary));
+}
+
+.dashboard__logo:active {
+    background-color: rgba(var(--color-primary), 0.12);
+    color: rgb(var(--color-primary-hover));
+}
+
+.dashboard__link {
+    transition: background-color 250ms ease-in-out 0s, color 250ms ease-in-out 0s;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    display: block;
+}
+
+.dashboard__link--active {
+    background-color: rgba(var(--color-primary), 0.06);
+    color: rgb(var(--color-primary));
+}
+
+.dashboard__link:hover, .dashboard__link:focus {
+    background-color: rgba(var(--color-primary), 0.06);
+    color: rgb(var(--color-primary-hover));
+}
+
+.dashboard__link:active {
+    background-color: rgba(var(--color-primary), 0.12);
+    color: rgb(var(--color-primary-active));
+}
