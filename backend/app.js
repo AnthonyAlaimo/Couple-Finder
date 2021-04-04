@@ -20,7 +20,7 @@ app.use(
     saveUninitialized: false,
     secret: crypto.randomBytes(16).toString("base64"),
     resave: false,
-    cookie: {httpOnly: true, sameSite: true, secure: true}
+    cookie: {httpOnly: true, sameSite: true /*,secure: true*/}
   })
 );
 
@@ -51,14 +51,14 @@ let server = http.createServer(app).listen(PORT, function (err) {
    however need to prevent underlying http routes from being accessed.
    Redirects HTTP requests to HTTPS */
 // From https://stackoverflow.com/questions/24726779/using-https-on-heroku
-app.all("*", function (req, res, next) {
-  if ((process.env.NODE_ENV != "development") && req.headers["x-forwarded-proto"] != "https") {     
-    res.redirect("https://" + req.headers.host + req.url);
-  }
-  else {
-    next();
-  }
-});
+// app.all("*", function (req, res, next) {
+//   if ((process.env.NODE_ENV != "development") && req.headers["x-forwarded-proto"] != "https") {     
+//     res.redirect("https://" + req.headers.host + req.url);
+//   }
+//   else {
+//     next();
+//   }
+// });
 
 /* Initial handler, obtains email from session if one exists */
 app.use(function (req, res, next) {
