@@ -6,7 +6,7 @@ import './ProfilePage/ProfilePage.css';
 import fetchApi from "../utils/fetchApi";
 import { FcLike } from '@react-icons/all-files/fc/FcLike';
 import { FcDislike } from '@react-icons/all-files/fc/FcDislike';
-import { Icon, HStack, Heading } from "@chakra-ui/react";
+import { Icon, HStack, Heading, Button } from "@chakra-ui/react";
 import MatchDetails from "../components/MatchDetails";
 import '../components/DashboardLayout/DashboardLayout.css';
 import './InboxPage/InboxPage.css';
@@ -31,11 +31,15 @@ function InboxPage() {
 
     const onSubmit = async (action) => {
         if (action === 'LikeProfile'){
-            console.log("Like");
             await fetchApi("/match/", "PUT", {invitee: userDetails.matches[0].email, status: "PENDING"});
+            let updatedMatches = userDetails.matches.slice(1);
+            console.log(updatedMatches);
+            dispatch({matches: updatedMatches});
         }else if (action === 'DisLikeProfile'){
-            console.log("DisLike");
             await fetchApi("/match/", "PUT", {invitee: userDetails.matches[0].email, status: "DISLIKED"});
+            let updatedMatches = userDetails.matches.slice(1);
+            console.log(updatedMatches);
+            dispatch({matches: updatedMatches});
         }   
     };
     useEffect(() => {
@@ -48,7 +52,8 @@ function InboxPage() {
                     const user_profile = await fetchApi("/profile/", "GET", null, controller.signal);
                     const matches = await fetchApi("/new-matches/", "GET", null, controller.signal);
                     const survey = await fetchApi("/survey/", "GET", null);
-                    console.log(matches);
+                    // const match_history = await fetchApi("/matches/", "GET", null);
+                    // console.log(match_history);
                     dispatch(user_profile);
                     dispatch({matches: matches, survey: survey});
                 }
@@ -83,9 +88,9 @@ function InboxPage() {
         <DashboardLayout>
             <Heading className="centre" as="h1" size="4xl">Inbox</Heading>
             <HStack className="centre">
-                <Icon className="dashboard__logo" boxSize="100px" as={FcLike} onClick={() => onSubmit(`LikeProfile`)}/>
+                <Icon className="dashboard__logo" boxSize="100px" as={FcLike} onClick={() => onSubmit("LikeProfile")}/*onClick={() => dispatch({action: "LikeProfile"})}*//>
                 <MatchDetails user={userDetails.matches[0]} survey={userDetails.survey}></MatchDetails>
-                <Icon className="dashboard__logo" boxSize="100px" as={FcDislike} onClick={() => onSubmit(`DisLikeProfile`)}/>
+                <Icon className="dashboard__logo" boxSize="100px" as={FcDislike} onClick={() => onSubmit("DisLikeProfile")}/*dispatch({action: "DisLikeProfile"})}*//>
             </HStack>
         </DashboardLayout>
     );
