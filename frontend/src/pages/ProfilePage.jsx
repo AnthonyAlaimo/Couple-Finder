@@ -140,7 +140,7 @@ function ProfilePage() {
                     }
                     else{
                         dispatch(user_profile);
-                        dispatch({survey: survey, surveyResults: surveyResults, surveyComplete: true, filterResults: user_profile.filters[0]});
+                        dispatch({survey: survey, surveyResults: surveyResults, surveyComplete: true, filterResults: user_profile.filter});
                     }
                 }
             } catch (err) {

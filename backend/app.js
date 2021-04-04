@@ -42,7 +42,7 @@ const PORT = process.env.PORT;
 let server = http.createServer(app).listen(PORT, function (err) {
 	if (err) console.log(err);
 	else {
-	console.log("HTTP server on http://localhost:%s", PORT);
+	console.log("Server listening on port " + PORT);
 	chat.initialize(server);
 	}
 });
@@ -68,16 +68,12 @@ app.use(function (req, res, next) {
 
 /* Create */
 
-/**
- * Sign up new user
- */
+/* Sign up new user */
 app.post("/api/signup/", validateEmail, function (req, res, next) {
 	login.signup(req, res, next);
 });
 
-/**
- * Sign in existing user
- */
+/* Sign in existing user */
 app.post("/api/signin/", validateEmail, function (req, res, next) {
 	login.signin(req, res, next);
 });
@@ -89,21 +85,17 @@ app.post("/api/profile/", isAuthenticated, upload.single("profile_picture"), san
 
 /* Read */
 
-/**
- * Sign out currently authenticated user
- */
+/* Sign out currently authenticated user */
 app.get("/api/signout/", function (req, res, next) {
 	login.signout(req, res, next);
 });
 
-
+/* Get static survey questions and answers */
 app.get("/api/survey/", isAuthenticated, function (req, res, next) {
 	survey.getSurvey(req, res, next);
 });
 
-/**
- * Get profile for current user
- */
+/* Get profile for current user */
 app.get("/api/profile/", isAuthenticated, function (req, res, next) {
 	profile.getUserProfile(req, res, next);
 });
