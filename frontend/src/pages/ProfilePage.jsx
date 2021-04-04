@@ -38,9 +38,8 @@ function ProfilePage() {
             dispatch({...profile, id: userId});
         }
         if (action === 'survey'){
-            let results = await fetchApi("/survey/", "POST", userDetails.surveyResults);
+            let results = await fetchApi("/survey/", "PUT", userDetails.surveyResults);
             dispatch({...results, surveyComplete: true, filterResults: {lower_age_range: 18, upper_age_range: 90, preferred_gender: "", smokes: ""}});
-            console.log(userDetails);
         }
         if (action === 'filter'){
             // if lower is greater than upper, reset values

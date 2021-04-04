@@ -20,7 +20,7 @@ app.use(
     saveUninitialized: false,
     secret: crypto.randomBytes(16).toString("base64"),
     resave: false,
-    cookie: {httpOnly: true, sameSite: true /*secure: true*/}
+    cookie: {httpOnly: true, sameSite: true, secure: true}
   })
 );
 
@@ -34,13 +34,17 @@ const login = require("./authentication/login");
 const profile = require("./profile/profile");
 const survey = require("./profile/survey");
 const match  = require("./profile/match");
+const chat = require("./chat/chat");
 
 const PORT = process.env.PORT;
 
 /* Create underlying http server. When deployed Heroku will wrap it in a proxy https server */
-http.createServer(app).listen(PORT, function (err) {
+let server = http.createServer(app).listen(PORT, function (err) {
   if (err) console.log(err);
-  else console.log("HTTP server on http://localhost:%s", PORT);
+  else {
+    console.log("HTTP server on http://localhost:%s", PORT);
+    chat.initialize(server);
+  }
 });
 
 /* By default all routes will be https when deployed,
@@ -80,17 +84,7 @@ app.post("/api/signin/", validateEmail, function (req, res, next) {
 
 /* Post profile for current user */
 app.post("/api/profile/", isAuthenticated, upload.single("profile_picture"), sanitizeProfileFields, function(req, res, next) {
-  profile.updateUserProfile(req, res, next);
-});
-
-/* Post survey responses for current user */
-app.post("/api/survey/", isAuthenticated, function (req, res, next) {
-  survey.postSurveyResponses(req, res, next);
-});
-
-/* Like or dislike a potential profile */
-app.post("/api/match/", isAuthenticated, function (req, res, next) {
-  match.postMatchRequest(req, res, next);
+  profile.postUserProfile(req, res, next);
 });
 
 /* Read */
@@ -131,14 +125,25 @@ app.get("/api/matches/", isAuthenticated, function (req, res, next) {
 
 /* Update */
 
+/* Create or update filters for the user */
 app.put("/api/filters/", isAuthenticated, function(req, res, next) {
-  match.updateFilters(req, res, next);
+  match.putFilters(req, res, next);
+});
+
+/* Create or update survey responses for current user */
+app.put("/api/survey/", isAuthenticated, function (req, res, next) {
+  survey.putSurveyResponses(req, res, next);
+});
+
+/* Like or dislike a potential profile */
+app.put("/api/match/", isAuthenticated, function (req, res, next) {
+  match.putMatchRequest(req, res, next);
 });
 
 /* Delete */
 
 app.use("/", function (req, res, next){
-  res.redirect("/");
+  res.sendFile(path.join(__dirname, "../frontend/build/index.html"));
 });
 
 // Determines if user is authenticated
@@ -158,6 +163,7 @@ function validateEmail(req, res, next) {
   next();
 }
 
+/* Sanitizes user inputted string fields for the profile. */
 function sanitizeProfileFields(req, res, next) {
   req.body.bio = req.body.bio ? validator.escape(req.body.bio) : null;
   req.body.name = req.body.name ? validator.escape(req.body.name) : null;

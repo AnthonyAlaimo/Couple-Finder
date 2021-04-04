@@ -32,10 +32,10 @@ function InboxPage() {
     const onSubmit = async (action) => {
         if (action === 'LikeProfile'){
             console.log("Like");
-            await fetchApi("/match/", "POST", {invitee: userDetails.matches[0].email, status: -1});
+            await fetchApi("/match/", "PUT", {invitee: userDetails.matches[0].email, status: "PENDING"});
         }else if (action === 'DisLikeProfile'){
             console.log("DisLike");
-            await fetchApi("/match/", "POST", {invitee: userDetails.matches[0].email, status: 0});
+            await fetchApi("/match/", "PUT", {invitee: userDetails.matches[0].email, status: "DISLIKED"});
         }   
     };
     useEffect(() => {
