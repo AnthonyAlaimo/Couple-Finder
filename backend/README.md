@@ -3,7 +3,7 @@
 ### Create
 
 - Description: Sign up a new user
-- Request: "POST api/signup/"
+- Request: "POST /api/signup/"
     -  content-type: "application/json"
     -  body: object
         - email: (string) user's email. Must be formatted as a valid email. 
@@ -24,7 +24,7 @@ $ curl -H "Content-Type: application/json"
 ```
 
 - Description: Sign in existing user based on email, password
-- Request: "POST api/signin/"
+- Request: "POST /api/signin/"
     - Content-type: "application/json"
     - Body: object
         - email: (string) user's email. Must be formatted as a valid email.
@@ -49,7 +49,7 @@ $ curl -H "Content-Type: application/json"
     - content-type: "multipart/form-data"
     - body: object
         - name: (string) the name of the user
-        - birthdate: (string) the string representation of the birthday of the user
+        - birth_date: (string) the string representation of the birthday of the user
         - gender: (string) the gender of the user
         - bio: (string) the bio of the user
         - profile_picture: (file) the image uploaded
@@ -76,70 +76,42 @@ $ curl -H "Content-Type: application/json"
     - content-type: "text/html"
     - body: (string) Error message of whatever error occured
 ```
-$ curl -F name=Adam birthdate= -F picture=file.txt http://localhost:3000/api/images/
-```
-
-- description: Add a new comment to an image
-- request: "POST /api/comments/:id/"
-    - content-type: "application/json"
-    - body: object
-        - content: (string) content of the comment
-- response: 200
-    - content-type: "application/json"
-    - body: object
-        - _id: (string) the comment id
-        - imageId: (string) The id of the parent image
-        - author: (string) The author of the comment
-        - content: (string) The content of the comment
-        - createdAt: (string) Time the comment was added
-        - updatedAt: (string) Time the comment was last modified
-- response: 400
-    - content-type: "text/html"
-    - body: (string) "A required field is missing, please fix request and try again."
-- response: 401
-    - content-type: "text/html"
-    - body: (string) "Access Denied" 
-- response: 404
-    - content-type: "text/html"
-    - body: (string) No image with id :id could be found
-- response: 500
-    - content-type: "text/html"
-    - body: (string) Error message of whatever error occured
-```
-$ curl -H "Content-Type: 'application/json'"
-        -d "{'content': 'test comment'}"
-        http://localhost:3000/api/comments/dsfdf3we/
+$ curl -F name=Adam -F birth_date=1998-03-04 -F profile_picture=file.jpg -F gender=MALE -F bio=ferfsgeffsafefa https://couple-finder.me/api/profile
 ```
 
 ### Read
 
-- description: Signs out currently authenticated user
-- request: "GET /signout/"
-- response: 200
+- Description: Signs out currently authenticated user
+- Request: "GET /api/signout/"
+- Response: 200
     - content-type: "application/json"
-    - body: (string) "User has signed out"
+    - body: (string) "OK"
 ```
-$ curl http://localhost:3000/signout/
+$ curl https://couple-finder.me/api/signout
 ```
 
-- description: Gets list of all users
-- request: "GET /api/users/"
-- response: 200
+- Description: Get survey questions and answers
+- Request: "GET /api/survey/"
+- Response: 200
     - content-type: "application/json"
-    - body: (list of objects) contains user objects
-        - _id: (string) user's username
-- response: 401
+    - body: [object]
+        - question_number: (number) id of the question
+        - question_text: (string) text of the question
+        - survey_options: [object]
+            - answer_number: (number) id of the answer option
+            - answer_text: (string) text of the answer  
+- Response: 401
     - content-type: "text/html"
     - body: (string) "Access Denied"
-- response: 500
+- Response: 500
     - content-type: "text/html"
     - body: (string) Error message of whatever error occured
 ```
-$ curl http://localhost:3000/api/users/
+$ curl https://couple-finder.me/api/survey
 ```
 
-- description: Get most recent image of specified user
-- request: "GET /api/images/:author/"
+- Description: Get most recent image of specified user
+- Request: "GET /api/images/:author/"
 - response: 200
     - content-type: "application/json"
     - body: object
