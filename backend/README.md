@@ -1,4 +1,4 @@
-# Web Gallery REST API Documentation
+# Couple Finder API Documentation
 
 ### Create
 
