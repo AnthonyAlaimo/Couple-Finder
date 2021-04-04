@@ -3,73 +3,80 @@
 ### Create
 
 - Description: Sign up a new user
-- request: "POST api/signup/"
-- content-type: "application/json"
-- body: object
-    - email: (string) user's email. Must be formatted as a valid email. 
-    - password: (string) user's password
-- response: 200
+- Request: "POST api/signup/"
+    -  content-type: "application/json"
+    -  body: object
+        - email: (string) user's email. Must be formatted as a valid email. 
+        - password: (string) user's password
+- Response: 200
     - content-type: "application/json"
-    - body: (string) "User: _:username_ signed up"
-- response: 409
+    - body: (string) "OK"
+- Response: 409
     - content-type: "text/html"
-    - body: (string) "username: _:username_ already exists"
-- response: 500
+    - body: (string) "Invalid request, email is already in use."
+- Response: 500
     - content-type: "text/html"
     - body: (string) Error message of whatever error occured
 ```
-$ curl -H "Content-Type: 'application/json'"
-        -d "{'username': 'user 1', 'password': '434ewrefe3'}"
-        http://localhost:3000/signup/
+$ curl -H "Content-Type: application/json"
+        -d '{"email": "test@testdfdf.com", "password": "434ewrefe3"}'
+        https://couple-finder.me/api/signup
 ```
 
-- description: Sign in existing user
-- request: "POST /signin/"
-    - content-type: "application/json"
-    - body: object
-        - username: (string) user's username
+- Description: Sign in existing user based on email, password
+- Request: "POST api/signin/"
+    - Content-type: "application/json"
+    - Body: object
+        - email: (string) user's email. Must be formatted as a valid email.
         - password: (string) user's password
-- response: 200
+- Response: 200
     - content-type:"application/json"
-    - body: (string) "User: _:username_ signed in"
-- response: 401
+    - body: (string) "OK"
+- Response: 401
     - content-type: "text/html"
     - body: (string) "Incorrect login credentials"
-- response: 500
+- Response: 500
     - content-type: "text/html"
     - body: (string) Error message of whatever error occured
 ```
-$ curl -H "Content-Type: 'application/json'"
-        -d "{'username': 'user 1', 'password': '434ewrefe3'}"
-        http://localhost:3000/signin/
+$ curl -H "Content-Type: application/json"
+        -d '{"email": "test@testdsfdsf.com", "password": "434ewrefe3"}'
+        https://couple-finder.me/api/signin
 ```
 
-- description: Add a new image
-- request: "POST /api/images/"
+- Description: Post profile for current user
+- Request: "POST /api/profile/"
     - content-type: "multipart/form-data"
     - body: object
-        - title: (string) the title of the iamge
-        - picture: (file) the image uploaded
-- response: 200
+        - name: (string) the name of the user
+        - birthdate: (string) the string representation of the birthday of the user
+        - gender: (string) the gender of the user
+        - bio: (string) the bio of the user
+        - profile_picture: (file) the image uploaded
+- Response: 200
     - content-type: "application/json"
     - body: object
-        - _id: (string) the image id
-        - author: (string) the author of the image
-        - title: (string) the title of the image
-        - image: (object) json object containing image file details
-        - createdAt: (string) Time the file was uploaded
-        - updatedAt: (string) Time the file was last modified
-- response: 400
+        - name: (string) the name of the user
+        - bio: (string) the bio of the user
+        - gender: (string) the gender of the user
+        - age: (number) the age of the user in years
+        - pictures: [object] array containing pictures of the user
+            - filename: (string) randomly generated filename
+            - id: (string) randomly generated id
+            - is_profile_picture: (boolean) true if picture is the profile picture for the user
+            - mimetype: (string) mimetype of the image
+            - path: (string) path of the image on disc     
+- Response: 400
     - content-type: "text/html"
     - body: (string) "A required field is missing, please fix request and try again."
-- response: 401
+- Response: 401
     - content-type: "text/html"
     - body: (string) "Access Denied" 
-- response: 500
+- Response: 500
     - content-type: "text/html"
     - body: (string) Error message of whatever error occured
 ```
-$ curl -F title=test title -F picture=file.txt http://localhost:3000/api/images/
+$ curl -F name=Adam birthdate= -F picture=file.txt http://localhost:3000/api/images/
 ```
 
 - description: Add a new comment to an image
