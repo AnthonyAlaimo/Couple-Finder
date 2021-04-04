@@ -19,13 +19,14 @@ export default function DashboardLayout({ children }) {
     
 
     const onSubmit = async (action) => {
-        if (action == 'logout'){
+        if (action === 'logout'){
             await logout();
         }
     };
 
     return (
-        <VStack padding='0 1rem' w="100%" h="100%" bgGradient="linear(to-r, green.200, pink.500)">
+        <Box w="100%" h="150vh" bgGradient="linear(to-r, green.200, pink.500)">
+        <VStack>
             <HStack padding='2rem 0' as='nav' width='100%' maxW='1000px'>
                 <HStack className='dashboard__logo' as={Link} to='/' marginRight='auto'>
                     <Icon as={FaHeart}/>
@@ -62,5 +63,6 @@ export default function DashboardLayout({ children }) {
                 {children}
             </Box>
         </VStack>
+        </Box>
     );
 }

@@ -51,7 +51,7 @@ function LoginRegisterPage() {
                         onChange={e => setEmail(e.currentTarget.value)}
                         placeholder="email"
                         type='email'
-                        required
+                        isRequired
                     />
                     <Input
                         variant='filled'
@@ -59,7 +59,7 @@ function LoginRegisterPage() {
                         onChange={e => setPassword(e.currentTarget.value)}
                         placeholder="password"
                         type='password'
-                        required
+                        isRequired
                     />
                     <HStack>
                         <Button onClick={() => {

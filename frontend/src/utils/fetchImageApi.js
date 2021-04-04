@@ -21,5 +21,5 @@ export default function fetchImageApi(path, method = `GET`, data, signal) {
                 signal,
             },
         ),
-    ).then(formdata);
+    ).then(data => data.json());
 }

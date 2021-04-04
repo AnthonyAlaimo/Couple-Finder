@@ -1,6 +1,6 @@
 import DashboardLayout from "../components/DashboardLayout";
-import { useContext, useEffect, useReducer, useState } from "react";
-import UserProvider, { UserContext } from "../components/UserProvider";
+import { useContext, useEffect, useReducer } from "react";
+import { UserContext } from "../components/UserProvider";
 import { useParams } from "react-router";
 import './ProfilePage/ProfilePage.css';
 import fetchApi from "../utils/fetchApi";
@@ -47,9 +47,10 @@ function InboxPage() {
                 if (!controller.signal.aborted){
                     const user_profile = await fetchApi("/profile/", "GET", null, controller.signal);
                     const matches = await fetchApi("/new-matches/", "GET", null, controller.signal);
+                    const survey = await fetchApi("/survey/", "GET", null);
                     console.log(matches);
                     dispatch(user_profile);
-                    dispatch({matches: matches});
+                    dispatch({matches: matches, survey: survey});
                 }
             } catch (err) {
                 if (err.name === `AbortError`) {
@@ -77,13 +78,13 @@ function InboxPage() {
     else if(userDetails.matches.length === 0){
         return <DashboardLayout>You have no matches D:</DashboardLayout>
     }
-    console.log(userDetails)
+    console.log(userDetails.survey)
     return (
         <DashboardLayout>
             <Heading className="centre" as="h1" size="4xl">Inbox</Heading>
             <HStack className="centre">
                 <Icon className="dashboard__logo" boxSize="100px" as={FcLike} onClick={() => onSubmit(`LikeProfile`)}/>
-                <MatchDetails user={userDetails.matches[0]}></MatchDetails>
+                <MatchDetails user={userDetails.matches[0]} survey={userDetails.survey}></MatchDetails>
                 <Icon className="dashboard__logo" boxSize="100px" as={FcDislike} onClick={() => onSubmit(`DisLikeProfile`)}/>
             </HStack>
         </DashboardLayout>

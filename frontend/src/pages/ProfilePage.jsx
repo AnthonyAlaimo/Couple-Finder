@@ -1,21 +1,23 @@
-import { useContext, useEffect, useReducer, useState } from "react";
-import { Redirect, useParams } from "react-router";
+import { useContext, useEffect, useReducer } from "react";
+import { useParams } from "react-router";
 import DashboardLayout from "../components/DashboardLayout";
 import UserDetails from "../components/UserDetails";
-import UserProvider, { UserContext } from "../components/UserProvider";
-import { Field, FormLabel, RadioGroup, VStack, HStack, Input, Heading, Radio, Button, Textarea, Stack } from '@chakra-ui/react';
+import { UserContext } from "../components/UserProvider";
+import { FormLabel, RadioGroup, VStack, HStack, Input, Heading, Radio, Button, Textarea } from '@chakra-ui/react';
 import './ProfilePage/ProfilePage.css';
 import fetchApi from "../utils/fetchApi";
 import fetchImageApi from "../utils/fetchImageApi";
 import { Wrap, WrapItem } from "@chakra-ui/react"
 import { NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper } from "@chakra-ui/react"
 import { useToast } from "@chakra-ui/react"
+import _ from "lodash"
 
 function reducer(state = {}, action) {
     if (action === null){
         return action;
     }
-    return Object.assign({}, state, action);
+    return _.merge({}, state, action)
+    // return Object.assign({}, state, action);
 }
   
 function ProfilePage() {
@@ -25,15 +27,19 @@ function ProfilePage() {
     const userId = params.userID ?? user?._id;
 
     const [ userDetails, dispatch ] = useReducer(reducer, null);
+    console.log(userDetails);
 
-    const onSubmit = async (action) => {
+
+    const onSubmit = async () => {
+        const action = userDetails.action;
+        console.log(action);
         if (action === 'profile'){
-            await fetchImageApi("/profile/", "POST", {name: userDetails.name, birth_date: userDetails.birth_date, gender: userDetails.gender, bio: userDetails.profile_bio, profile_picture: userDetails.image_file})
-            dispatch({id: userId});
+            let profile = await fetchImageApi("/profile/", "POST", {name: userDetails.name, birth_date: userDetails.birth_date, gender: userDetails.gender, bio: userDetails.profile_bio, profile_picture: userDetails.image_file});
+            dispatch({...profile, id: userId});
         }
         if (action === 'survey'){
-            await fetchApi("/survey/", "PUT", userDetails.surveyResults);
-            dispatch({surveyComplete: true});
+            let results = await fetchApi("/survey/", "PUT", userDetails.surveyResults);
+            dispatch({...results, surveyComplete: true, filterResults: {lower_age_range: 18, upper_age_range: 90, preferred_gender: "", smokes: ""}});
         }
         if (action === 'filter'){
             // if lower is greater than upper, reset values
@@ -56,19 +62,26 @@ function ProfilePage() {
     };
 
     const setSurveyResults = async (o_num, q_text) =>{
-        userDetails.surveyResults[q_text] = parseInt(o_num);
+        // userDetails.surveyResults[q_text] = parseInt(o_num);
+        dispatch({surveyResults:{
+            ...userDetails.surveyResults,
+            [q_text]:parseInt(o_num),
+            },
+        });
     }
     const setFilterResults = async (o_answer, q_text) =>{
-        if (q_text === "preferred_age_upper"){
-            userDetails.filterResults.upper_age_range = parseInt(o_answer);
-        }
-        else if (q_text === "preferred_age_lower"){
-            userDetails.filterResults.lower_age_range = parseInt(o_answer);
-        }
-        else if (q_text === "preferred_gender"){
-            userDetails.filterResults.preferred_gender = o_answer;
-        }else if (q_text === "smokes"){
-            userDetails.filterResults.smokes =  parseInt(o_answer);
+        if (q_text === "preferred_gender"){
+            dispatch({filterResults:{
+                ...userDetails.filterResults,
+                [q_text]:o_answer,
+                },
+            });
+        }else{
+            dispatch({filterResults:{
+                ...userDetails.filterResults,
+                [q_text]:parseInt(o_answer),
+                },
+            });
         }
     }
 
@@ -127,7 +140,7 @@ function ProfilePage() {
                     }
                     else{
                         dispatch(user_profile);
-                        dispatch({survey: survey, surveyResults: surveyResults, surveyComplete: true, filterResults: user_profile.filters});
+                        dispatch({survey: survey, surveyResults: surveyResults, surveyComplete: true, filterResults: user_profile.filters[0]});
                     }
                 }
             } catch (err) {
@@ -148,7 +161,6 @@ function ProfilePage() {
     }, [ userId ]);
 
 
-    console.log(userDetails)
     if ( userDetails === null ){
         return <DashboardLayout>loading</DashboardLayout>
     }
@@ -161,109 +173,114 @@ function ProfilePage() {
             return <DashboardLayout>
                 <VStack>
                         <UserDetails user={userDetails}></UserDetails>
-                         <VStack className='lrp__card img_layout profile_info' borderRadius='md' maxW="600px" boxSize="700px">
+                        {/* survey */}
+                         <VStack 
+                            onSubmit={e => {
+                                e.preventDefault();
+                                onSubmit().then(()=>{
+                                    toast({
+                                        title: "Survey Complete",
+                                        position: 'top',
+                                        description: "View Survey Results below",
+                                        status: "success",
+                                        duration: 4000,
+                                        isClosable: true
+                                    })
+                                }).catch(()=>{
+                                    toast({
+                                        title: "Survey Incomplete",
+                                        position: 'top',
+                                        description: "All survey fields must be filled out",
+                                        status: "error",
+                                        duration: 4000,
+                                        isClosable: true
+                                    })
+                                })
+                                return false;
+                                }}
+                                as='form'
+                                spacing='4'
+                                w='80%'
+                                className='lrp__card img_layout profile_info' borderRadius='md' maxW="600px" boxSize="700px">
                         <Heading as="h3" color="white" bg="black" w="110%" borderRadius="5px" p="10px">Complete Your Matching Survey</Heading>
                         <Heading as="h2" size="md">How would you describe your personality?</Heading>
-                        <RadioGroup value={userDetails.surveyResults.personality_resp} defaultValue={userDetails.surveyResults.personality_resp}  onChange={(q1) => {setSurveyResults(q1, "personality_resp")}}>
+                        <RadioGroup isRequired name="q1" value={userDetails.surveyResults.personality_resp.toString()}  onChange={(q1) => {setSurveyResults(q1, "personality_resp")}}>
                             <HStack spacing="24px">
                             <Wrap>
                                 <WrapItem>
-                                <Radio value="1" name="q1">Shy and naive</Radio>
-                                <Radio value="2" name="q1">Brave and talkative</Radio>
-                                <Radio value="3" name="q1">Honest and reliable</Radio>
-                                <Radio value="4" name="q1">Easy-going and cheerful</Radio>
-                                <Radio value="5" name="q1">Sympathetic and tolerant</Radio>
-                                <Radio value="6" name="q1">Energetic and open minded</Radio>
+                                <Radio value="1">Shy and naive</Radio>
+                                <Radio value="2" >Brave and talkative</Radio>
+                                <Radio value="3" >Honest and reliable</Radio>
+                                <Radio value="4" >Easy-going and cheerful</Radio>
+                                <Radio value="5" >Sympathetic and tolerant</Radio>
+                                <Radio value="6" >Energetic and open minded</Radio>
                                 </WrapItem>
                             </Wrap>
                             </HStack>
                         </RadioGroup>
                         <Heading as="h2" size="md">What traits do you look for in a partner?</Heading>
-                        <RadioGroup value={userDetails.surveyResults.traits_resp} defaultValue={userDetails.surveyResults.traits_resp}  onChange={(q2) => {setSurveyResults(q2, "traits_resp")}}>
+                        <RadioGroup isRequired name="q2" value={userDetails.surveyResults.traits_resp.toString()} onChange={(q2) => {setSurveyResults(q2, "traits_resp")}}>
                             <HStack spacing="24px">
                             <Wrap maxW="200">
                                 <WrapItem>
-                                <Radio value="1" name="q2">Kind</Radio>
-                                <Radio value="2" name="q2">Energetic</Radio>
-                                <Radio value="3" name="q2">Honest</Radio>
-                                <Radio value="4" name="q2">Naive</Radio>
-                                <Radio value="5" name="q2">Talkative</Radio>
-                                <Radio value="6" name="q2">Moody</Radio>
-                                <Radio value="7" name="q2">Open minded</Radio>
-                                <Radio value="8" name="q2">Respectful</Radio>
-                                <Radio value="9" name="q2">Passionate</Radio>
-                                <Radio value="10" name="q2">Good looks</Radio>
+                                <Radio value="1" >Kind</Radio>
+                                <Radio value="2" >Energetic</Radio>
+                                <Radio value="3" >Honest</Radio>
+                                <Radio value="4" >Naive</Radio>
+                                <Radio value="5" >Talkative</Radio>
+                                <Radio value="6" >Moody</Radio>
+                                <Radio value="7" >Open minded</Radio>
+                                <Radio value="8" >Respectful</Radio>
+                                <Radio value="9" >Passionate</Radio>
+                                <Radio value="10" >Good looks</Radio>
                                 </WrapItem>
                             </Wrap>
                             </HStack>
                         </RadioGroup>
                         <Heading as="h2" size="md">What kind of music puts you in the mood?</Heading>
-                        <RadioGroup value={userDetails.surveyResults.music_resp} defaultValue={userDetails.surveyResults.music_resp}  onChange={(q3) => {setSurveyResults(q3, "music_resp")}}>
+                        <RadioGroup isRequired name="q3" value={userDetails.surveyResults.music_resp.toString()}  onChange={(q3) => {setSurveyResults(q3, "music_resp")}}>
                             <HStack spacing="24px">
-                                <Radio value="1" name="q3">Soul music</Radio>
-                                <Radio value="2" name="q3">Jazz</Radio>
-                                <Radio value="3" name="q3">Blues</Radio>
-                                <Radio value="4" name="q3">Classical music</Radio>
-                                <Radio value="5" name="q3">House music</Radio>
+                                <Radio value="1" >Soul music</Radio>
+                                <Radio value="2" >Jazz</Radio>
+                                <Radio value="3">Blues</Radio>
+                                <Radio value="4">Classical music</Radio>
+                                <Radio value="5">House music</Radio>
                             </HStack>
                         </RadioGroup>
                         <Heading as="h2" size="md">Out of the following foods, what appeals to you the most?</Heading>
-                        <RadioGroup value={userDetails.surveyResults.foods_resp} defaultValue={userDetails.surveyResults.foods_resp}  onChange={(q4) => {setSurveyResults(q4, "foods_resp")}}>
+                        <RadioGroup isRequired name="q4" value={userDetails.surveyResults.foods_resp.toString()} onChange={(q4) => {setSurveyResults(q4, "foods_resp")}}>
                             <HStack spacing="24px">
-                                <Radio value="1" name="q4">Pizza</Radio>
-                                <Radio value="2" name="q4">Pasta</Radio>
-                                <Radio value="3" name="q4">Sushi</Radio>
-                                <Radio value="4" name="q4">Hamburger</Radio>
-                                <Radio value="5" name="q4">Chinese</Radio>
+                                <Radio value="1" >Pizza</Radio>
+                                <Radio value="2" >Pasta</Radio>
+                                <Radio value="3" >Sushi</Radio>
+                                <Radio value="4">Hamburger</Radio>
+                                <Radio value="5" >Chinese</Radio>
                             </HStack>
                         </RadioGroup>
                         <Heading as="h2" size="md">How do you feel about pets and animals?</Heading>
-                        <RadioGroup value={userDetails.surveyResults.pets_resp} defaultValue={userDetails.surveyResults.pets_resp}  onChange={(q5) => {setSurveyResults(q5, "pets_resp")}}>
+                        <RadioGroup isRequired name="q5" value={userDetails.surveyResults.pets_resp.toString()} onChange={(q5) => {setSurveyResults(q5, "pets_resp")}}>
                             <HStack spacing="24px">
-                                <Radio value="1" name="q5">Not very much</Radio>
-                                <Radio value="2" name="q5">Not much</Radio>
-                                <Radio value="3" name="q5">Neutral</Radio>
-                                <Radio value="4" name="q5">Somewhat like</Radio>
-                                <Radio value="5" name="q5">Adore</Radio>
+                                <Radio value="1" >Not very much</Radio>
+                                <Radio value="2" >Not much</Radio>
+                                <Radio value="3" >Neutral</Radio>
+                                <Radio value="4" >Somewhat like</Radio>
+                                <Radio value="5" >Adore</Radio>
                             </HStack>
                         </RadioGroup>
                         <Heading as="h2" size="md">Do you smoke?</Heading>
-                        <RadioGroup value={userDetails.surveyResults.smokes_resp} defaultValue={userDetails.surveyResults.smokes_resp}  onChange={(q6) => {setSurveyResults(q6, "smokes_resp")}}>
+                        <RadioGroup isRequired name="q6" value={userDetails.surveyResults.smokes_resp.toString()} onChange={(q6) => {setSurveyResults(q6, "smokes_resp")}}>
                             <HStack spacing="24px">
-                                <Radio value="1" name="q6">Not at all</Radio>
-                                <Radio value="2" name="q6">Somewhat</Radio>
-                                <Radio value="3" name="q6">Frequently</Radio>
+                                <Radio value="1" >Not at all</Radio>
+                                <Radio value="2" >Somewhat</Radio>
+                                <Radio value="3" >Frequently</Radio>
                             </HStack>
                         </RadioGroup>
-                            <Button onClick={() => onSubmit(`survey`).then(()=>{
-                            toast({
-                                title: "Survey Complete",
-                                position: 'top',
-                                description: "View Survey Results below",
-                                status: "success",
-                                duration: 4000,
-                                isClosable: true
-                            })
-                        }).catch(()=>{
-                            toast({
-                                title: "Survey Incomplete",
-                                position: 'top',
-                                description: "All survey fields must be filled out",
-                                status: "error",
-                                duration: 4000,
-                                isClosable: true
-                            })
-                        })}>Submit</Button>
+                            <Button type="submit" onClick={() => dispatch({action:"survey"})}>Submit</Button>
                         </VStack>
                         </VStack>
                     </DashboardLayout>
         // SURVEY RESPONSE CASE: SURVEY HAS BEEN COMPLETED
         }else{
-            console.log(userDetails);
-            if (userDetails.personality_resp === 0){
-                window.location.reload();
-                return <Heading as="h1" size="4xl">loading</Heading>
-            }
             let response=[userDetails.personality_resp, 
                 userDetails.traits_resp, 
                 userDetails.music_resp,
@@ -293,21 +310,47 @@ function ProfilePage() {
                          )}
                          </VStack>
                          {/* filter code */}
-                         <VStack className='lrp__card img_layout profile_info' borderRadius='md' maxW="600px" boxSize="700px">
+                         <VStack onSubmit={e => {
+                                e.preventDefault();
+                                onSubmit().then(()=>{
+                                    toast({
+                                        title: "Filters Successfully set",
+                                        position: 'top',
+                                        description: "Go to inbox to check for potential matches",
+                                        status: "success",
+                                        duration: 4000,
+                                        isClosable: true
+                                    })
+                                }).catch(()=>{
+                                    toast({
+                                        title: "Filters not set",
+                                        position: 'top',
+                                        description: "Failed to set filters, make sure to set all fields!",
+                                        status: "error",
+                                        duration: 4000,
+                                        isClosable: true
+                                    })
+                                })
+                                return false;
+                                }}
+                                as='form'
+                                spacing='4'
+                                w='80%'
+                                className='lrp__card img_layout profile_info' borderRadius='md' maxW="600px" boxSize="700px">
                         <Heading className='display' as="h3" color="white" bg="black" w="110%" borderRadius="5px" p="10px">Edit Matching Filters</Heading>
                         <Heading as="h2" size="md">Preferred Age Range</Heading>
                         <VStack>
                         <Heading as="h2" size="sm">Lowest</Heading>
-                            <NumberInput value={userDetails.filterResults.lower_age_range} defaultValue={18} min={18} max={90} onChange={(lower) => {setFilterResults(lower, "preferred_age_lower")}}>
-                            <NumberInputField name="lower"/>
+                            <NumberInput isRequired value={userDetails.filterResults.lower_age_range?.toString()} min={18} max={90} onChange={(lower) => {setFilterResults(lower, "lower_age_range")}}>
+                            <NumberInputField/>
                             <NumberInputStepper>
                                 <NumberIncrementStepper />
                                 <NumberDecrementStepper />
                             </NumberInputStepper>
                             </NumberInput>
                         <Heading as="h2" size="sm">Highest</Heading>
-                            <NumberInput value={userDetails.filterResults.upper_age_range} defaultValue={90} min={18} max={90} onChange={(upper) => {setFilterResults(upper, "preferred_age_upper")}}>
-                            <NumberInputField name="upper"/>
+                            <NumberInput isRequired value={userDetails.filterResults.upper_age_range?.toString()} min={18} max={90} onChange={(upper) => {setFilterResults(upper, "upper_age_range")}}>
+                            <NumberInputField/>
                             <NumberInputStepper>
                                 <NumberIncrementStepper />
                                 <NumberDecrementStepper />
@@ -316,40 +359,22 @@ function ProfilePage() {
                         </VStack>
 
                         <Heading as="h2" size="md">Preferred Gender</Heading>
-                        <RadioGroup value={userDetails.filterResults.preferred_gender} defaultValue={userDetails.filterResults.preferred_gender} onChange={(q2) => {setFilterResults(q2, "preferred_gender")}}>
+                        <RadioGroup isRequired value={userDetails.filterResults.preferred_gender} defaultValue={userDetails.filterResults.preferred_gender} onChange={(q2) => {setFilterResults(q2, "preferred_gender")}}>
                             <HStack spacing="24px">
-                                <Radio value="Male" name="q2">Male</Radio>
-                                <Radio value="Female" name="q2">Female</Radio>
-                                <Radio value="Both" name="q2">Both</Radio>
+                                <Radio value="MALE" >Male</Radio>
+                                <Radio value="FEMALE" >Female</Radio>
+                                <Radio value="BOTH" >Both</Radio>
                             </HStack>
                         </RadioGroup>
                         <Heading as="h2" size="md">Partner's Smoking Habit</Heading>
-                        <RadioGroup value={userDetails.filterResults.smokes} defaultValue={userDetails.filterResults.smokes} onChange={(q3) => {setFilterResults(q3, "smokes")}}>
+                        <RadioGroup isRequired value={userDetails.filterResults.smokes?.toString()} defaultValue={userDetails.filterResults.smokes} onChange={(q3) => {setFilterResults(q3, "smokes")}}>
                             <HStack spacing="24px">
-                                <Radio value="1" name="q3">Not at all</Radio>
-                                <Radio value="2" name="q3">Somewhat</Radio>
-                                <Radio value="3" name="q3">Frequently</Radio>
+                                <Radio value="1" >Not at all</Radio>
+                                <Radio value="2" >Somewhat</Radio>
+                                <Radio value="3" >Frequently</Radio>
                             </HStack>
                         </RadioGroup>
-                        <Button onClick={() => onSubmit(`filter`).then(()=>{
-                            toast({
-                                title: "Filters Successfully set",
-                                position: 'top',
-                                description: "Go to inbox to check for potential matches",
-                                status: "success",
-                                duration: 4000,
-                                isClosable: true
-                            })
-                        }).catch(()=>{
-                            toast({
-                                title: "Filters not set",
-                                position: 'top',
-                                description: "Failed to set filters, make sure to set all fields!",
-                                status: "error",
-                                duration: 4000,
-                                isClosable: true
-                            })
-                        })}>Submit</Button>
+                        <Button type="submit" onClick={() => dispatch({action: "filter"})}>Submit</Button>
                         </VStack>
                         </HStack>
                     </DashboardLayout>
@@ -361,62 +386,9 @@ function ProfilePage() {
                 <Heading as="h1" size="4xl">Create Your Profile</Heading>
                 <VStack
                     onSubmit={e => {
+                        console.log("working")
                         e.preventDefault();
-                        return false;
-                    }}
-                    as='form'
-                    spacing='4'
-                    w='80%'
-                >
-                   <Input background="none"
-                        id="image_id"
-                        name="image_file"
-                        variant='filled'
-                        type="file"
-                        onChange={imageHandler}
-                        placeholder="choose a profile image"
-                        accept="image/*"
-                        required
-                        /> 
-                    <Input
-                        id="name"
-                        name="name"
-                        variant='filled'
-                        value={userDetails.name}
-                        onChange={handler}
-                        placeholder="name"
-                        type='text'
-                        required
-                    />
-                    <Input
-                        id="birth_date"
-                        name="birth_date"
-                        variant='filled'
-                        value={userDetails.birth_date}
-                        onChange={handler}
-                        placeholder="Date of Birth"
-                        type='date'
-                        required
-                    />
-                    <FormLabel>Select your gender</FormLabel>
-                    <RadioGroup id="gender" value={userDetails.gender} onChange={(gender) => {dispatch({gender})}}>
-                        <HStack spacing="24px">
-                        <Radio value="Male" name="gender">Male</Radio>
-                        <Radio value="Female" name="gender">Female</Radio>
-                        </HStack>
-                    </RadioGroup>
-                    <Textarea
-                        id="profile_bio"
-                        name="profile_bio"
-                        variant='filled'
-                        value={userDetails.profile_bio}
-                        onChange={handler}
-                        placeholder="Write your profile biography here"
-                        type='text'
-                        required
-                />
-                    <HStack>
-                        <Button onClick={() => onSubmit(`profile`).then(()=>{
+                        onSubmit().then(()=>{
                             toast({
                                 title: "Profile Successful Created",
                                 position: 'top',
@@ -434,7 +406,62 @@ function ProfilePage() {
                                 duration: 4000,
                                 isClosable: true
                             })
-                        })}>Submit</Button>
+                        })
+                        return false;
+                    }}
+                    as='form'
+                    spacing='4'
+                    w='80%'
+                >
+                   <Input background="none"
+                        id="image_id"
+                        name="image_file"
+                        variant='filled'
+                        type="file"
+                        onChange={imageHandler}
+                        placeholder="choose a profile image"
+                        accept="image/*"
+                        isRequired
+                        /> 
+                    <Input
+                        id="name"
+                        name="name"
+                        variant='filled'
+                        value={userDetails.name}
+                        onChange={handler}
+                        placeholder="name"
+                        type='text'
+                        isRequired
+                    />
+                    <Input
+                        id="birth_date"
+                        name="birth_date"
+                        variant='filled'
+                        value={userDetails.birth_date}
+                        onChange={handler}
+                        placeholder="Date of Birth"
+                        type='date'
+                        isRequired
+                    />
+                    <FormLabel>Select your gender</FormLabel>
+                    <RadioGroup required id="gender" value={userDetails.gender} onChange={(gender) => {dispatch({gender})}}>
+                        <HStack spacing="24px">
+                        <Radio value="Male" name="gender">Male</Radio>
+                        <Radio value="Female" name="gender">Female</Radio>
+                        </HStack>
+                    </RadioGroup>
+                    <Textarea
+                        id="profile_bio"
+                        name="profile_bio"
+                        variant='filled'
+                        value={userDetails.profile_bio}
+                        onChange={handler}
+                        placeholder="Write your profile biography here"
+                        type='text'
+                        isRequired
+                    />
+                    <HStack>
+                        <Button type="submit" onClick={() => dispatch({ action: "profile" })}>Submit</Button>
                     </HStack>
                 </VStack>
             </VStack>

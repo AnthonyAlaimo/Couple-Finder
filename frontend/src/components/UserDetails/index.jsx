@@ -1,6 +1,8 @@
-import { Heading, VStack, HStack, Container, Box, Img, Button, Form, Textarea } from "@chakra-ui/react"
+import { Heading, VStack, HStack, Container, Box, Img, Form, Textarea, Button} from "@chakra-ui/react"
+// import { useState } from "react";
 import './userDetails.css';
-export default function UserDetails({ user, heading, body }) {
+export default function UserDetails({ user }) {
+    // const { user } = useState(UserContext);
     // const onBioSubmit = async (bio) => {
     //     console.log(bio);
     //     //await fetchImageApi("/changeBio/", "PUT", {bio: bio})
@@ -14,24 +16,24 @@ export default function UserDetails({ user, heading, body }) {
     //     }
     // }
     // "Pure component
-    if (user.pictures === undefined){
-        window.location.reload();
-        return <Heading as="h1" size="4xl">loading</Heading>
-    }
+    // if (user.pictures === undefined){
+    //     // window.location.reload();
+    //     return <Heading as="h1" size="4xl">loading</Heading>
+    // }
     console.log(user);
     return (
             <HStack>
                 <Box className='lrp__card' maxW='800px' maxH='60%' w='90%' m='auto' p='4' borderRadius='md'>
                 <HStack justifyContent="center">
                 <Heading className="centre" as="h1" size="4xl">Profile</Heading>
-                {/* <Button onClick={() => setVisibility("bio_edit")}>Edit Bio.</Button> */}
+                <Button /*onClick={() => setVisibility("bio_edit")}*/>Edit Bio.</Button>
                 </HStack>
                 <HStack p="8">
                     {/* default image, need to SRC PATH*/}
                     <Img className="img_shadow"
                         boxSize="350px"
                         objectFit="cover"
-                        src={"/api/pictures/"+user.pictures[0].id+"/picture/"}
+                        src={"/api/pictures/"+user?.pictures?.[0]?.id+"/picture/"}
                         alt="okay"
                     />
                     <VStack className='lrp__card img_layout profile_info' borderRadius='md' boxSize="350px">
