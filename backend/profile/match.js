@@ -171,10 +171,11 @@ function getAllMatchRequests(req, res, next) {
         else if (isError) {
             return res.status(500).end(resp.message);
         }
-        return res.json(resp.data.data);
+        return res.json(resp.data);
     });
 }
 
+/* Get favourite matches for the user */
 function getFavourites(req, res, next) {
     database.get("favourites/" + req.email, function(resp, isError) {
         if (resp.isAxiosError) {
