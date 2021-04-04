@@ -46,6 +46,11 @@ function postUserProfile(req, res, next) {
             }
         ]}
     }};
+
+    // Check for valid age
+    if (data.profile.age < 18) {
+        return res.status(400).end("You are too young to be using this app.");
+    }
     database.put("profile/", data, function(resp, isError) {
         if (resp.isAxiosError) {
             // Remove uploaded file from FS

@@ -171,6 +171,18 @@ function getAllMatchRequests(req, res, next) {
         else if (isError) {
             return res.status(500).end(resp.message);
         }
+        return res.json(resp.data.data);
+    });
+}
+
+function getFavourites(req, res, next) {
+    database.get("favourites/" + req.email, function(resp, isError) {
+        if (resp.isAxiosError) {
+            return res.status(resp.response.status).end(resp.response.data.error);
+        }
+        else if (isError) {
+            return res.status(500).end(resp.message);
+        }
         return res.json(resp.data.match_requests);
     });
 }
@@ -194,4 +206,4 @@ const upsert_match_requests = `mutation upsert_match_requests($match_requests: [
     }
 }`;
 
-module.exports = {putFilters, getNewMatches, putMatchRequest, getAllMatchRequests};
+module.exports = {putFilters, getNewMatches, putMatchRequest, getAllMatchRequests, getFavourites};
