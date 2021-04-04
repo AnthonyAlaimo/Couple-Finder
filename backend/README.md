@@ -131,7 +131,7 @@ $ curl https://couple-finder.me/api/survey
             - is_profile_picture: (boolean) true if picture is the profile picture for the user
             - mimetype: (string) mimetype of the image
             - path: (string) path of the image on disc
-        - filters: [object] array containing filters of the user
+        - filter: filter values for the user
             - lower_age_range: (number) preferred minimum age
             - upper_age_range: (number) preferred maximum age
             - preferred_gender: (string) preferred gender
