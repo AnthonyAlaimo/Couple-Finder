@@ -16,21 +16,13 @@ Whether you're looking for a romantic partner or new best friend, you can be sur
 
 - Create and update your profile by filling in some information about yourself and what you are looking for.
 
-- Upon creation of a new profile, the user will fill out a personality test that will help their initial match criteria and get a estimate of their overall personality type.
-
 - Match with a wide variety of other users based on criteria such as age, gender, location, common hobbies, etc.
+
+## Final Features ##
 
 - Message those people that you match with in one on one conversations where no private information is exposed.
 
 - Unmatch those people that you are not interested in and never see them again.
-
-## Final Features ##
-
-- Additional Filters: Filter by more comprehensive fields and hobbies.
-
-- Ranked Filters: Designate which filters are more important to you than others and be matched accordingly.
-
-- AI will refine matching criteria the more a user uses the app.
 
 - Use the app on computer and mobile devices.
 
@@ -40,17 +32,16 @@ Whether you're looking for a romantic partner or new best friend, you can be sur
 
 - Nodejs for the Server
 
-- AngularJS for the Front End
+- REACT framework for the Front End
 
 - Postgres SQL for the Database
 
+- HASURA GraphQL Engine for accessing the Database
+
 ## Top 5 Technical Challenges ##
 
-1. We will most likely need to implement some kind of AI algorithm to match users based on various criteria.
-2. Figuring out how to host a web app online and connect the front end to the back end.
-3. Generate the initial user profile using a personality test to initially configure their match criteria.
-4. Learning how to use Angular.
-5. Figure out how to use the user's match and unmatch history to better fine tune their match criteria using an AI.
-
-
-
+1. Figuring out how React works and how to use it properly
+2. Figuring out how to access and query the database using GraphQL
+3. Figuring out how to host the web app through Heroku and connecting the front end to the back end.
+4. Generate the user's profile and filters to configure their match criteria.
+5. Setting up a custom domain using Cloudflare.
