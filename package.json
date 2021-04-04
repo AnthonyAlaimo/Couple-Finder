@@ -9,5 +9,8 @@
     "start": "cd backend && npm run start"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "lodash": "^4.17.21"
+  }
 }
