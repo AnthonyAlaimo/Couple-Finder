@@ -2,11 +2,11 @@
 
 ### Create
 
-- description: Sign up a new user
-- request: "POST /signup/"
+- Description: Sign up a new user
+- request: "POST api/signup/"
 - content-type: "application/json"
 - body: object
-    - username: (string) user's username
+    - email: (string) user's email. Must be formatted as a valid email. 
     - password: (string) user's password
 - response: 200
     - content-type: "application/json"
