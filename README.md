@@ -35,7 +35,7 @@ Whether you're looking for a romantic partner or new best friend, you can be sur
 - REACT framework for the Front End
 
 - Postgres SQL for the Database
-- 
+
 - HASURA GraphQL Engine for accessing the Database
 
 ## Top 5 Technical Challenges ##
