@@ -140,7 +140,7 @@ function putMatchRequest(req, res, next) {
 
         // If match request is found, need to update status of both accordingly
         if (resp.data.data.match_requests.length > 0) {            
-            let match2 = resp.data.match_requests[0];
+            let match2 = resp.data.data.match_requests[0];
             if (match1.status === "DISLIKED" || match2.status === "DISLIKED") {
                 match1.status = "DISLIKED";
                 match2.status = "DISLIKED";
