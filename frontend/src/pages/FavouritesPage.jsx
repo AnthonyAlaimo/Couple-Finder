@@ -78,10 +78,10 @@ function FavouritesPage() {
     //get matched status
     //possible logic for getting mutual matches for a user
     console.log(userDetails.match)
-    if (userDetails?.favourites !== undefined){
+    if (userDetails?.favourites[0].inviter_profile !== undefined){
         return (
             <DashboardLayout>
-                <MatchDetails user={userDetails.favourites[0]} survey={userDetails.survey}></MatchDetails>
+                <MatchDetails user={userDetails.favourites[0].inviter_profile} survey={userDetails.survey}></MatchDetails>
                 {/* <Menu>
                 <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
                     Favourites

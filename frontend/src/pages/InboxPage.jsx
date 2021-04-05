@@ -84,7 +84,7 @@ function InboxPage() {
         return <DashboardLayout>Loading. Complete your user <b>Survey</b> and fill out <b>Filters</b> located in the profile page</DashboardLayout>
     }
     else if(userDetails.matches.length === 0){
-        return <DashboardLayout><Heading className="centre" as="h1" size="4xl">You have no matches D:</Heading></DashboardLayout>
+        return <DashboardLayout><Heading className="centre" as="h1" size="4xl">You have no current matches! Reconfigure your filters or wait for more users to join the community :D</Heading></DashboardLayout>
     }
     console.log(userDetails.matches)
     return (
