@@ -10,6 +10,7 @@ import { Icon, HStack, Heading, Button } from "@chakra-ui/react";
 import MatchDetails from "../components/MatchDetails";
 import '../components/DashboardLayout/DashboardLayout.css';
 import './InboxPage/InboxPage.css';
+import { useToast } from "@chakra-ui/react";
 
 function reducer(state = {}, action) {
     if (action === null){
@@ -20,6 +21,7 @@ function reducer(state = {}, action) {
 
 
 function InboxPage() {
+    const toast = useToast();
     const { user } = useContext(UserContext);
     const params = useParams();
     const userId = params.userID ?? user?._id;
@@ -87,10 +89,41 @@ function InboxPage() {
     return (
         <DashboardLayout>
             <Heading className="centre" as="h1" size="4xl">Inbox</Heading>
-            <HStack className="centre">
-                <Icon className="dashboard__logo" boxSize="100px" as={FcLike} onClick={() => onSubmit("LikeProfile")}/*onClick={() => dispatch({action: "LikeProfile"})}*//>
+            <HStack className="centre" 
+            onSubmit={e => {
+                e.preventDefault();
+                onSubmit().then(()=>{
+                    toast({
+                        title: "Successfully updated matches :D",
+                        position: 'top',
+                        description: "",
+                        status: "success",
+                        duration: 4000,
+                        isClosable: true
+                    })
+                }).catch(()=>{
+                    toast({
+                        title: "Something went wrong, try refreshing the page",
+                        position: 'top',
+                        description: "",
+                        status: "error",
+                        duration: 4000,
+                        isClosable: true
+                    })
+                })
+                return false;
+            }}
+            as='form'
+            spacing='4'
+            w='80%'
+            >
+                <Button className="dashboard__logo" boxSize="100px" onClick={() => dispatch({action: "LikeProfile"})}>
+                    <Icon as={FcLike} /*onClick={() => onSubmit("LikeProfile")}*//>
+                </Button>
                 <MatchDetails user={userDetails.matches[0]} survey={userDetails.survey}></MatchDetails>
-                <Icon className="dashboard__logo" boxSize="100px" as={FcDislike} onClick={() => onSubmit("DisLikeProfile")}/*dispatch({action: "DisLikeProfile"})}*//>
+                <Button className="dashboard__logo" boxSize="100px" onClick={() => dispatch({action: "DisLikeProfile"})}>
+                    <Icon as={FcDislike} /*onClick={() => onSubmit("DisLikeProfile")}*//>
+                </Button>
             </HStack>
         </DashboardLayout>
     );

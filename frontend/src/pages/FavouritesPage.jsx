@@ -1,16 +1,21 @@
 import DashboardLayout from "../components/DashboardLayout";
-import { useContext, useEffect, useReducer } from "react";
+import { useContext, useEffect, useReducer, useState } from "react";
 import { UserContext } from "../components/UserProvider";
 import MatchDetails from "../components/MatchDetails";
 import { useParams } from "react-router";
 import fetchApi from "../utils/fetchApi";
-import { Button, ChevronDownIcon } from "@chakra-ui/react";
+import { Button, ChevronDownIcon, Textarea } from "@chakra-ui/react";
 import {
     Menu,
     MenuButton,
     MenuList,
     MenuItem,
   } from "@chakra-ui/react"
+// import io from 'socket.io-client';
+// import './FavouritesPage/FavouritesPage.css';
+
+
+// const socket = io.connect(process.env.PORT);
 
 function reducer(state = {}, action) {
     if (action === null){
@@ -20,6 +25,10 @@ function reducer(state = {}, action) {
 }
 
 function FavouritesPage() {
+    // const [state, setState] = useState({message: '', name: ''});
+    // const [chat, setChat] = useState([]);
+
+
     const { user } = useContext(UserContext);
     const params = useParams();
     const userId = params.userID ?? user?._id;
@@ -30,6 +39,9 @@ function FavouritesPage() {
     };
 
     useEffect(() => {
+        // socket.on('message', ({name, message}) => {
+        //     setChat([...chat, {name, message}])
+        // })
         const controller = new AbortController();
         dispatch(null);
         const runFetch = async () => {
@@ -84,9 +96,45 @@ function FavouritesPage() {
             </DashboardLayout>
         );
     }
+    // const onTextChange = e => {
+    //     setState({...state, [e.target.name]: e.target.value})
+    // }
+
+    // const onMessageSubmit = e => {
+    //     e.preventDefault()
+    //     const {name, message} = state;
+    //     socket.emit('message', {name, message})
+    //     setState({message: '', name })
+    // }
+    // const renderChat = () => {
+    //     return chat.map(({name, message}, key)=>{
+    //         <div key={key}>
+    //             <h3>{name}:
+    //                 <span>{message}</span>
+    //             </h3>
+    //         </div>
+    //     })
+    // }
+
     return (
         <DashboardLayout>
-            favourite
+            {/* <div className="card">
+            <form onSubmit={onMessageSubmit}>
+                <h1>Messanger</h1>
+                <div className='name-field'>
+                    <Input name='name' onChange={e => onTextChange(e)} value={state.name} label='Name'/>
+                </div>
+                <div className='name-field'>
+                    <Input name='message' onChange={e => onTextChange(e)} value={state.message} label='Message'/>
+                </div>
+                <Button>Send <Message></Message></Button>
+            </form>
+            <div className="render-chat">
+                <h1>Chat log</h1>
+                {renderChat()}
+            </div>
+
+            </div> */}
         </DashboardLayout>
     );
 }

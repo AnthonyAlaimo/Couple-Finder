@@ -5,7 +5,6 @@ export default function MatchDetails({ user, survey }) {
     if (user === undefined){
         return <Heading as="h1" size="4xl">loading</Heading>
     }
-    console.log(user);
     ////////
     let response=[user.personality_resp, 
                 user.traits_resp, 
