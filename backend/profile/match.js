@@ -58,11 +58,11 @@ function getNewMatches(req, res, next) {
             return res.status(500).end(resp.message);
         }
         // Construct query criteria
-        if (resp.data.profiles.length === 0 || resp.data.profiles[0].filters.length === 0) {
+        if (resp.data.profiles.length === 0 || !resp.data.profiles[0].filter) {
             return res.json(null);
         }
         let profile = resp.data.profiles[0];
-        let filter = profile.filters[0];
+        let filter = profile.filter;
   
         // Construct match query based on criteria
         let where = `{age: {_gte: ${filter.lower_age_range}, _lte: ${filter.upper_age_range}}`;
@@ -137,7 +137,7 @@ function putMatchRequest(req, res, next) {
 
         // If match request is found, need to update status of both accordingly
         if (resp.data.data.match_requests.length > 0) {            
-            let match2 = resp.data.match_requests[0];
+            let match2 = resp.data.data.match_requests[0];
             if (match1.status === "DISLIKED" || match2.status === "DISLIKED") {
                 match1.status = "DISLIKED";
                 match2.status = "DISLIKED";

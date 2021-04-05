@@ -37,16 +37,4 @@ function putSurveyResponses(req, res, next) {
     });
 }
 
-/* Graphql documents */
-const upsert_survey_responses = `
-mutation upsert_survey_responses($survey_responses: [survey_responses_insert_input!]!) {
-  insert_survey_responses(on_conflict: {constraint: survey_responses_pkey, update_columns: answer_number}, objects: $survey_responses) {
-    returning {
-      answer_number
-      question_number
-    }
-  }
-}
-`;
-
 module.exports = {getSurvey, putSurveyResponses};
