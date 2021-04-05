@@ -1,149 +1,141 @@
-# Web Gallery REST API Documentation
+# Couple Finder API Documentation
 
 ### Create
 
 - Description: Sign up a new user
-- request: "POST api/signup/"
-- content-type: "application/json"
-- body: object
-    - email: (string) user's email. Must be formatted as a valid email. 
-    - password: (string) user's password
-- response: 200
+- Request: "POST /api/signup/"
+    -  content-type: "application/json"
+    -  body: object
+        - email: (string) user's email. Must be formatted as a valid email. 
+        - password: (string) user's password
+- Response: 200
     - content-type: "application/json"
-    - body: (string) "User: _:username_ signed up"
-- response: 409
+    - body: (string) "OK"
+- Response: 409
     - content-type: "text/html"
-    - body: (string) "username: _:username_ already exists"
-- response: 500
+    - body: (string) "Invalid request, email is already in use."
+- Response: 500
     - content-type: "text/html"
     - body: (string) Error message of whatever error occured
 ```
-$ curl -H "Content-Type: 'application/json'"
-        -d "{'username': 'user 1', 'password': '434ewrefe3'}"
-        http://localhost:3000/signup/
+$ curl -H "Content-Type: application/json"
+        -d '{"email": "test@testdfdf.com", "password": "434ewrefe3"}'
+        https://couple-finder.me/api/signup
 ```
 
-- description: Sign in existing user
-- request: "POST /signin/"
-    - content-type: "application/json"
-    - body: object
-        - username: (string) user's username
+- Description: Sign in existing user based on email, password
+- Request: "POST /api/signin/"
+    - Content-type: "application/json"
+    - Body: object
+        - email: (string) user's email. Must be formatted as a valid email.
         - password: (string) user's password
-- response: 200
+- Response: 200
     - content-type:"application/json"
-    - body: (string) "User: _:username_ signed in"
-- response: 401
+    - body: (string) "OK"
+- Response: 401
     - content-type: "text/html"
     - body: (string) "Incorrect login credentials"
-- response: 500
+- Response: 500
     - content-type: "text/html"
     - body: (string) Error message of whatever error occured
 ```
-$ curl -H "Content-Type: 'application/json'"
-        -d "{'username': 'user 1', 'password': '434ewrefe3'}"
-        http://localhost:3000/signin/
+$ curl -H "Content-Type: application/json"
+        -d '{"email": "test@testdsfdsf.com", "password": "434ewrefe3"}'
+        https://couple-finder.me/api/signin
 ```
 
-- description: Add a new image
-- request: "POST /api/images/"
+- Description: Post profile for current user
+- Request: "POST /api/profile/"
     - content-type: "multipart/form-data"
     - body: object
-        - title: (string) the title of the iamge
-        - picture: (file) the image uploaded
-- response: 200
+        - name: (string) the name of the user
+        - birth_date: (string) the string representation of the birthday of the user
+        - gender: (string) the gender of the user
+        - bio: (string) the bio of the user
+        - profile_picture: (file) the image uploaded
+- Response: 200
     - content-type: "application/json"
     - body: object
-        - _id: (string) the image id
-        - author: (string) the author of the image
-        - title: (string) the title of the image
-        - image: (object) json object containing image file details
-        - createdAt: (string) Time the file was uploaded
-        - updatedAt: (string) Time the file was last modified
-- response: 400
+        - name: (string) the name of the user
+        - bio: (string) the bio of the user
+        - gender: (string) the gender of the user
+        - age: (number) the age of the user in years
+        - pictures: [object] array containing pictures of the user
+            - filename: (string) randomly generated filename
+            - id: (string) randomly generated id
+            - is_profile_picture: (boolean) true if picture is the profile picture for the user
+            - mimetype: (string) mimetype of the image
+            - path: (string) path of the image on disc     
+- Response: 400
     - content-type: "text/html"
     - body: (string) "A required field is missing, please fix request and try again."
-- response: 401
+- Response: 401
     - content-type: "text/html"
     - body: (string) "Access Denied" 
-- response: 500
+- Response: 500
     - content-type: "text/html"
     - body: (string) Error message of whatever error occured
 ```
-$ curl -F title=test title -F picture=file.txt http://localhost:3000/api/images/
-```
-
-- description: Add a new comment to an image
-- request: "POST /api/comments/:id/"
-    - content-type: "application/json"
-    - body: object
-        - content: (string) content of the comment
-- response: 200
-    - content-type: "application/json"
-    - body: object
-        - _id: (string) the comment id
-        - imageId: (string) The id of the parent image
-        - author: (string) The author of the comment
-        - content: (string) The content of the comment
-        - createdAt: (string) Time the comment was added
-        - updatedAt: (string) Time the comment was last modified
-- response: 400
-    - content-type: "text/html"
-    - body: (string) "A required field is missing, please fix request and try again."
-- response: 401
-    - content-type: "text/html"
-    - body: (string) "Access Denied" 
-- response: 404
-    - content-type: "text/html"
-    - body: (string) No image with id :id could be found
-- response: 500
-    - content-type: "text/html"
-    - body: (string) Error message of whatever error occured
-```
-$ curl -H "Content-Type: 'application/json'"
-        -d "{'content': 'test comment'}"
-        http://localhost:3000/api/comments/dsfdf3we/
+$ curl -F name=Adam -F birth_date=1998-03-04 -F profile_picture=file.jpg -F gender=MALE -F bio=ferfsgeffsafefa https://couple-finder.me/api/profile
 ```
 
 ### Read
 
-- description: Signs out currently authenticated user
-- request: "GET /signout/"
-- response: 200
+- Description: Signs out currently authenticated user
+- Request: "GET /api/signout/"
+- Response: 200
     - content-type: "application/json"
-    - body: (string) "User has signed out"
+    - body: (string) "OK"
 ```
-$ curl http://localhost:3000/signout/
+$ curl https://couple-finder.me/api/signout
 ```
 
-- description: Gets list of all users
-- request: "GET /api/users/"
-- response: 200
+- Description: Get survey questions and answers
+- Request: "GET /api/survey/"
+- Response: 200
     - content-type: "application/json"
-    - body: (list of objects) contains user objects
-        - _id: (string) user's username
-- response: 401
+    - body: [object]
+        - question_number: (number) id of the question
+        - question_text: (string) text of the question
+        - survey_options: [object]
+            - answer_number: (number) id of the answer option
+            - answer_text: (string) text of the answer  
+- Response: 401
     - content-type: "text/html"
     - body: (string) "Access Denied"
-- response: 500
+- Response: 500
     - content-type: "text/html"
     - body: (string) Error message of whatever error occured
 ```
-$ curl http://localhost:3000/api/users/
+$ curl https://couple-finder.me/api/survey
 ```
 
-- description: Get most recent image of specified user
-- request: "GET /api/images/:author/"
-- response: 200
+- Description: Get profile of currently logged in user
+- Request: "GET /api/profile/"
+- Response: 200
     - content-type: "application/json"
     - body: object
-        - _id: (string) the image id
-        - author: (string) the author of the image
-        - title: (string) the title of the image
-        - image: (object) json object containing image file details
-        - createdAt: (string) Time the file was uploaded
-        - updatedAt: (string) Time the file was last modified
-        - hasPrev: (boolean) Indicates whether a previous image in the gallery exists
-        - hasNext: (boolean) Indicates whether a next image in the gallery exists
+        - bio: (string) bio of the user
+        - gender: (string) gender of the user
+        - name: (string) name of the user
+        - age: (number) age of the user
+        - foods_resp: (number) response to food survey question
+        - music_resp: (number) response to music survey question
+        - personality_resp: (number) response to the personality survey question
+        - pets_resp: (number) response to the pets survey question
+        - smokes_resp: (number) response to the smokes survey question
+        - traits_resp: (number) response to the traits survey question
+        - pictures: [object] array containing pictures of the user
+            - filename: (string) randomly generated filename
+            - id: (string) randomly generated id
+            - is_profile_picture: (boolean) true if picture is the profile picture for the user
+            - mimetype: (string) mimetype of the image
+            - path: (string) path of the image on disc
+        - filter: filter values for the user
+            - lower_age_range: (number) preferred minimum age
+            - upper_age_range: (number) preferred maximum age
+            - preferred_gender: (string) preferred gender
+            - smokes: (number) preferred smoking preference
 - response: 401
     - content-type: "text/html"
     - body: (string) "Access Denied"
@@ -151,137 +143,244 @@ $ curl http://localhost:3000/api/users/
     - content-type: "text/html"
     - body: (string) Error message of whatever error occured
 ```
-$ curl http://localhost:3000/api/images/user1/
+$ curl https://couple-finder.me/api/profile
 ```
 
-- description: Gets image file for specified image
-- request: "GET /api/images/:id/image/"
-- response: 200
+- Description: Gets image file for specified image
+- Request: "GET /api/pictures/:id/picture/"
+- Response: 200
     - content-type: _:image mimetype_
     - body: _:image file_
-- response: 401
+- Response: 401
     - content-type: "text/html"
     - body: (string) "Access Denied"
-- response: 404
+- Response: 404
     - content-type "text/html"
-    - body: (string) "No image with id :id could be found"
-- response: 500
+    - body: (string) "No image with id could be found"
+- Response: 500
     - content-type: "text/html"
     - body: (string) Error message of whatever error occured
 ```
-$ curl http://localhost:3000/api/images/5435easfdf2/image/
+$ curl https://couple-finder.me/api/pictures/5435easfdf2/picture
 ```
 
-- description: Gets either next or prev image of specified one
-- request: "GET /api/images/:id/:action/"
-- response: 200
+- Description: Gets at most 10 new matches for the user based on their filters
+- Request: "GET /api/new-matches/"
+- Response: 200
     - content-type: "application/json"
-    - body: object
-        - _id: (string) the image id
-        - author: (string) the author of the image
-        - title: (string) the title of the image
-        - image: (object) json object containing image file details
-        - createdAt: (string) Time the file was uploaded
-        - updatedAt: (string) Time the file was last modified
-        - hasPrev: (boolean) Indicates whether a previous image in the gallery exists
-        - hasNext: (boolean) Indicates whether a next image in the gallery exists
+    - body: [object]
+        - bio: (string) bio of the match
+        - gender: (string) gender of the match
+        - name: (string) name of the match
+        - email: (string) email of the match
+        - age: (number) age of the match
+        - foods_resp: (number) response to food survey question
+        - music_resp: (number) response to music survey question
+        - personality_resp: (number) response to the personality survey question
+        - pets_resp: (number) response to the pets survey question
+        - smokes_resp: (number) response to the smokes survey question
+        - traits_resp: (number) response to the traits survey question
+        - pictures: [object] array containing pictures of the match
+            - filename: (string) randomly generated filename
+            - id: (string) randomly generated id
+            - is_profile_picture: (boolean) true if picture is the profile picture for the match
+            - mimetype: (string) mimetype of the image
+            - path: (string) path of the image on disc
 - response: 400
     - content-type: "text/html"
-    - body: (string) "Incorrect action, please fix request and try again"
+    - body: (string) "Improperly formatted request, please fix and try again."
 - response: 401
     - content-type: "text/html"
     - body: (string) "Access Denied" 
-- response: 404:
-    - content-type: "text/html"
-    - body: (string) "No image with id :id could be found"
 - response: 500
     - content-type: "text/html"
     - body: (string) Error message of whatever error occured
 ```
-$ curl http://localhost:3000/api/images/fdf43ade/next/
+$ curl https://couple-finder.me/api/new-matches
 ```
 
-- description: Gets requested comment page for image
-- request: "GET /api/comments/:id/[?page=0]/"
-- response: 200
+- Description: Gets all incoming and outgoing match requests for the logged in user
+- Request: "GET /api/matches/"
+- Response: 200
     - content-type: "application/json"
     - body: object
-        - items: (list of objects) contains comment objects
-            - _id: (string) the comment id
-            - imageId: (string) The id of the parent image
-            - author: (string) The author of the comment
-            - content: (string) The content of the comment
-            - createdAt: (string) Time the comment was added
-            - updatedAt: (string) Time the comment was last modified
-        - hasNext: (boolean) Indicates whether another page of comments exists after this one
-        - page: (number) Indicates page number of comments
-- response: 401
+        - incoming: [object] incomming match requests
+            - inviter_profile: object
+                - bio: (string) bio of the match
+                - gender: (string) gender of the match
+                - name: (string) name of the match
+                - email: (string) email of the match
+                - age: (number) age of the match
+                - foods_resp: (number) response to food survey question
+                - music_resp: (number) response to music survey question
+                - personality_resp: (number) response to the personality survey question
+                - pets_resp: (number) response to the pets survey question
+                - smokes_resp: (number) response to the smokes survey question
+                - traits_resp: (number) response to the traits survey question
+                - pictures: [object] array containing pictures of the match
+                    - filename: (string) randomly generated filename
+                    - id: (string) randomly generated id
+                    - is_profile_picture: (boolean) true if picture is the profile picture for the match
+                    - mimetype: (string) mimetype of the image
+                    - path: (string) path of the image on disc
+        - outgoing: [object] outgoing match requests
+            - invitee_profile: object
+                - bio: (string) bio of the match
+                - gender: (string) gender of the match
+                - name: (string) name of the match
+                - email: (string) email of the match
+                - age: (number) age of the match
+                - foods_resp: (number) response to food survey question
+                - music_resp: (number) response to music survey question
+                - personality_resp: (number) response to the personality survey question
+                - pets_resp: (number) response to the pets survey question
+                - smokes_resp: (number) response to the smokes survey question
+                - traits_resp: (number) response to the traits survey question
+                - pictures: [object] array containing pictures of the match
+                    - filename: (string) randomly generated filename
+                    - id: (string) randomly generated id
+                    - is_profile_picture: (boolean) true if picture is the profile picture for the match
+                    - mimetype: (string) mimetype of the image
+                    - path: (string) path of the image on disc
+- Response: 401
     - content-type: "text/html"
     - body: (string) "Access Denied"
-- response: 500
+- Response: 500
     - content-type: "text/html"
     - body: (string) Error message of whatever error occured
 ```
-$ curl http://localhost:3000/api/comments/gfdg34asde/?page=0/
+$ curl https://couple-finder.me/api/matches
+```
+
+- Description: Gets all favourite matches for the logged in user
+- Request: "GET /api/favourites/"
+- Response: 200
+    - content-type: "application/json"
+    - body: [object]
+        - bio: (string) bio of the match
+        - gender: (string) gender of the match
+        - name: (string) name of the match
+        - email: (string) email of the match
+        - age: (number) age of the match
+        - foods_resp: (number) response to food survey question
+        - music_resp: (number) response to music survey question
+        - personality_resp: (number) response to the personality survey question
+        - pets_resp: (number) response to the pets survey question
+        - smokes_resp: (number) response to the smokes survey question
+        - traits_resp: (number) response to the traits survey question
+        - pictures: [object] array containing pictures of the match
+            - filename: (string) randomly generated filename
+            - id: (string) randomly generated id
+            - is_profile_picture: (boolean) true if picture is the profile picture for the match
+            - mimetype: (string) mimetype of the image
+            - path: (string) path of the image on disc
+- Response: 401
+    - content-type: "text/html"
+    - body: (string) "Access Denied"
+- Response: 500
+    - content-type: "text/html"
+    - body: (string) Error message of whatever error occured
+```
+$ curl https://couple-finder.me/api/favourites
 ```
 
 ### Update
-
-### Delete
-
-- description: Delete specific image and all associated comments.
-    If other images exist in the user's gallery, returns the next image to be displayed.
-- request: "DELETE /api/images/:id/"
-- response: 200
+- Description: Create or update filters for the logged in user
+- Request: "PUT /api/filters/"
+    - Content-type: "application/json"
+    - Body: object
+        - lower_age_range: (number) preferred minimum age for matches
+        - upper_age_range: (number) preferred upper age for matches
+        - preferred_gender: (string) preferred gender of matches
+        - smokes: (number) preferred smoking frequency for matches
+- Response: 200
     - content-type: "application/json"
     - body: object
-        - _id: (string) the image id
-        - author: (string) the author of the image
-        - title: (string) the title of the image
-        - image: (object) json object containing image file details
-        - createdAt: (string) Time the file was uploaded
-        - updatedAt: (string) Time the file was last modified
-        - hasPrev: (boolean) Indicates whether a previous image in the gallery exists
-        - hasNext: (boolean) Indicates whether a next image in the gallery exists
-- response: 401
+        - lower_age_range: (number) preferred minimum age for matches
+        - upper_age_range: (number) preferred upper age for matches
+        - preferred_gender: (string) preferred gender of matches
+        - smokes: (number) preferred smoking frequency for matches
+- Response: 400
+    - content-type: "text/html"
+    - body: (string) "A required field is missing, Please add a value for: _field_ and try again"
+- Response: 400
+    - content-type: "text/html"
+    - body: (string) "Invalid value for preferred_gender, please choose from: MALE, FEMALE, BOTH"
+- Response: 401
     - content-type: "text/html"
     - body: (string) "Access Denied"
-- response: 404
-    - content-type: "text/html"
-    - body: (string) "No image with id :id could be found"
-- response: 500
+- Response: 500
     - content-type: "text/html"
     - body: (string) Error message of whatever error occured
 ```
-$ curl -X DELETE
-    http://localhost:3000/api/images/3ewfsdsdee/
+$ curl -X PUT -H "Content-Type: application/json" 
+    -d '{"lower_age_range": 18, "upper_age_range": 45, "preferred_gender": "FEMALE", "smokes": 1}' 
+    https://couple-finder.me/api/filters
 ```
 
-- description: Deletes specified comment from image and returns the page of comments to be displayed
-- request: "DELETE /api/comments/:id/"
-- response: 200
+- Description: Create or update survey responses for the logged in user
+- Request: "PUT /api/survey/"
+    - Content-type: "application/json"
+    - Body: object
+        - foods_resp: (number) answer_number to the food preference question
+        - music_resp: (number) answer_number to the music preference question
+        - personality_resp: (number) answer_number to the personality question
+        - pets_resp: (number) answer_number to the pets preference question
+        - smokes_resp: (number) answer_number to the smokes frequency question
+        - traits_resp: (number) answer_number to the traits question
+- Response: 200
     - content-type: "application/json"
     - body: object
-        - items: (list of objects) contains comment objects
-            - _id: (string) the comment id
-            - imageId: (string) The id of the parent image
-            - author: (string) The author of the comment
-            - content: (string) The content of the comment
-            - createdAt: (string) Time the comment was added
-            - updatedAt: (string) Time the comment was last modified
-        - hasNext: (boolean) Indicates whether another page of comments exists after this one
-        - page: (number) Indicates page number of comments
-- response: 401
+        - foods_resp: (number) answer_number to the food preference question
+        - music_resp: (number) answer_number to the music preference question
+        - personality_resp: (number) answer_number to the personality question
+        - pets_resp: (number) answer_number to the pets preference question
+        - smokes_resp: (number) answer_number to the smokes frequency question
+        - traits_resp: (number) answer_number to the traits question
+- Response: 400
     - content-type: "text/html"
-    - body: (string) "Access Denied" 
-- response: 404
+    - body: (string) "A required field is missing, Please add a value for: _field_ and try again"
+- Response: 401
     - content-type: "text/html"
-    - body: (string) No comment with id :id could be found.
-- response: 500
+    - body: (string) "Access Denied"
+- Response: 500
     - content-type: "text/html"
     - body: (string) Error message of whatever error occured
 ```
-$ curl -X DELETE
-    http://localhost:3000/api/comments/sdr34erefe/
+$ curl -X PUT -H "Content-Type: application/json" 
+    -d '{"foods_resp": 1, "music_resp": 1, "personality_resp": 1, "smokes_resp": 1, "pets_resp": 1, "traits_resp": 1}' 
+    https://couple-finder.me/api/survey
 ```
-    
+
+- Description: Like or dislike a potential profile
+- Request: "PUT /api/match/"
+    - Content-type: "application/json"
+    - Body: object
+        - invitee: (string) the email of the liked/disliked profile
+        - status: (string) the status of the match request out of PENDING, MATCHED, DISLIKED
+- Response: 200
+    - content-type: "application/json"
+    - body: [object]
+        - invitee: (string) the email of the liked/disliked profile
+        - inviter: (string) the email of the current user
+        - status: (string) the status of the match request out of PENDING, MATCHED, DISLIKED
+- Response: 400
+    - content-type: "text/html"
+    - body: (string) "Improperly formatted request, please fix and try again."
+- Response: 400
+    - content-type: "text/html"
+    - body: (string) "Impropper value for status. Please select one of: PENDING, DISLIKED, MATCHED and try again."
+- Response: 401
+    - content-type: "text/html"
+    - body: (string) "Access Denied"
+- Response: 500
+    - content-type: "text/html"
+    - body: (string) Error message of whatever error occured
+```
+$ curl -X PUT -H "Content-Type: application/json" 
+    -d '{"invitee": "testemail@email.com", "status": "PENDING"}' 
+    https://couple-finder.me/api/match
+```
+
+
+### Delete

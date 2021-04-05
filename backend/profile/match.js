@@ -26,7 +26,7 @@ function putFilters(req, res, next) {
     // Check preferred gender has acceptable value
     req.body.preferred_gender = req.body.preferred_gender.toLocaleUpperCase("en-US");
     if (!genders.includes(req.body.preferred_gender)) {
-        return res.status(400).end("Invalid value for preferred_gender, please choose from: Male, Female, Both");
+        return res.status(400).end("Invalid value for preferred_gender, please choose from: Male, Female, BOTH");
     }
 
     // Post to database
@@ -58,11 +58,11 @@ function getNewMatches(req, res, next) {
             return res.status(500).end(resp.message);
         }
         // Construct query criteria
-        if (resp.data.profiles.length === 0 || resp.data.profiles[0].filters.length === 0) {
+        if (resp.data.profiles.length === 0 || !resp.data.profiles[0].filter) {
             return res.json(null);
         }
         let profile = resp.data.profiles[0];
-        let filter = profile.filters[0];
+        let filter = profile.filter;
   
         // Construct match query based on criteria
         let where = `{age: {_gte: ${filter.lower_age_range}, _lte: ${filter.upper_age_range}}`;
@@ -74,7 +74,10 @@ function getNewMatches(req, res, next) {
         resp.data.matched_already.forEach(match => {
             where += `, "${match.email}"`;
         });
-        where += "]}}";
+        where += "]}";
+        where += `, filter: {lower_age_range: {_lte: ${profile.age}}, upper_age_range: {_gte: ${profile.age}},
+                    preferred_gender: {_in: ["${profile.gender}", "BOTH"]}, smokes: {_gte: ${profile.smokes_resp}}}`;
+        where += "}";
 
         // Construct graphQL query
         let find_matches_query = `query find_matches_query {
@@ -117,7 +120,7 @@ function getNewMatches(req, res, next) {
 function putMatchRequest(req, res, next) {
     // Check for missing fields
     if (!req.body.invitee || !req.body.status) {
-        return res.status(400).end("Inproperly formatted request, please fix and try again.");
+        return res.status(400).end("Improperly formatted request, please fix and try again.");
     }
     let match1 = {inviter: req.email, invitee: req.body.invitee};
     match1.status = req.body.status.toLocaleUpperCase("en-US");
@@ -149,6 +152,7 @@ function putMatchRequest(req, res, next) {
             data.push(match2);
         }
         data.push(match1);
+
         // Post updated match requests
         database.postQuery("upsert_match_requests", upsert_match_requests, {match_requests: data}, function(resp, isError) {
             if (resp.isAxiosError) {

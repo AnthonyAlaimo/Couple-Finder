@@ -137,6 +137,7 @@ function ProfilePage() {
                                 surveyComplete: false,
                                 surveyResults: surveyResults,
                                 filterResults: {lower_age_range: "", upper_age_range:"", preferred_gender: "", smokes: ""}})
+<<<<<<< HEAD
                     }else if (user_profile.filter === null){
                         dispatch({...user_profile,
                             survey: survey,
@@ -145,6 +146,12 @@ function ProfilePage() {
                             filterResults: {lower_age_range: "", upper_age_range:"", preferred_gender: "", smokes: ""}})
                         }else{
                         dispatch({...user_profile, survey: survey, surveyResults: surveyResults, surveyComplete: true, filterResults: user_profile.filter[0]});
+=======
+                    }
+                    else{
+                        dispatch(user_profile);
+                        dispatch({survey: survey, surveyResults: surveyResults, surveyComplete: true, filterResults: user_profile.filter});
+>>>>>>> 23540343b6cc54fcc68910cc8278910f459d36e7
                     }
                 }
             } catch (err) {
