@@ -6,7 +6,7 @@ import './ProfilePage/ProfilePage.css';
 import fetchApi from "../utils/fetchApi";
 import { FcLike } from '@react-icons/all-files/fc/FcLike';
 import { FcDislike } from '@react-icons/all-files/fc/FcDislike';
-import { Icon, HStack, Heading, Button } from "@chakra-ui/react";
+import { IconButton, HStack, Heading, VStack } from "@chakra-ui/react";
 import MatchDetails from "../components/MatchDetails";
 import '../components/DashboardLayout/DashboardLayout.css';
 import './InboxPage/InboxPage.css';
@@ -31,9 +31,11 @@ function InboxPage() {
     // /* Get match history for the user */
     // app.get("/api/matches/", isAuthenticated, function (req, res, next) {
 
-    const onSubmit = async (action) => {
+    const onSubmit = async () => {
+        const action = userDetails.action;
         if (action === 'LikeProfile'){
-            await fetchApi("/match/", "PUT", {invitee: userDetails.matches[0].email, status: "PENDING"});
+            let result = await fetchApi("/match/", "PUT", {invitee: userDetails.matches[0].email, status: "PENDING"});
+            console.log(result);
             let updatedMatches = userDetails.matches.slice(1);
             console.log(updatedMatches);
             dispatch({matches: updatedMatches});
@@ -75,7 +77,6 @@ function InboxPage() {
         };
     }, [ userId ]);
 
-    console.log(userDetails)
     if ( userDetails === null ){
         return <DashboardLayout>Loading. Complete your user <b>Survey</b> and fill out <b>Filters</b> located in the profile page</DashboardLayout>
     }
@@ -83,11 +84,12 @@ function InboxPage() {
         return <DashboardLayout>Loading. Complete your user <b>Survey</b> and fill out <b>Filters</b> located in the profile page</DashboardLayout>
     }
     else if(userDetails.matches.length === 0){
-        return <DashboardLayout>You have no matches D:</DashboardLayout>
+        return <DashboardLayout><Heading className="centre" as="h1" size="4xl">You have no matches D:</Heading></DashboardLayout>
     }
-    console.log(userDetails.survey)
+    console.log(userDetails.matches)
     return (
-        <DashboardLayout>
+        <DashboardLayout >
+            <VStack justifyContent="center">
             <Heading className="centre" as="h1" size="4xl">Inbox</Heading>
             <HStack className="centre" 
             onSubmit={e => {
@@ -117,14 +119,29 @@ function InboxPage() {
             spacing='4'
             w='80%'
             >
-                <Button className="dashboard__logo" boxSize="100px" onClick={() => dispatch({action: "LikeProfile"})}>
-                    <Icon as={FcLike} /*onClick={() => onSubmit("LikeProfile")}*//>
-                </Button>
+                {/* <Button className="dashboard__logo" boxSize="80px" onClick={() => dispatch({action: "LikeProfile"})}>
+                    <Icon as={FcLike} boxSize="60px"/>
+                </Button> */}
+                <IconButton
+                    type="submit"
+                    colorScheme="teal"
+                    aria-label="Call Sage"
+                    icon={<FcLike />}
+                    size="lg"
+                    onClick={() => dispatch({action: "LikeProfile"})}></IconButton>
                 <MatchDetails user={userDetails.matches[0]} survey={userDetails.survey}></MatchDetails>
-                <Button className="dashboard__logo" boxSize="100px" onClick={() => dispatch({action: "DisLikeProfile"})}>
-                    <Icon as={FcDislike} /*onClick={() => onSubmit("DisLikeProfile")}*//>
-                </Button>
+                <IconButton
+                    type="submit"
+                    colorScheme="teal"
+                    aria-label="Call Sage"
+                    icon={<FcDislike />}
+                    size="lg"
+                    onClick={() => dispatch({action: "DisLikeProfile"})}></IconButton>
+                {/* <Button className="dashboard__logo" boxSize="80px" onClick={() => dispatch({action: "DisLikeProfile"})}>
+                    <Icon as={FcDislike} boxSize="60px"/>
+                </Button> */}
             </HStack>
+            </VStack>
         </DashboardLayout>
     );
 }

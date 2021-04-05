@@ -11,6 +11,7 @@ import {
     MenuItem,
   } from "@chakra-ui/react"
 import './ProfilePage/ProfilePage.css';
+import { result } from "lodash";
 
 function reducer(state = {}, action) {
     if (action === null){
@@ -26,20 +27,33 @@ function RequestsPage() {
     const userId = params.userID ?? user?._id;
     const [ userDetails, dispatch ] = useReducer(reducer, null);
 
-    const onSubmit = async (action) => {
+    const onSubmit = async () => {
+        const action = userDetails.action;
         // got to fix dispatch value to remove correct invitee
         if (action === 'accept'){
-            await fetchApi("/match/", "PUT", {invitee: userDetails.out_email, status: "MATCHED"});
-            // let updatedMatches = userDetails.matches.slice(1);
-            // dispatch({matches: updatedMatches});
+            let result = await fetchApi("/match/", "PUT", {invitee: userDetails.in_email, status: "MATCHED"});
+            console.log(result);
+            let updatedMatches = userDetails.incoming.filter((cur) => {
+                return cur.email !== result.email;
+            })
+            console.log(updatedMatches);
+            dispatch({incoming: updatedMatches});
         }else if (action === 'decline'){
-            await fetchApi("/match/", "PUT", {invitee: userDetails.out_email, status: "DISLIKED"});
-            // let updatedMatches = userDetails.matches.slice(1);
-            // dispatch({matches: updatedMatches});
+            let result = await fetchApi("/match/", "PUT", {invitee: userDetails.in_email, status: "DISLIKED"});
+            console.log(result);
+            let updatedMatches = userDetails.incoming.filter((cur) => {
+                return cur.email !== result.email;
+            })
+            console.log(updatedMatches);
+            dispatch({incoming: updatedMatches});
         }else if (action === 'cancel'){
-            await fetchApi("/match/", "PUT", {invitee: userDetails.in_email, status: "DISLIKED"});
-            // let updatedMatches = userDetails.matches.slice(1);
-            // dispatch({matches: updatedMatches});
+            let result = await fetchApi("/match/", "PUT", {invitee: userDetails.out_email, status: "DISLIKED"});
+            console.log(result);
+            let updatedMatches = userDetails.outgoing.filter((cur) => {
+                return cur.email !== result.email;
+            })
+            console.log(updatedMatches);
+            dispatch({outgoing: updatedMatches});
         }
     };
 
@@ -89,9 +103,6 @@ function RequestsPage() {
                     <HStack justifyContent="center" justifyContent="space-around">
                     <VStack className='lrp__card img_layout profile_info'>
                     <Heading as="h3" color="white" bg="black" w="110%" borderRadius="5px" p="10px">Match Request Recieved</Heading>
-                    {userDetails.incoming.length === 0 &&
-                        console.log("okay")
-                    }
                     {userDetails.incoming.map((match, key) => 
                         <HStack key={key} 
                         onSubmit={e => {
@@ -121,10 +132,10 @@ function RequestsPage() {
                         spacing='4'
                         w='80%'
                         >
-                            <Heading as="h3" color="white" p="2px">{match.invitee_profile.name}</Heading>
+                            <Heading as="h3" color="white" p="2px">{match.inviter_profile.name}</Heading>
                             <VStack>
-                                <Button type="submit" onClick={() => dispatch({ action: "accept", out_email: match.invitee_profile.email})}>Accept</Button>
-                                <Button type="submit" onClick={() => dispatch({ action: "decline", out_email: match.invitee_profile.email })}>Decline</Button>
+                                <Button type="submit" onClick={() => dispatch({ action: "accept", in_email: match.inviter_profile.email})}>Accept</Button>
+                                <Button type="submit" onClick={() => dispatch({ action: "decline", in__email: match.inviter_profile.email })}>Decline</Button>
                             </VStack>
                         </HStack>
                     )}
@@ -161,7 +172,7 @@ function RequestsPage() {
                         w='80%'
                         >
                             <Heading as="h3" color="white" p="2px">{match.invitee_profile.name}</Heading>
-                            <Button type="submit" onClick={() => dispatch({ action: "cancel", in_email: match.invitee_profile.email })}>Cancel</Button>
+                            <Button type="submit" onClick={() => dispatch({ action: "cancel", out_email: match.invitee_profile.email })}>Cancel</Button>
                         </HStack>
                     )}
                     </VStack>
