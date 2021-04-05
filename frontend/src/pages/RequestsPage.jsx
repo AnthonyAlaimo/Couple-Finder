@@ -86,9 +86,12 @@ function RequestsPage() {
     }, [ userId ]);
     
     if ( userDetails === null ){
-        return <DashboardLayout>loading</DashboardLayout>
+        return <DashboardLayout><Heading className="centre" as="h1" size="4xl">Loading</Heading></DashboardLayout>
     }
     if ( userDetails !== undefined){
+        if (userDetails.incoming.length === 0 && userDetails.outgoing.length === 0){
+            return <DashboardLayout><Heading className="centre" as="h1" size="4xl">You have no current Requests</Heading></DashboardLayout>
+        }
         return <DashboardLayout>
                 {/* <Menu>
                     <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
@@ -104,7 +107,7 @@ function RequestsPage() {
                     <VStack className='lrp__card img_layout profile_info'>
                     <Heading as="h3" color="white" bg="black" w="110%" borderRadius="5px" p="10px">Match Request Recieved</Heading>
                     {userDetails.incoming.map((match, key) => 
-                        <HStack key={key} 
+                        <HStack m="20px" key={key} 
                         onSubmit={e => {
                             e.preventDefault();
                             onSubmit().then(()=>{
@@ -143,7 +146,7 @@ function RequestsPage() {
                     <VStack className='lrp__card img_layout profile_info'>
                     <Heading as="h3" color="white" bg="black" w="110%" borderRadius="5px" p="10px">Match Request Sent</Heading>
                     {userDetails.outgoing.map((match, key) => 
-                        <HStack key={key}
+                        <HStack m="20px" key={key}
                         onSubmit={e => {
                             e.preventDefault();
                             onSubmit().then(()=>{

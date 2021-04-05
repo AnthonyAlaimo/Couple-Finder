@@ -54,12 +54,16 @@ function InboxPage() {
                 // TODO: 
                 if (!controller.signal.aborted){
                     const user_profile = await fetchApi("/profile/", "GET", null, controller.signal);
-                    const matches = await fetchApi("/new-matches/", "GET", null, controller.signal);
+                    const matches = await fetchApi("/new-matches/", "GET", null);
                     const survey = await fetchApi("/survey/", "GET", null);
+                    console.log(matches);
+                    if (matches === null) {
+                        dispatch({...user_profile, matches: [], survey: survey});
+                    }else{
+                        dispatch({...user_profile, matches: matches, survey: survey});
+                    }
                     // const match_history = await fetchApi("/matches/", "GET", null);
-                    // console.log(match_history);
-                    dispatch(user_profile);
-                    dispatch({matches: matches, survey: survey});
+                    // console.log(match_history)
                 }
             } catch (err) {
                 if (err.name === `AbortError`) {
@@ -77,20 +81,17 @@ function InboxPage() {
         };
     }, [ userId ]);
 
+    console.log(userDetails);
     if ( userDetails === null ){
-        return <DashboardLayout>Loading. Complete your user <b>Survey</b> and fill out <b>Filters</b> located in the profile page</DashboardLayout>
-    }
-    else if(userDetails.matches === undefined || userDetails.matches === null){
-        return <DashboardLayout>Loading. Complete your user <b>Survey</b> and fill out <b>Filters</b> located in the profile page</DashboardLayout>
+        return <DashboardLayout><Heading className="centre" as="h1" size="4xl">Loading. Complete your user <b>Survey</b> and fill out <b>Filters</b> located in the profile page</Heading></DashboardLayout>
     }
     else if(userDetails.matches.length === 0){
-        return <DashboardLayout><Heading className="centre" as="h1" size="4xl">You have no current matches! Reconfigure your filters or wait for more users to join the community :D</Heading></DashboardLayout>
+        return <DashboardLayout><Heading className="centre" as="h1" size="4xl">You have no current matches! Reconfigure your filters or wait for more users to join the community</Heading></DashboardLayout>
     }
-    console.log(userDetails.matches)
     return (
         <DashboardLayout >
             <VStack justifyContent="center">
-            <Heading className="centre" as="h1" size="4xl">Inbox</Heading>
+            <Heading className="centre" as="h1" size="4xl">Matches</Heading>
             <HStack className="centre" 
             onSubmit={e => {
                 e.preventDefault();

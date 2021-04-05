@@ -156,10 +156,10 @@ function ProfilePage() {
 
 
     if ( userDetails === null ){
-        return <DashboardLayout>loading</DashboardLayout>
+        return <DashboardLayout><Heading className="centre" as="h1" size="4xl">Loading</Heading></DashboardLayout>
     }
     if (userDetails.surveyResults === undefined){
-        return <DashboardLayout>loading</DashboardLayout>
+        return <DashboardLayout><Heading className="centre" as="h1" size="4xl">Loading</Heading></DashboardLayout>
     }
     if ( userDetails.id !== null){
         // SURVEY RESPONSE CASE: SURVEY HASN'T BEEN COMPLETED
