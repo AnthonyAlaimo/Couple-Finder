@@ -24,7 +24,7 @@ export default function MatchDetails({ user, survey }) {
             })
     return (
             <HStack >
-                <Box className='lrp__card' maxW='800px' maxH='60%' w='100%' m='auto' p='4' borderRadius='md'>
+                <Box className='lrp__card' maxW='750px' maxH='60%' w='100%' m='auto' p='4' borderRadius='md'>
                 <VStack p="4">
                 {/* <Heading className="centre" as="h1" size="4xl">Matches</Heading> */}
                 <HStack>

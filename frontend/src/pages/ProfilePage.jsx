@@ -194,6 +194,7 @@ function ProfilePage() {
                                 }}
                                 as='form'
                                 spacing='4'
+                                p='0px'
                                 w='80%'
                                 className='lrp__card img_layout profile_info' borderRadius='md' maxW="600px" boxSize="700px">
                         <Heading as="h3" color="white" bg="black" w="110%" borderRadius="5px" p="10px">Complete Your Matching Survey</Heading>
@@ -215,20 +216,26 @@ function ProfilePage() {
                         <Heading as="h2" size="md">What traits do you look for in a partner?</Heading>
                         <RadioGroup isRequired name="q2" value={userDetails.surveyResults.traits_resp.toString()} onChange={(q2) => {setSurveyResults(q2, "traits_resp")}}>
                             <HStack spacing="24px">
-                            <Wrap maxW="200">
-                                <WrapItem>
+                                <VStack>
                                 <Radio value="1" >Kind</Radio>
                                 <Radio value="2" >Energetic</Radio>
+                                </VStack>
+                                <VStack>
                                 <Radio value="3" >Honest</Radio>
                                 <Radio value="4" >Naive</Radio>
+                                </VStack>
+                                <VStack>
                                 <Radio value="5" >Talkative</Radio>
                                 <Radio value="6" >Moody</Radio>
+                                </VStack>
+                                <VStack>
                                 <Radio value="7" >Open minded</Radio>
                                 <Radio value="8" >Respectful</Radio>
+                                </VStack>
+                                <VStack>
                                 <Radio value="9" >Passionate</Radio>
                                 <Radio value="10" >Good looks</Radio>
-                                </WrapItem>
-                            </Wrap>
+                                </VStack>
                             </HStack>
                         </RadioGroup>
                         <Heading as="h2" size="md">What kind of music puts you in the mood?</Heading>
@@ -292,89 +299,6 @@ function ProfilePage() {
                 count += 1;
             })
             console.log(userDetails);
-            // if (userDetails.filter !== null){
-            //     return <DashboardLayout>
-            //                 <UserDetails user={userDetails}></UserDetails>
-            //                 <HStack>
-            //                 <VStack className='lrp__card img_layout profile_info' borderRadius='md' boxSize="500px">
-            //                 <Heading as="h3" color="white" bg="black" w="110%" borderRadius="5px" p="2px">Survey Answers</Heading>
-            //                 {stringResponse.map((result, key) => 
-            //                     <VStack key={key}>
-            //                         <Heading as="h2" size="md">{result.q}</Heading>
-            //                         <Heading as="h3" size="md" color="blue">{result.o}</Heading>
-            //                     </VStack>
-            //                 )}
-            //                 </VStack>
-            //                 {/* filter code */}
-            //                 <VStack onSubmit={e => {
-            //                         e.preventDefault();
-            //                         onSubmit().then(()=>{
-            //                             toast({
-            //                                 title: "Filters Successfully set",
-            //                                 position: 'top',
-            //                                 description: "Go to inbox to check for potential matches",
-            //                                 status: "success",
-            //                                 duration: 4000,
-            //                                 isClosable: true
-            //                             })
-            //                         }).catch(()=>{
-            //                             toast({
-            //                                 title: "Filters not set",
-            //                                 position: 'top',
-            //                                 description: "Failed to set filters, make sure to set all fields!",
-            //                                 status: "error",
-            //                                 duration: 4000,
-            //                                 isClosable: true
-            //                             })
-            //                         })
-            //                         return false;
-            //                         }}
-            //                         as='form'
-            //                         spacing='4'
-            //                         w='80%'
-            //                         className='lrp__card img_layout profile_info' borderRadius='md' maxW="600px" boxSize="700px">
-            //                 <Heading className='display' as="h3" color="white" bg="black" w="110%" borderRadius="5px" p="10px">Edit Matching Filters</Heading>
-            //                 <Heading as="h2" size="md">Preferred Age Range</Heading>
-            //                 <VStack>
-            //                 <Heading as="h2" size="sm">Lowest</Heading>
-            //                     <NumberInput isRequired value={userDetails?.filter?.lower_age_range?.toString()} min={18} max={90} onChange={(lower) => {setFilterResults(lower, "lower_age_range")}}>
-            //                     <NumberInputField/>
-            //                     <NumberInputStepper>
-            //                         <NumberIncrementStepper />
-            //                         <NumberDecrementStepper />
-            //                     </NumberInputStepper>
-            //                     </NumberInput>
-            //                 <Heading as="h2" size="sm">Highest</Heading>
-            //                     <NumberInput isRequired value={userDetails?.filter?.upper_age_range?.toString()} min={18} max={90} onChange={(upper) => {setFilterResults(upper, "upper_age_range")}}>
-            //                     <NumberInputField/>
-            //                     <NumberInputStepper>
-            //                         <NumberIncrementStepper />
-            //                         <NumberDecrementStepper />
-            //                     </NumberInputStepper>
-            //                     </NumberInput>
-            //                 </VStack>
-
-            //                 <Heading as="h2" size="md">Preferred Gender</Heading>
-            //                 <RadioGroup isRequired value={userDetails?.filter?.preferred_gender} defaultValue={userDetails.filter.preferred_gender} onChange={(q2) => {setFilterResults(q2, "preferred_gender")}}>
-            //                     <HStack spacing="24px">
-            //                         <Radio value="MALE" >Male</Radio>
-            //                         <Radio value="FEMALE" >Female</Radio>
-            //                         <Radio value="BOTH" >Both</Radio>
-            //                     </HStack>
-            //                 </RadioGroup>
-            //                 <Heading as="h2" size="md">Partner's Smoking Habit</Heading>
-            //                 <RadioGroup isRequired value={userDetails?.filter?.smokes?.toString()} defaultValue={userDetails.filter.smokes} onChange={(q3) => {setFilterResults(q3, "smokes")}}>
-            //                     <HStack spacing="24px">
-            //                         <Radio value="1" >Not at all</Radio>
-            //                         <Radio value="2" >Somewhat</Radio>
-            //                         <Radio value="3" >Frequently</Radio>
-            //                     </HStack>
-            //                 </RadioGroup>
-            //                 <Button type="submit" onClick={() => dispatch({action: "filter"})}>Submit</Button>
-            //                 </VStack>
-            //                 </HStack>
-            //             </DashboardLayout>
-            // }else{
                 return <DashboardLayout>
                             <UserDetails user={userDetails}></UserDetails>
                             <HStack>
@@ -412,10 +336,10 @@ function ProfilePage() {
                                     return false;
                                     }}
                                     as='form'
-                                    spacing='4'
                                     w='80%'
+                                    p='0px'
                                     className='lrp__card img_layout profile_info' borderRadius='md' maxW="600px" boxSize="700px">
-                            <Heading className='display' as="h3" color="white" bg="black" w="110%" borderRadius="5px" p="10px">Edit Matching Filters</Heading>
+                            <Heading className='display' as="h3" color="white" bg="black" w="110%" borderRadius="5px">Edit Matching Filters</Heading>
                             <Heading as="h2" size="md">Preferred Age Range</Heading>
                             <VStack>
                             <Heading as="h2" size="sm">Lowest</Heading>

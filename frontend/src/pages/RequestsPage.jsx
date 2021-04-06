@@ -3,15 +3,15 @@ import { useContext, useEffect, useReducer } from "react";
 import { UserContext } from "../components/UserProvider";
 import { useParams } from "react-router";
 import fetchApi from "../utils/fetchApi";
-import { Button, ChevronDownIcon, Heading, HStack, VStack, useToast } from "@chakra-ui/react";
+import MatchDetails from "../components/MatchDetails";
+import { Button, Heading, HStack, VStack, useToast, Form } from "@chakra-ui/react";
 import {
     Menu,
     MenuButton,
     MenuList,
-    MenuItem,
+    MenuItem,MenuGroup, MenuDivider
   } from "@chakra-ui/react"
 import './ProfilePage/ProfilePage.css';
-import { result } from "lodash";
 
 function reducer(state = {}, action) {
     if (action === null){
@@ -32,28 +32,38 @@ function RequestsPage() {
         // got to fix dispatch value to remove correct invitee
         if (action === 'accept'){
             let result = await fetchApi("/match/", "PUT", {invitee: userDetails.in_email, status: "MATCHED"});
-            console.log(result);
             let updatedMatches = userDetails.incoming.filter((cur) => {
-                return cur.email !== result.email;
+                return cur.inviter_profile.email !== result[0].inviter;
             })
             console.log(updatedMatches);
-            dispatch({incoming: updatedMatches});
+            dispatch({incoming: updatedMatches,  match: null});
         }else if (action === 'decline'){
+            console.log(userDetails);
             let result = await fetchApi("/match/", "PUT", {invitee: userDetails.in_email, status: "DISLIKED"});
             console.log(result);
             let updatedMatches = userDetails.incoming.filter((cur) => {
-                return cur.email !== result.email;
+                console.log(cur.inviter_profile.email );
+                console.log(result[0].inviter);
+                return cur.inviter_profile.email !== result[0].inviter;
             })
             console.log(updatedMatches);
-            dispatch({incoming: updatedMatches});
+            dispatch({incoming: updatedMatches,  match: null});
         }else if (action === 'cancel'){
             let result = await fetchApi("/match/", "PUT", {invitee: userDetails.out_email, status: "DISLIKED"});
-            console.log(result);
             let updatedMatches = userDetails.outgoing.filter((cur) => {
-                return cur.email !== result.email;
+                console.log(cur.invitee_profile.email);
+                return cur.invitee_profile.email !== result[0].invitee;
             })
-            console.log(updatedMatches);
-            dispatch({outgoing: updatedMatches});
+            dispatch({outgoing: updatedMatches, match: null});
+        }
+    };
+
+    const displayMatch = async (match, invite) => {
+        console.log(match);
+        if (invite === "invitee"){
+            dispatch({match: match, invite: "invitee"});
+        }else{
+            dispatch({match: match, invite: "inviter"});
         }
     };
 
@@ -66,8 +76,9 @@ function RequestsPage() {
                 if (!controller.signal.aborted){
                     const user_profile = await fetchApi("/profile/", "GET", null, controller.signal);
                     const matches = await fetchApi("/matches/", "GET", null);
+                    const survey = await fetchApi("/survey/", "GET", null);
                     console.log(matches);
-                    dispatch({...user_profile, incoming: matches.incoming, outgoing: matches.outgoing});
+                    dispatch({...user_profile, incoming: matches.incoming, outgoing: matches.outgoing, match: null, survey: survey});
                 }
             } catch (err) {
                 if (err.name === `AbortError`) {
@@ -93,93 +104,102 @@ function RequestsPage() {
             return <DashboardLayout><Heading className="centre" as="h1" size="4xl">You have no current Requests</Heading></DashboardLayout>
         }
         return <DashboardLayout>
-                {/* <Menu>
-                    <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-                        Favourites
-                    </MenuButton>
-                    <MenuList>
-                    {userDetails.matches.map((match, key) =>
-                        <MenuItem key={key}  onClick={() => displayMatch(match)}>{match.name}</MenuItem>
-                        )}
-                    </MenuList>
-                    </Menu> */}
-                    <HStack justifyContent="center" justifyContent="space-around">
-                    <VStack className='lrp__card img_layout profile_info'>
-                    <Heading as="h3" color="white" bg="black" w="110%" borderRadius="5px" p="10px">Match Request Recieved</Heading>
-                    {userDetails.incoming.map((match, key) => 
-                        <HStack m="20px" key={key} 
-                        onSubmit={e => {
-                            e.preventDefault();
-                            onSubmit().then(()=>{
-                                toast({
-                                    title: "Request Complete",
-                                    position: 'top',
-                                    description: "",
-                                    status: "success",
-                                    duration: 4000,
-                                    isClosable: true
-                                })
-                            }).catch(()=>{
-                                toast({
-                                    title: "Something went wrong, try refreshing the page",
-                                    position: 'top',
-                                    description: "",
-                                    status: "error",
-                                    duration: 4000,
-                                    isClosable: true
-                                })
+            {/* menus for request sent to and from the user */}
+            <HStack p="10px">
+            <Menu>
+            <MenuButton as={Button} colorScheme="pink">
+                Request Sent
+            </MenuButton>
+            <MenuList>
+                <MenuGroup title="Sent">
+                {userDetails.outgoing.map((match, key) =>
+                <MenuItem key={key}  onClick={() => displayMatch(match, "invitee")}>{match.invitee_profile.name}</MenuItem>
+                )}
+                </MenuGroup>
+                <MenuDivider />
+            </MenuList>
+            </Menu>
+            <Menu>
+            <MenuButton as={Button} colorScheme="pink">
+                Request Recieved
+            </MenuButton>
+            <MenuList>
+                <MenuGroup title="Recieved">
+                {userDetails.incoming.map((match, key) =>
+                <MenuItem key={key}  onClick={() => displayMatch(match, "inviter")}>{match.inviter_profile.name}</MenuItem>
+                )}
+                </MenuGroup>
+                <MenuDivider />
+            </MenuList>
+            </Menu>
+            </HStack>
+                {userDetails.match !== null &&
+                <HStack>
+                    {/* invitee case */}
+                    {userDetails.invite === "invitee" &&
+                    <HStack as="form"
+                    onSubmit={e => {
+                        e.preventDefault();
+                        onSubmit().then(()=>{
+                            toast({
+                                title: "Match Request Succesfully Cancelled",
+                                position: 'top',
+                                description: "Match removed from request sent list",
+                                status: "success",
+                                duration: 4000,
+                                isClosable: true
                             })
-                            return false;
-                        }}
-                        as='form'
-                        spacing='4'
-                        w='80%'
-                        >
-                            <Heading as="h3" color="white" p="2px">{match.inviter_profile.name}</Heading>
-                            <VStack>
-                                <Button type="submit" onClick={() => dispatch({ action: "accept", in_email: match.inviter_profile.email})}>Accept</Button>
-                                <Button type="submit" onClick={() => dispatch({ action: "decline", in__email: match.inviter_profile.email })}>Decline</Button>
-                            </VStack>
-                        </HStack>
-                    )}
-                    </VStack>
-                    <VStack className='lrp__card img_layout profile_info'>
-                    <Heading as="h3" color="white" bg="black" w="110%" borderRadius="5px" p="10px">Match Request Sent</Heading>
-                    {userDetails.outgoing.map((match, key) => 
-                        <HStack m="20px" key={key}
-                        onSubmit={e => {
-                            e.preventDefault();
-                            onSubmit().then(()=>{
-                                toast({
-                                    title: "Match Request Succesfully Cancelled",
-                                    position: 'top',
-                                    description: "",
-                                    status: "success",
-                                    duration: 4000,
-                                    isClosable: true
-                                })
-                            }).catch(()=>{
-                                toast({
-                                    title: "Something went wrong, try refreshing the page",
-                                    position: 'top',
-                                    description: "",
-                                    status: "error",
-                                    duration: 4000,
-                                    isClosable: true
-                                })
+                        }).catch(()=>{
+                            toast({
+                                title: "Something went wrong, try refreshing the page",
+                                position: 'top',
+                                description: "",
+                                status: "error",
+                                duration: 4000,
+                                isClosable: true
                             })
-                            return false;
-                        }}
-                        as='form'
-                        spacing='4'
-                        w='80%'
-                        >
-                            <Heading as="h3" color="white" p="2px">{match.invitee_profile.name}</Heading>
-                            <Button type="submit" onClick={() => dispatch({ action: "cancel", out_email: match.invitee_profile.email })}>Cancel</Button>
-                        </HStack>
-                    )}
+                        })
+                        return false;
+                    }}>
+                    <MatchDetails user={userDetails.match.invitee_profile} survey={userDetails.survey}></MatchDetails>
+                    <Button type="submit" onClick={() => dispatch({ action: "cancel", out_email: userDetails.match.invitee_profile.email })}>Cancel Request</Button>
+                    </HStack>
+                    }
+                    {/* inviter case */}
+                    {userDetails.invite === "inviter" &&
+                    <HStack onSubmit={e => {
+                        e.preventDefault();
+                        onSubmit().then(()=>{
+                            toast({
+                                title: "Request Complete",
+                                position: 'top',
+                                description: "",
+                                status: "success",
+                                duration: 4000,
+                                isClosable: true
+                            })
+                        }).catch(()=>{
+                            toast({
+                                title: "Something went wrong, try refreshing the page",
+                                position: 'top',
+                                description: "",
+                                status: "error",
+                                duration: 4000,
+                                isClosable: true
+                            })
+                        })
+                        return false;
+                    }}
+                    as='form'>
+                    <MatchDetails user={userDetails.match.inviter_profile} survey={userDetails.survey}></MatchDetails>
+                    <VStack>
+                        <Button type="submit" onClick={() => dispatch({ action: "accept", in_email: userDetails.match.inviter_profile.email})}>Accept</Button>
+                        <Button type="submit" onClick={() => dispatch({ action: "decline", in_email: userDetails.match.inviter_profile.email })}>Decline</Button>
                     </VStack>
                     </HStack>
+                    }
+                </HStack>
+                }
         </DashboardLayout>
     }    
     return (

@@ -101,7 +101,7 @@ function FavouritesPage() {
     console.log(userDetails.favourites)
     if (userDetails?.favourites.length === 0){
         return <DashboardLayout>
-                <Heading className="centre" as="h1" size="4xl">Your favourites list is empty. Make sure to fill out your survey and filters on the profile page!</Heading>
+                <Heading className="centre" as="h1" size="4xl">Your favourites list is empty. Only matches that you've liked and have liked you back will appear here!</Heading>
             </DashboardLayout>
     }
     else{

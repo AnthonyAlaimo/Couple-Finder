@@ -118,11 +118,10 @@ function InboxPage() {
             }}
             as='form'
             spacing='4'
-            w='80%'
+            w='100%'
             >
-                {/* <Button className="dashboard__logo" boxSize="80px" onClick={() => dispatch({action: "LikeProfile"})}>
-                    <Icon as={FcLike} boxSize="60px"/>
-                </Button> */}
+                <VStack>
+                <Heading className="centre" as="h4" size="1xl">Like</Heading>
                 <IconButton
                     type="submit"
                     colorScheme="teal"
@@ -130,7 +129,10 @@ function InboxPage() {
                     icon={<FcLike />}
                     size="lg"
                     onClick={() => dispatch({action: "LikeProfile"})}></IconButton>
+                </VStack>
                 <MatchDetails user={userDetails.matches[0]} survey={userDetails.survey}></MatchDetails>
+                <VStack>
+                <Heading className="centre" as="h4" size="1xl">DisLike</Heading>
                 <IconButton
                     type="submit"
                     colorScheme="teal"
@@ -138,9 +140,7 @@ function InboxPage() {
                     icon={<FcDislike />}
                     size="lg"
                     onClick={() => dispatch({action: "DisLikeProfile"})}></IconButton>
-                {/* <Button className="dashboard__logo" boxSize="80px" onClick={() => dispatch({action: "DisLikeProfile"})}>
-                    <Icon as={FcDislike} boxSize="60px"/>
-                </Button> */}
+                </VStack>
             </HStack>
             </VStack>
         </DashboardLayout>
