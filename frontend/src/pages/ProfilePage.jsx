@@ -193,7 +193,6 @@ function ProfilePage() {
                                 return false;
                                 }}
                                 as='form'
-                                spacing='4'
                                 p='0px'
                                 w='80%'
                                 className='lrp__card img_layout profile_info' borderRadius='md' maxW="600px" boxSize="700px">
@@ -276,7 +275,7 @@ function ProfilePage() {
                                 <Radio value="3" >Frequently</Radio>
                             </HStack>
                         </RadioGroup>
-                        <Button className="btn" type="submit" onClick={() => dispatch({action:"survey"})}>Submit</Button>
+                        <Button p='2' className="btn" type="submit" onClick={() => dispatch({action:"survey"})}>Submit</Button>
                         </VStack>
                     </VStack>
                 </DashboardLayout>
@@ -376,7 +375,7 @@ function ProfilePage() {
                                     <Radio value="3" >Frequently</Radio>
                                 </HStack>
                             </RadioGroup>
-                            <Button type="submit" onClick={() => dispatch({action: "filter"})}>Submit</Button>
+                            <Button p='2' type="submit" onClick={() => dispatch({action: "filter"})}>Submit</Button>
                             </VStack>
                             </HStack>
                         </DashboardLayout>
