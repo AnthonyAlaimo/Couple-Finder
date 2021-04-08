@@ -12,6 +12,12 @@ const routes = [
         exact: true,
     },
     {
+        component: require('./pages/RequestsPage').default,
+        name: 'Requests',
+        path: '/requests',
+        exact: true,
+    },
+    {
         component: require('./pages/FavouritesPage').default,
         name: 'Favourites',
         path: '/favourites',

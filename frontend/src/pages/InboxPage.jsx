@@ -6,10 +6,11 @@ import './ProfilePage/ProfilePage.css';
 import fetchApi from "../utils/fetchApi";
 import { FcLike } from '@react-icons/all-files/fc/FcLike';
 import { FcDislike } from '@react-icons/all-files/fc/FcDislike';
-import { Icon, HStack, Heading } from "@chakra-ui/react";
+import { IconButton, HStack, Heading, VStack } from "@chakra-ui/react";
 import MatchDetails from "../components/MatchDetails";
 import '../components/DashboardLayout/DashboardLayout.css';
 import './InboxPage/InboxPage.css';
+import { useToast } from "@chakra-ui/react";
 
 function reducer(state = {}, action) {
     if (action === null){
@@ -20,6 +21,7 @@ function reducer(state = {}, action) {
 
 
 function InboxPage() {
+    const toast = useToast();
     const { user } = useContext(UserContext);
     const params = useParams();
     const userId = params.userID ?? user?._id;
@@ -29,13 +31,19 @@ function InboxPage() {
     // /* Get match history for the user */
     // app.get("/api/matches/", isAuthenticated, function (req, res, next) {
 
-    const onSubmit = async (action) => {
+    const onSubmit = async () => {
+        const action = userDetails.action;
         if (action === 'LikeProfile'){
-            console.log("Like");
-            await fetchApi("/match/", "PUT", {invitee: userDetails.matches[0].email, status: "PENDING"});
+            let result = await fetchApi("/match/", "PUT", {invitee: userDetails.matches[0].email, status: "PENDING"});
+            console.log(result);
+            let updatedMatches = userDetails.matches.slice(1);
+            console.log(updatedMatches);
+            dispatch({matches: updatedMatches});
         }else if (action === 'DisLikeProfile'){
-            console.log("DisLike");
             await fetchApi("/match/", "PUT", {invitee: userDetails.matches[0].email, status: "DISLIKED"});
+            let updatedMatches = userDetails.matches.slice(1);
+            console.log(updatedMatches);
+            dispatch({matches: updatedMatches});
         }   
     };
     useEffect(() => {
@@ -46,11 +54,16 @@ function InboxPage() {
                 // TODO: 
                 if (!controller.signal.aborted){
                     const user_profile = await fetchApi("/profile/", "GET", null, controller.signal);
-                    const matches = await fetchApi("/new-matches/", "GET", null, controller.signal);
+                    const matches = await fetchApi("/new-matches/", "GET", null);
                     const survey = await fetchApi("/survey/", "GET", null);
                     console.log(matches);
-                    dispatch(user_profile);
-                    dispatch({matches: matches, survey: survey});
+                    if (matches === null) {
+                        dispatch({...user_profile, matches: [], survey: survey});
+                    }else{
+                        dispatch({...user_profile, matches: matches, survey: survey});
+                    }
+                    // const match_history = await fetchApi("/matches/", "GET", null);
+                    // console.log(match_history)
                 }
             } catch (err) {
                 if (err.name === `AbortError`) {
@@ -68,25 +81,68 @@ function InboxPage() {
         };
     }, [ userId ]);
 
-    console.log(userDetails)
+    console.log(userDetails);
     if ( userDetails === null ){
-        return <DashboardLayout>Loading. Complete your user <b>Survey</b> and fill out <b>Filters</b> located in the profile page</DashboardLayout>
-    }
-    else if(userDetails.matches === undefined || userDetails.matches === null){
-        return <DashboardLayout>Loading. Complete your user <b>Survey</b> and fill out <b>Filters</b> located in the profile page</DashboardLayout>
+        return <DashboardLayout><Heading className="centre" as="h1" size="4xl">Loading. Complete your user <b>Survey</b> and fill out <b>Filters</b> located in the profile page</Heading></DashboardLayout>
     }
     else if(userDetails.matches.length === 0){
-        return <DashboardLayout>You have no matches D:</DashboardLayout>
+        return <DashboardLayout><Heading className="centre" as="h1" size="4xl">You have no current matches! Reconfigure your filters or wait for more users to join the community</Heading></DashboardLayout>
     }
-    console.log(userDetails.survey)
     return (
-        <DashboardLayout>
-            <Heading className="centre" as="h1" size="4xl">Inbox</Heading>
-            <HStack className="centre">
-                <Icon className="dashboard__logo" boxSize="100px" as={FcLike} onClick={() => onSubmit(`LikeProfile`)}/>
+        <DashboardLayout >
+            <VStack justifyContent="center">
+            <Heading className="centre" as="h1" size="4xl">Matches</Heading>
+            <HStack className="centre" 
+            onSubmit={e => {
+                e.preventDefault();
+                onSubmit().then(()=>{
+                    toast({
+                        title: "Successfully updated matches :D",
+                        position: 'top',
+                        description: "",
+                        status: "success",
+                        duration: 4000,
+                        isClosable: true
+                    })
+                }).catch(()=>{
+                    toast({
+                        title: "Something went wrong, try refreshing the page",
+                        position: 'top',
+                        description: "",
+                        status: "error",
+                        duration: 4000,
+                        isClosable: true
+                    })
+                })
+                return false;
+            }}
+            as='form'
+            spacing='4'
+            w='100%'
+            >
+                <VStack>
+                <Heading className="centre" as="h4" size="1xl">Like</Heading>
+                <IconButton
+                    type="submit"
+                    colorScheme="teal"
+                    aria-label="Call Sage"
+                    icon={<FcLike />}
+                    size="lg"
+                    onClick={() => dispatch({action: "LikeProfile"})}></IconButton>
+                </VStack>
                 <MatchDetails user={userDetails.matches[0]} survey={userDetails.survey}></MatchDetails>
-                <Icon className="dashboard__logo" boxSize="100px" as={FcDislike} onClick={() => onSubmit(`DisLikeProfile`)}/>
+                <VStack>
+                <Heading className="centre" as="h4" size="1xl">DisLike</Heading>
+                <IconButton
+                    type="submit"
+                    colorScheme="teal"
+                    aria-label="Call Sage"
+                    icon={<FcDislike />}
+                    size="lg"
+                    onClick={() => dispatch({action: "DisLikeProfile"})}></IconButton>
+                </VStack>
             </HStack>
+            </VStack>
         </DashboardLayout>
     );
 }

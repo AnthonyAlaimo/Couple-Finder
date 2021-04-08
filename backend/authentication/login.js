@@ -26,7 +26,7 @@ function signup(req, res, next) {
             return res.status(500).end(resp.message);
         }
         else if (resp.data.users.length > 0) {
-            return res.status(400).end("Invalid request, email is already in use.");
+            return res.status(409).end("Invalid request, email is already in use.");
         }
         // Hash and Salt Password and store in DB
         let salt = crypto.randomBytes(16).toString("base64");
