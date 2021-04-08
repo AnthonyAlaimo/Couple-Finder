@@ -343,7 +343,7 @@ function ProfilePage() {
                             <Heading as="h2" size="md">Preferred Age Range</Heading>
                             <VStack>
                             <Heading as="h2" size="sm">Lowest</Heading>
-                                <NumberInput isRequired value={userDetails?.filterResults?.lower_age_range?.toString()} min={18} max={90} onChange={(lower) => {setFilterResults(lower, "lower_age_range")}}>
+                                <NumberInput value={userDetails?.filterResults?.lower_age_range?.toString()} min={18} max={90} onChange={(lower) => {setFilterResults(lower, "lower_age_range")}}>
                                 <NumberInputField/>
                                 <NumberInputStepper>
                                     <NumberIncrementStepper />
@@ -351,7 +351,7 @@ function ProfilePage() {
                                 </NumberInputStepper>
                                 </NumberInput>
                             <Heading as="h2" size="sm">Highest</Heading>
-                                <NumberInput isRequired value={userDetails?.filterResults?.upper_age_range?.toString()} min={18} max={90} onChange={(upper) => {setFilterResults(upper, "upper_age_range")}}>
+                                <NumberInput value={userDetails?.filterResults?.upper_age_range?.toString()} min={18} max={90} onChange={(upper) => {setFilterResults(upper, "upper_age_range")}}>
                                 <NumberInputField/>
                                 <NumberInputStepper>
                                     <NumberIncrementStepper />

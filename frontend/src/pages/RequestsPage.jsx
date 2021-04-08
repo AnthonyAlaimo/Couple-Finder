@@ -35,23 +35,17 @@ function RequestsPage() {
             let updatedMatches = userDetails.incoming.filter((cur) => {
                 return cur.inviter_profile.email !== result[0].inviter;
             })
-            console.log(updatedMatches);
             dispatch({incoming: updatedMatches,  match: null});
         }else if (action === 'decline'){
             console.log(userDetails);
             let result = await fetchApi("/match/", "PUT", {invitee: userDetails.in_email, status: "DISLIKED"});
-            console.log(result);
             let updatedMatches = userDetails.incoming.filter((cur) => {
-                console.log(cur.inviter_profile.email );
-                console.log(result[0].inviter);
                 return cur.inviter_profile.email !== result[0].inviter;
             })
-            console.log(updatedMatches);
             dispatch({incoming: updatedMatches,  match: null});
         }else if (action === 'cancel'){
             let result = await fetchApi("/match/", "PUT", {invitee: userDetails.out_email, status: "DISLIKED"});
             let updatedMatches = userDetails.outgoing.filter((cur) => {
-                console.log(cur.invitee_profile.email);
                 return cur.invitee_profile.email !== result[0].invitee;
             })
             dispatch({outgoing: updatedMatches, match: null});

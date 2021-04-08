@@ -1,18 +1,19 @@
 import DashboardLayout from "../components/DashboardLayout";
-import { useContext, useEffect, useReducer, useState } from "react";
+import { useContext, useEffect, useReducer} from "react";
 import { UserContext } from "../components/UserProvider";
 import MatchDetails from "../components/MatchDetails";
+import Chat from "../components/Chat";
 import { useParams } from "react-router";
 import fetchApi from "../utils/fetchApi";
-import { Button, ChevronDownIcon, Textarea, Heading, Input, Message } from "@chakra-ui/react";
+import { Button, Heading, HStack} from "@chakra-ui/react";
 import {
     Menu,
     MenuButton,
     MenuList,
     MenuItem,MenuGroup, MenuDivider
   } from "@chakra-ui/react"
-import io from 'socket.io-client';
 import './FavouritesPage/FavouritesPage.css';
+import { useToast } from "@chakra-ui/react";
 
 function reducer(state = {}, action) {
     if (action === null){
@@ -22,47 +23,28 @@ function reducer(state = {}, action) {
 }
 
 function FavouritesPage() {
-    const [state, setState] = useState({message: '', name: ''});
-    const [chat, setChat] = useState([]);
-
-
+    const toast = useToast();
     const { user } = useContext(UserContext);
     const params = useParams();
     const userId = params.userID ?? user?._id;
     const [ userDetails, dispatch ] = useReducer(reducer, null);
 
+    const onSubmit = async () => {
+        const action = userDetails.action;
+        if (action === 'decline'){
+            let result = await fetchApi("/match/", "PUT", {invitee: userDetails.in_email, status: "DISLIKED"});
+            let updatedMatches = userDetails.favourites.filter((cur) => {
+                return cur.inviter_profile.email !== result[0].inviter;
+            })
+            dispatch({favourites: updatedMatches,  match: null});
+        }
+    };
+
     const displayMatch = async (match) => {
         console.log(match);
         dispatch({match: match});
     };
-
-    // chat functions
-    const onTextChange = e => {
-        setState({...state, [e.target.name]: e.target.value})
-    }
-
-    const onMessageSubmit = e => {
-        e.preventDefault()
-        const {name, message} = state;
-        socket.emit('message', {name, message})
-        setState({message: '', name })
-    }
-    const renderChat = () => {
-        return chat.map(({name, message}, key)=>{
-            <div key={key}>
-                <h3>{name}:
-                    <span>{message}</span>
-                </h3>
-            </div>
-        })
-    }
-    /////////////////
     useEffect(() => {
-        const socket = io.connect(process.env.PORT);
-        socket.on('message', ({name, message}) => {
-            setChat([...chat, {name, message}])
-        })
-
         const controller = new AbortController();
         dispatch(null);
         const runFetch = async () => {
@@ -94,11 +76,10 @@ function FavouritesPage() {
     }, [ userId ]);
     
     if ( userDetails === null ){
-        return <DashboardLayout><Heading as="h1" size="4xl">loading</Heading></DashboardLayout>
+        return <DashboardLayout><Heading className="centre" as="h1" size="4xl">Loading</Heading></DashboardLayout>
     }
     //get matched status
     //possible logic for getting mutual matches for a user
-    console.log(userDetails.favourites)
     if (userDetails?.favourites.length === 0){
         return <DashboardLayout>
                 <Heading className="centre" as="h1" size="4xl">Your favourites list is empty. Only matches that you've liked and have liked you back will appear here!</Heading>
@@ -122,26 +103,37 @@ function FavouritesPage() {
                 </MenuList>
                 </Menu>
                 {userDetails.match !== null &&
-                    <MatchDetails user={userDetails.match.inviter_profile} survey={userDetails.survey}></MatchDetails>
+                    <HStack>
+                        <HStack onSubmit={e => {
+                        e.preventDefault();
+                        onSubmit().then(()=>{
+                                toast({
+                                    title: "Request successful",
+                                    position: 'top',
+                                    description: "Match removed from Favourites list",
+                                    status: "success",
+                                    duration: 4000,
+                                    isClosable: true
+                                })
+                                }).catch(()=>{
+                                    toast({
+                                        title: "Something went wrong, try refreshing the page",
+                                        position: 'top',
+                                        description: "",
+                                        status: "error",
+                                        duration: 4000,
+                                        isClosable: true
+                                    })
+                                })
+                                return false;
+                            }}
+                            as='form'>
+                            <MatchDetails user={userDetails.match.inviter_profile} survey={userDetails.survey}></MatchDetails>
+                            <Button type="submit" onClick={() => dispatch({ action: "decline", in_email: userDetails.match.inviter_profile.email })}>Delete</Button>
+                        </HStack>
+                        {/* <Chat userDetails={userDetails} MatchDetails={userDetails.match.inviter_profile}></Chat> */}
+                    </HStack>
                 }
-                {/* chat stuff */}
-                {/* <div className="card">
-                <form onSubmit={onMessageSubmit}>
-                    <h1>Messanger</h1>
-                    <div className='name-field'>
-                        <Input name='name' value={userDetails.name} label='Name'/>
-                    </div>
-                    <div className='name-field'>
-                        <Input name='message' onChange={e => onTextChange(e)} value={state.message} label='Message'/>
-                    </div>
-                    <Button>Send Message</Button>
-                </form>
-                <div className="render-chat">
-                    <h1>Chat log</h1>
-                    {renderChat()}
-                </div>
-
-                </div> */}
             </DashboardLayout>
         );
     }
