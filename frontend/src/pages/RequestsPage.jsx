@@ -164,14 +164,27 @@ function RequestsPage() {
                     <HStack onSubmit={e => {
                         e.preventDefault();
                         onSubmit().then(()=>{
+                            {userDetails.action === "decline" &&
                             toast({
                                 title: "Request Complete",
                                 position: 'top',
-                                description: "",
+                                description: "Match removed from request list",
                                 status: "success",
                                 duration: 4000,
                                 isClosable: true
                             })
+                            }
+                            {userDetails.action === "accept" &&
+                            toast({
+                                title: "Request Complete",
+                                position: 'top',
+                                description: "View the favourites page to see your perfect matches",
+                                status: "success",
+                                duration: 4000,
+                                isClosable: true
+                            })
+                            }
+
                         }).catch(()=>{
                             toast({
                                 title: "Something went wrong, try refreshing the page",

@@ -33,7 +33,7 @@ export default function MatchDetails({ user, survey }) {
                         boxSize="350px"
                         objectFit="cover"
                         src={"/api/pictures/"+user?.pictures?.[0]?.id+"/picture/"}
-                        alt="okay"
+                        alt="Image Missing"
                     />
                     <VStack className='lrp__card img_layout profile_info' borderRadius='md' boxSize="350px">
                         <Container m='0' p='0' w='110%' borderRadius='md'>

@@ -97,9 +97,9 @@ function InboxPage() {
                 e.preventDefault();
                 onSubmit().then(()=>{
                     toast({
-                        title: "Successfully updated matches :D",
+                        title: "Successfully updated matches",
                         position: 'top',
-                        description: "",
+                        description: "Check the request page to view matches you sent out and are recieving",
                         status: "success",
                         duration: 4000,
                         isClosable: true

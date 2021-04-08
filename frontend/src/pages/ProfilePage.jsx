@@ -165,7 +165,7 @@ function ProfilePage() {
         // SURVEY RESPONSE CASE: SURVEY HASN'T BEEN COMPLETED
         if (userDetails.surveyComplete === false){
             return <DashboardLayout>
-                <VStack>
+                    <VStack>
                         <UserDetails user={userDetails}></UserDetails>
                         {/* survey */}
                          <VStack 
@@ -276,10 +276,10 @@ function ProfilePage() {
                                 <Radio value="3" >Frequently</Radio>
                             </HStack>
                         </RadioGroup>
-                            <Button type="submit" onClick={() => dispatch({action:"survey"})}>Submit</Button>
+                        <Button type="submit" onClick={() => dispatch({action:"survey"})}>Submit</Button>
                         </VStack>
-                        </VStack>
-                    </DashboardLayout>
+                    </VStack>
+                </DashboardLayout>
         // SURVEY RESPONSE CASE: SURVEY HAS BEEN COMPLETED
         }else{
             let response=[userDetails.personality_resp, 
