@@ -27,3 +27,7 @@
 .display {
   text-align: center;
 }
+
+.btn{
+  -webkit-appearance: none
+}
