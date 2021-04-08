@@ -275,7 +275,7 @@ function ProfilePage() {
                                 <Radio value="3" >Frequently</Radio>
                             </HStack>
                         </RadioGroup>
-                        <Button p='2' className="btn" type="submit" onClick={() => dispatch({action:"survey"})}>Submit</Button>
+                        <Button p='8' className="btn" type="submit" onClick={() => dispatch({action:"survey"})}>Submit</Button>
                         </VStack>
                     </VStack>
                 </DashboardLayout>
