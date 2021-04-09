@@ -20,7 +20,7 @@ app.use(
     saveUninitialized: false,
     secret: crypto.randomBytes(16).toString("base64"),
     resave: false,
-    cookie: {httpOnly: true, sameSite: true, secure: true}
+    cookie: {httpOnly: true, sameSite: true}
   })
 );
 
