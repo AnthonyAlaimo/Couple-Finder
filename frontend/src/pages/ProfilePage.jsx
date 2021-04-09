@@ -400,7 +400,7 @@ function ProfilePage() {
                             toast({
                                 title: "Profile Not Created",
                                 position: 'top',
-                                description: "Missing profile fields",
+                                description: "Missing profile fields, Age must be 18+",
                                 status: "error",
                                 duration: 4000,
                                 isClosable: true
