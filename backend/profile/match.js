@@ -7,9 +7,7 @@ const genders = ["MALE", "FEMALE", "BOTH"];
 /* Constant containing required filters */
 const requiredFilters = ["lower_age_range", "upper_age_range", "preferred_gender", "smokes"];
 
-/* Constant containing self match fields */
-const selfMatchFields = ["foods_resp", "music_resp", "personality_resp", "pets_resp", "traits_resp"];
-
+/* Constant containing accepted values for match_status */
 const match_statuses = ["PENDING", "DISLIKED", "MATCHED"];
 
 /* Logic for matching user profiles */
