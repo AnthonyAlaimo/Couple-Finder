@@ -27,22 +27,16 @@ function InboxPage() {
     const userId = params.userID ?? user?._id;
 
     const [ userDetails, dispatch ] = useReducer(reducer, null);
-    
-    // /* Get match history for the user */
-    // app.get("/api/matches/", isAuthenticated, function (req, res, next) {
 
     const onSubmit = async () => {
         const action = userDetails.action;
         if (action === 'LikeProfile'){
             let result = await fetchApi("/match/", "PUT", {invitee: userDetails.matches[0].email, status: "PENDING"});
-            console.log(result);
             let updatedMatches = userDetails.matches.slice(1);
-            console.log(updatedMatches);
             dispatch({matches: updatedMatches});
         }else if (action === 'DisLikeProfile'){
             await fetchApi("/match/", "PUT", {invitee: userDetails.matches[0].email, status: "DISLIKED"});
             let updatedMatches = userDetails.matches.slice(1);
-            console.log(updatedMatches);
             dispatch({matches: updatedMatches});
         }   
     };
@@ -56,14 +50,11 @@ function InboxPage() {
                     const user_profile = await fetchApi("/profile/", "GET", null, controller.signal);
                     const matches = await fetchApi("/new-matches/", "GET", null);
                     const survey = await fetchApi("/survey/", "GET", null);
-                    console.log(matches);
                     if (matches === null) {
                         dispatch({...user_profile, matches: [], survey: survey});
                     }else{
                         dispatch({...user_profile, matches: matches, survey: survey});
                     }
-                    // const match_history = await fetchApi("/matches/", "GET", null);
-                    // console.log(match_history)
                 }
             } catch (err) {
                 if (err.name === `AbortError`) {
@@ -81,17 +72,16 @@ function InboxPage() {
         };
     }, [ userId ]);
 
-    console.log(userDetails);
     if ( userDetails === null ){
-        return <DashboardLayout><Heading className="centre" as="h1" size="4xl">Loading. Complete your user <b>Survey</b> and fill out <b>Filters</b> located in the profile page</Heading></DashboardLayout>
+        return <DashboardLayout><Heading className="centre" as="h1" size="2xl">Loading. Complete your user <b>Survey</b> and fill out <b>Filters</b> located in the profile page</Heading></DashboardLayout>
     }
     else if(userDetails.matches.length === 0){
-        return <DashboardLayout><Heading className="centre" as="h1" size="4xl">You have no current matches! Reconfigure your filters or wait for more users to join the community</Heading></DashboardLayout>
+        return <DashboardLayout><Heading className="centre" as="h1" size="2xl">You have no current matches! Reconfigure your filters or wait for more users to join the community</Heading></DashboardLayout>
     }
     return (
         <DashboardLayout >
             <VStack justifyContent="center">
-            <Heading className="centre" as="h1" size="4xl">Matches</Heading>
+            <Heading className="centre" as="h1" size="2xl">Matches</Heading>
             <HStack className="centre" 
             onSubmit={e => {
                 e.preventDefault();

@@ -3,7 +3,7 @@ import './matchDetails.css';
 export default function MatchDetails({ user, survey }) {
     // "Pure component
     if (user === undefined){
-        return <Heading as="h1" size="4xl">loading</Heading>
+        return <Heading as="h1" size="2xl">loading</Heading>
     }
     ////////
     let response=[user.personality_resp, 
@@ -26,7 +26,6 @@ export default function MatchDetails({ user, survey }) {
             <HStack >
                 <Box className='lrp__card' maxW='750px' maxH='60%' w='100%' m='auto' p='4' borderRadius='md'>
                 <VStack p="4">
-                {/* <Heading className="centre" as="h1" size="4xl">Matches</Heading> */}
                 <HStack>
                     {/* default image, need to SRC PATH*/}
                     <Img className="img_shadow"

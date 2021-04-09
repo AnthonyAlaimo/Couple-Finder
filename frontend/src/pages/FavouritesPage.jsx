@@ -2,7 +2,6 @@ import DashboardLayout from "../components/DashboardLayout";
 import { useContext, useEffect, useReducer} from "react";
 import { UserContext } from "../components/UserProvider";
 import MatchDetails from "../components/MatchDetails";
-import Chat from "../components/Chat";
 import { useParams } from "react-router";
 import fetchApi from "../utils/fetchApi";
 import { Button, Heading, HStack} from "@chakra-ui/react";
@@ -41,7 +40,6 @@ function FavouritesPage() {
     };
 
     const displayMatch = async (match) => {
-        console.log(match);
         dispatch({match: match});
     };
     useEffect(() => {
@@ -56,7 +54,6 @@ function FavouritesPage() {
                     const favourites = await fetchApi("/favourites/", "GET", null);
                     const user_profile = await fetchApi("/profile/", "GET", null, controller.signal);
                     const survey = await fetchApi("/survey/", "GET", null);
-                    console.log(favourites);
                     dispatch({...user_profile, favourites: favourites, survey: survey, match: null});
                 }
             } catch (err) {
@@ -76,17 +73,16 @@ function FavouritesPage() {
     }, [ userId ]);
     
     if ( userDetails === null ){
-        return <DashboardLayout><Heading className="centre" as="h1" size="4xl">Loading</Heading></DashboardLayout>
+        return <DashboardLayout><Heading className="centre" as="h1" size="2xl">Loading</Heading></DashboardLayout>
     }
     //get matched status
     //possible logic for getting mutual matches for a user
     if (userDetails?.favourites.length === 0){
         return <DashboardLayout>
-                <Heading className="centre" as="h1" size="4xl">Your favourites list is empty. Only matches that you've liked and have liked you back will appear here!</Heading>
+                <Heading className="centre" as="h1" size="2xl">Your favourites list is empty. Only matches that you've liked and have liked you back will appear here!</Heading>
             </DashboardLayout>
     }
     else{
-        console.log(userDetails.match)
         return (
             <DashboardLayout>
                 <Menu>
@@ -131,7 +127,6 @@ function FavouritesPage() {
                             <MatchDetails user={userDetails.match.inviter_profile} survey={userDetails.survey}></MatchDetails>
                             <Button type="submit" onClick={() => dispatch({ action: "decline", in_email: userDetails.match.inviter_profile.email })}>Delete</Button>
                         </HStack>
-                        {/* <Chat userDetails={userDetails} MatchDetails={userDetails.match.inviter_profile}></Chat> */}
                     </HStack>
                 }
             </DashboardLayout>

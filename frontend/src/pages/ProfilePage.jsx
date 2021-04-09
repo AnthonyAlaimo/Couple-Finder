@@ -27,7 +27,6 @@ function ProfilePage() {
     const userId = params.userID ?? user?._id;
 
     const [ userDetails, dispatch ] = useReducer(reducer, null);
-    console.log(userDetails);
 
 
     const onSubmit = async () => {
@@ -156,10 +155,10 @@ function ProfilePage() {
 
 
     if ( userDetails === null ){
-        return <DashboardLayout><Heading className="centre" as="h1" size="4xl">Loading</Heading></DashboardLayout>
+        return <DashboardLayout><Heading className="centre" as="h1" size="2xl">Loading</Heading></DashboardLayout>
     }
     if (userDetails.surveyResults === undefined){
-        return <DashboardLayout><Heading className="centre" as="h1" size="4xl">Loading</Heading></DashboardLayout>
+        return <DashboardLayout><Heading className="centre" as="h1" size="2xl">Loading</Heading></DashboardLayout>
     }
     if ( userDetails.id !== null){
         // SURVEY RESPONSE CASE: SURVEY HASN'T BEEN COMPLETED
@@ -297,7 +296,6 @@ function ProfilePage() {
                 })
                 count += 1;
             })
-            console.log(userDetails);
                 return <DashboardLayout>
                             <UserDetails user={userDetails}></UserDetails>
                             <HStack>
@@ -385,10 +383,9 @@ function ProfilePage() {
     return (
         <DashboardLayout>
             <VStack className='lrp__card' maxW='800px' w='80%' m='auto' p='8' borderRadius='md'>
-                <Heading as="h1" size="4xl">Create Your Profile</Heading>
+                <Heading as="h1" size="2xl">Create Your Profile</Heading>
                 <VStack
                     onSubmit={e => {
-                        console.log("working")
                         e.preventDefault();
                         onSubmit().then(()=>{
                             toast({
