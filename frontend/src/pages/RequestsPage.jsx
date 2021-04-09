@@ -37,7 +37,6 @@ function RequestsPage() {
             })
             dispatch({incoming: updatedMatches,  match: null});
         }else if (action === 'decline'){
-            console.log(userDetails);
             let result = await fetchApi("/match/", "PUT", {invitee: userDetails.in_email, status: "DISLIKED"});
             let updatedMatches = userDetails.incoming.filter((cur) => {
                 return cur.inviter_profile.email !== result[0].inviter;
@@ -53,7 +52,6 @@ function RequestsPage() {
     };
 
     const displayMatch = async (match, invite) => {
-        console.log(match);
         if (invite === "invitee"){
             dispatch({match: match, invite: "invitee"});
         }else{
@@ -71,7 +69,6 @@ function RequestsPage() {
                     const user_profile = await fetchApi("/profile/", "GET", null, controller.signal);
                     const matches = await fetchApi("/matches/", "GET", null);
                     const survey = await fetchApi("/survey/", "GET", null);
-                    console.log(matches);
                     dispatch({...user_profile, incoming: matches.incoming, outgoing: matches.outgoing, match: null, survey: survey});
                 }
             } catch (err) {

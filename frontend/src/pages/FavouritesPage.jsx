@@ -41,7 +41,6 @@ function FavouritesPage() {
     };
 
     const displayMatch = async (match) => {
-        console.log(match);
         dispatch({match: match});
     };
     useEffect(() => {
@@ -56,7 +55,6 @@ function FavouritesPage() {
                     const favourites = await fetchApi("/favourites/", "GET", null);
                     const user_profile = await fetchApi("/profile/", "GET", null, controller.signal);
                     const survey = await fetchApi("/survey/", "GET", null);
-                    console.log(favourites);
                     dispatch({...user_profile, favourites: favourites, survey: survey, match: null});
                 }
             } catch (err) {
@@ -86,7 +84,6 @@ function FavouritesPage() {
             </DashboardLayout>
     }
     else{
-        console.log(userDetails.match)
         return (
             <DashboardLayout>
                 <Menu>

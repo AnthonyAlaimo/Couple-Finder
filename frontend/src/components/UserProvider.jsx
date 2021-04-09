@@ -45,7 +45,6 @@ export default function UserProvider({ children }) {
             email,
         });
 
-        console.log(user);
         setUser({
             _id: 'owo',
             password,
@@ -60,7 +59,6 @@ export default function UserProvider({ children }) {
             email,
         });
 
-        console.log(user);
         setUser({
             _id: 'owo',
             password,

@@ -17,7 +17,6 @@ function reducer(state = {}, action) {
         return action;
     }
     return _.merge({}, state, action)
-    // return Object.assign({}, state, action);
 }
   
 function ProfilePage() {
@@ -27,7 +26,6 @@ function ProfilePage() {
     const userId = params.userID ?? user?._id;
 
     const [ userDetails, dispatch ] = useReducer(reducer, null);
-    console.log(userDetails);
 
 
     const onSubmit = async () => {
@@ -297,7 +295,6 @@ function ProfilePage() {
                 })
                 count += 1;
             })
-            console.log(userDetails);
                 return <DashboardLayout>
                             <UserDetails user={userDetails}></UserDetails>
                             <HStack>
@@ -388,7 +385,6 @@ function ProfilePage() {
                 <Heading as="h1" size="4xl">Create Your Profile</Heading>
                 <VStack
                     onSubmit={e => {
-                        console.log("working")
                         e.preventDefault();
                         onSubmit().then(()=>{
                             toast({
