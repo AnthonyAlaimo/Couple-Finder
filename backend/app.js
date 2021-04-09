@@ -20,7 +20,7 @@ app.use(
     saveUninitialized: false,
     secret: crypto.randomBytes(16).toString("base64"),
     resave: false,
-    cookie: {httpOnly: true, sameSite: true /*,secure: true*/}
+    cookie: {httpOnly: true, sameSite: true}
   })
 );
 
@@ -34,31 +34,17 @@ const login = require("./authentication/login");
 const profile = require("./profile/profile");
 const survey = require("./profile/survey");
 const match  = require("./profile/match");
-const chat = require("./chat/chat");
 
 const PORT = process.env.PORT;
 
-/* Create underlying http server. When deployed Heroku will wrap it in a proxy https server */
+/* Create underlying http server. 
+*  When deployed Heroku will wrap it in a proxy https server so all routes will be https */
 let server = http.createServer(app).listen(PORT, function (err) {
 	if (err) console.log(err);
 	else {
 	console.log("Server listening on port " + PORT);
-	chat.initialize(server);
 	}
 });
-
-/* By default all routes will be https when deployed,
-   however need to prevent underlying http routes from being accessed.
-   Redirects HTTP requests to HTTPS */
-// From https://stackoverflow.com/questions/24726779/using-https-on-heroku
-// app.all("*", function (req, res, next) {
-//   if ((process.env.NODE_ENV != "development") && req.headers["x-forwarded-proto"] != "https") {     
-//     res.redirect("https://" + req.headers.host + req.url);
-//   }
-//   else {
-//     next();
-//   }
-// });
 
 /* Initial handler, obtains email from session if one exists */
 app.use(function (req, res, next) {
