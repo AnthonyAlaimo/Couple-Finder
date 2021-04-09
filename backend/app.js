@@ -65,7 +65,7 @@ app.post("/api/signin/", validateEmail, function (req, res, next) {
 });
 
 /* Post profile for current user */
-app.post("/api/profile/", isAuthenticated, upload.single("profile_picture"), sanitizeProfileFields, function(req, res, next) {
+app.post("/api/profile/", isAuthenticated, upload.single("profile_picture"), function(req, res, next) {
 	profile.postUserProfile(req, res, next);
 });
 
@@ -143,12 +143,5 @@ function validateEmail(req, res, next) {
 	if (!validator.isEmail(req.body.email)) {
 		return res.status(400).end("Please enter a valid email");
 	}
-	next();
-}
-
-/* Sanitizes user inputted string fields for the profile. */
-function sanitizeProfileFields(req, res, next) {
-	req.body.bio = req.body.bio ? validator.escape(req.body.bio) : null;
-	req.body.name = req.body.name ? validator.escape(req.body.name) : null;
 	next();
 }
