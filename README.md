@@ -12,7 +12,7 @@ Tired and alone? Introducing <insert name here>,
 a brand new relationship finder web app for those who need just a little bit of help meeting new people.
 Whether you're looking for a romantic partner or new best friend, you can be sure to find those who match what you're looking for.
   
-### App URL ###
+## App URL ##
 https://couple-finder.me/
 
 ## Beta Key Features ##
