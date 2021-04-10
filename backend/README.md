@@ -158,7 +158,7 @@ $ curl https://couple-finder.me/api/profile -b cookie-file.txt
     - content-type: "text/html"
     - body: (string) Error message of whatever error occured
 ```
-$ curl https://couple-finder.me/api/pictures/b44c04fd-03c1-4b1f-9f8c-50f2cf19649b/picture -b cookie-file.txt
+$ curl https://couple-finder.me/api/pictures/eb388dbd-b9d0-4335-a850-a646180ca8be/picture -b cookie-file.txt
 ```
 
 - Description: Gets at most 10 new matches for the user based on their filters
