@@ -18,7 +18,7 @@
     - content-type: "text/html"
     - body: (string) Error message of whatever error occured
 ```
-$ curl -H "Content-Type: application/json" -d '{"email": "test12345@test.com", "password": "test"}' https://couple-finder.me/api/signup
+$ curl -H "Content-Type: application/json" -d '{"email": "test1234@test.com", "password": "test"}' https://couple-finder.me/api/signup
 ```
 
 - Description: Sign in existing user based on email, password
@@ -38,7 +38,7 @@ $ curl -H "Content-Type: application/json" -d '{"email": "test12345@test.com", "
     - body: (string) Error message of whatever error occured
 ```
 # Will save authentication headers to cookie-file.txt which is required by all other requests
-$ curl -H "Content-Type: application/json" -d '{"email": "test1235@test.com", "password": "test"}' https://couple-finder.me/api/signin -c cookie-file.txt
+$ curl -H "Content-Type: application/json" -d '{"email": "test1234@test.com", "password": "test"}' https://couple-finder.me/api/signin -c cookie-file.txt
 ```
 
 - Description: Post profile for current user
@@ -370,7 +370,7 @@ $ curl -X PUT -H "Content-Type: application/json" -d '{"foods_resp": 1, "music_r
     - content-type: "text/html"
     - body: (string) Error message of whatever error occured
 ```
-$ curl -X PUT -H "Content-Type: application/json" -d '{"invitee": "test2@gmail.com", "status": "PENDING"}' https://couple-finder.me/api/match -b cookie-file.txt
+$ curl -X PUT -H "Content-Type: application/json" -d '{"invitee": "nicole@gmail.com", "status": "PENDING"}' https://couple-finder.me/api/match -b cookie-file.txt
 ```
 
 
