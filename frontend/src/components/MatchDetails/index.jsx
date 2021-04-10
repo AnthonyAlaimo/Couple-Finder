@@ -34,9 +34,9 @@ export default function MatchDetails({ user, survey }) {
                         src={"/api/pictures/"+user?.pictures?.[0]?.id+"/picture/"}
                         alt="Image Missing"
                     />
-                    <VStack className='lrp__card img_layout profile_info' borderRadius='md' boxSize="350px">
+                    <VStack className='lrp__card img_layout profile_info' borderRadius='md' boxSize="350px" overflow="hidden">
                         <Container m='0' p='0' w='110%' borderRadius='md'>
-                        <Box bg="tomato" w="100%" color="white" borderRadius='md'>
+                        <Box bg="black" w="100%" color="white" borderRadius='md' padding="8px 0px">
                         <Heading as="h2" size="lg">{user?.name}</Heading>
                         </Box>
                         <Box p="2px" borderRadius="md" px={4}>
@@ -52,7 +52,7 @@ export default function MatchDetails({ user, survey }) {
                     </VStack>
                 </HStack>
                 {/* survey response of matche */}
-                <VStack className='lrp__card img_layout profile_info' borderRadius='md' boxSize="500px" overflowX="hidden">
+                <VStack w='80%' h="425px" p='0px 0px 5px 0px' className='lrp__card img_layout profile_info' borderRadius='md' maxW="700px" maxH="500px" overflowX="hidden">
                     <Heading as="h3" color="white" bg="black" w="100%" borderRadius="5px" p="8px 0px">Survey Answers</Heading>
                     {stringResponse.map((result, key) => 
                         <VStack key={key}>

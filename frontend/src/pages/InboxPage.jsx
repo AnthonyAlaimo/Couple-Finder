@@ -81,7 +81,6 @@ function InboxPage() {
     return (
         <DashboardLayout >
             <VStack justifyContent="center">
-            <Heading className="centre" as="h1" size="2xl">Matches</Heading>
             <HStack className="centre" 
             onSubmit={e => {
                 e.preventDefault();
@@ -120,7 +119,10 @@ function InboxPage() {
                     size="lg"
                     onClick={() => dispatch({action: "LikeProfile"})}></IconButton>
                 </VStack>
-                <MatchDetails user={userDetails.matches[0]} survey={userDetails.survey}></MatchDetails>
+                <VStack>
+                    <Heading className="centre" as="h1" size="2xl">Matches</Heading>
+                    <MatchDetails user={userDetails.matches[0]} survey={userDetails.survey}></MatchDetails>
+                </VStack>
                 <VStack>
                 <Heading className="centre" as="h4" size="1xl">DisLike</Heading>
                 <IconButton
