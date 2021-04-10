@@ -29,12 +29,13 @@ export default function MatchDetails({ user, survey }) {
                 <HStack>
                     {/* default image, need to SRC PATH*/}
                     <Img className="img_shadow"
-                        boxSize="350px"
+                        h="350px"
+                        w="450px"
                         objectFit="cover"
                         src={"/api/pictures/"+user?.pictures?.[0]?.id+"/picture/"}
                         alt="Image Missing"
                     />
-                    <VStack className='lrp__card img_layout profile_info' borderRadius='md' boxSize="350px" overflow="hidden">
+                    <VStack className='lrp__card img_layout profile_info' borderRadius='md' h="350px" w="450px" overflow="hidden">
                         <Container m='0' p='0' w='110%' borderRadius='md'>
                         <Box bg="black" w="100%" color="white" borderRadius='md' padding="8px 0px">
                         <Heading as="h2" size="lg">{user?.name}</Heading>

@@ -4,7 +4,7 @@ import './userDetails.css';
 export default function UserDetails({ user }) {
     return (
             <HStack>
-                <Box className='lrp__card' maxW='800px' maxH='60%' w='90%' m='auto' p='4' borderRadius='md' overflow="hidden">
+                <Box className='lrp__card' maxW='1000px' maxH='60%' w='90%' m='auto' p='4' borderRadius='md' overflow="hidden">
                 <HStack justifyContent="center">
                 <Heading className="centre" as="h1" size="2xl">Profile</Heading>
                 </HStack>
@@ -12,12 +12,12 @@ export default function UserDetails({ user }) {
                     {/* default image, need to SRC PATH*/}
                     <Img className="img_shadow"
                         h="350px"
-                        w="500px"
+                        w="450px"
                         objectFit="cover"
                         src={"/api/pictures/"+user?.pictures?.[0]?.id+"/picture/"}
                         alt="Image Missing"
                     />
-                    <VStack className='lrp__card img_layout profile_info' borderRadius='md' w="500px" h="350px" overflow="hidden">
+                    <VStack className='lrp__card img_layout profile_info' borderRadius='md' w="450px" h="350px" overflow="hidden">
                         <Container m='0' p='0' w='110%' borderRadius='md'>
                         <Box bg="black" w="100%" color="white" borderRadius='md' padding="8px 0px">
                         <Heading as="h2" size="lg">{user?.name}</Heading>

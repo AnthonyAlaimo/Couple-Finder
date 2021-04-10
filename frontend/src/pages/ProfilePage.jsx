@@ -192,12 +192,12 @@ function ProfilePage() {
                                 return false;
                                 }}
                                 as='form'
-                                p='0px'
-                                className='lrp__card img_layout profile_info' borderRadius='md' maxW="1000px" boxSize="1100px">
-                        <Heading as="h3" color="white" bg="black" w="110%" borderRadius="5px" p="10px">Complete Your Matching Survey</Heading>
+                                p='0px 0px 5px 0px'
+                                className='lrp__card img_layout profile_info' borderRadius='md' maxW="1000px" w="1000px" h="1500px" overflowX="hidden">
+                        <Heading as="h3" color="white" bg="black" w="100%" borderRadius="5px" p="10px">Complete Your Matching Survey</Heading>
                         <Heading as="h2" size="md">How would you describe your personality?</Heading>
                         <RadioGroup isRequired name="q1" value={userDetails.surveyResults.personality_resp.toString()}  onChange={(q1) => {setSurveyResults(q1, "personality_resp")}}>
-                            <HStack spacing="12px">
+                            <HStack spacing="12px" p="8px">
                             <Wrap>
                                 <WrapItem>
                                 <Radio value="1">Shy and naive</Radio>
@@ -273,7 +273,7 @@ function ProfilePage() {
                                 <Radio value="3" >Frequently</Radio>
                             </HStack>
                         </RadioGroup>
-                        <Button p='8' className="btn" type="submit" onClick={() => dispatch({action:"survey"})}>Submit</Button>
+                        <Button p='8px' className="btn" type="submit" onClick={() => dispatch({action:"survey"})}>Submit</Button>
                         </VStack>
                     </VStack>
                 </DashboardLayout>
@@ -372,7 +372,7 @@ function ProfilePage() {
                                     <Radio value="3" >Frequently</Radio>
                                 </HStack>
                             </RadioGroup>
-                            <Button p='2' type="submit" onClick={() => dispatch({action: "filter"})}>Submit</Button>
+                            <Button p='8px' type="submit" onClick={() => dispatch({action: "filter"})}>Submit</Button>
                             </VStack>
                             </HStack>
                         </DashboardLayout>
