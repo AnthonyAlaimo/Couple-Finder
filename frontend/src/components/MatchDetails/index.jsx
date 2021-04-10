@@ -52,8 +52,8 @@ export default function MatchDetails({ user, survey }) {
                     </VStack>
                 </HStack>
                 {/* survey response of matche */}
-                <VStack className='lrp__card img_layout profile_info' borderRadius='md' boxSize="500px">
-                    <Heading as="h3" color="white" bg="black" w="110%" borderRadius="5px" p="2px">Survey Answers</Heading>
+                <VStack className='lrp__card img_layout profile_info' borderRadius='md' boxSize="500px" overflowX="hidden">
+                    <Heading as="h3" color="white" bg="black" w="100%" borderRadius="5px" p="8px 0px">Survey Answers</Heading>
                     {stringResponse.map((result, key) => 
                         <VStack key={key}>
                             <Heading as="h2" size="md">{result.q}</Heading>

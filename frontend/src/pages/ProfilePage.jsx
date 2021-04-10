@@ -193,7 +193,6 @@ function ProfilePage() {
                                 }}
                                 as='form'
                                 p='0px'
-                                w='80%'
                                 className='lrp__card img_layout profile_info' borderRadius='md' maxW="1000px" boxSize="1100px">
                         <Heading as="h3" color="white" bg="black" w="110%" borderRadius="5px" p="10px">Complete Your Matching Survey</Heading>
                         <Heading as="h2" size="md">How would you describe your personality?</Heading>
@@ -299,8 +298,8 @@ function ProfilePage() {
                 return <DashboardLayout>
                             <UserDetails user={userDetails}></UserDetails>
                             <HStack>
-                            <VStack className='lrp__card img_layout profile_info' borderRadius='md' boxSize="800px">
-                            <Heading as="h3" color="white" bg="black" w="110%" borderRadius="5px" p="2px">Survey Answers</Heading>
+                            <VStack w='80%' h="425px" p='0px 0px 5px 0px' className='lrp__card img_layout profile_info' borderRadius='md' maxW="700px" maxH="500px" overflowX="hidden">
+                            <Heading as="h3" color="white" bg="black" w="100%" borderRadius="5px" p="8px 0px">Survey Answers</Heading>
                             {stringResponse.map((result, key) => 
                                 <VStack key={key}>
                                     <Heading as="h2" size="md">{result.q}</Heading>
@@ -333,10 +332,10 @@ function ProfilePage() {
                                     return false;
                                     }}
                                     as='form'
-                                    w='80%'
-                                    p='0px'
-                                    className='lrp__card img_layout profile_info' borderRadius='md' maxW="700px" boxSize="800px">
-                            <Heading className='display' as="h3" color="white" bg="black" w="110%" borderRadius="5px">Edit Matching Filters</Heading>
+                                    w='80%' h="425px"
+                                    p='0px 0px 5px 0px'
+                                    className='lrp__card img_layout profile_info' borderRadius='md' maxW="700px" maxH="500px" overflow="hidden">
+                            <Heading className='display' as="h3" color="white" bg="black" w="100%" borderRadius="5px" p="8px 0px">Edit Matching Filters</Heading>
                             <Heading as="h2" size="md">Preferred Age Range</Heading>
                             <VStack>
                             <Heading as="h2" size="sm">Lowest</Heading>
@@ -382,7 +381,7 @@ function ProfilePage() {
     }
     return (
         <DashboardLayout>
-            <VStack className='lrp__card' maxW='1000px' w='80%' m='auto' p='8' borderRadius='md'>
+            <VStack className='lrp__card' maxW='1000px' w='80%' m='auto' p='8' borderRadius='md' overflow="hidden">
                 <Heading as="h1" size="2xl">Create Your Profile</Heading>
                 <VStack
                     onSubmit={e => {
