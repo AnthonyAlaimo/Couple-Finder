@@ -18,9 +18,7 @@
     - content-type: "text/html"
     - body: (string) Error message of whatever error occured
 ```
-$ curl -H "Content-Type: application/json"
-        -d '{"email": "test@testdfdf.com", "password": "434ewrefe3"}'
-        https://couple-finder.me/api/signup
+$ curl -H "Content-Type: application/json" -d '{"email": "test12345@test.com", "password": "test"}' https://couple-finder.me/api/signup
 ```
 
 - Description: Sign in existing user based on email, password
@@ -39,9 +37,8 @@ $ curl -H "Content-Type: application/json"
     - content-type: "text/html"
     - body: (string) Error message of whatever error occured
 ```
-$ curl -H "Content-Type: application/json"
-        -d '{"email": "test@testdsfdsf.com", "password": "434ewrefe3"}'
-        https://couple-finder.me/api/signin
+# Will save authentication headers to cookie-file.txt which is required by all other requests
+$ curl -H "Content-Type: application/json" -d '{"email": "test1235@test.com", "password": "test"}' https://couple-finder.me/api/signin -c cookie-file.txt
 ```
 
 - Description: Post profile for current user
@@ -76,7 +73,7 @@ $ curl -H "Content-Type: application/json"
     - content-type: "text/html"
     - body: (string) Error message of whatever error occured
 ```
-$ curl -F name=Adam -F birth_date=1998-03-04 -F profile_picture=file.jpg -F gender=MALE -F bio=ferfsgeffsafefa https://couple-finder.me/api/profile
+$ curl -F name=Adam -F birth_date=1998-03-04 -F profile_picture=@file.jpg -F gender=MALE -F bio="Hello world" https://couple-finder.me/api/profile -b cookie-file.txt
 ```
 
 ### Read
@@ -87,7 +84,7 @@ $ curl -F name=Adam -F birth_date=1998-03-04 -F profile_picture=file.jpg -F gend
     - content-type: "application/json"
     - body: (string) "OK"
 ```
-$ curl https://couple-finder.me/api/signout
+$ curl https://couple-finder.me/api/signout -b cookie-file.txt
 ```
 
 - Description: Get survey questions and answers
@@ -107,7 +104,7 @@ $ curl https://couple-finder.me/api/signout
     - content-type: "text/html"
     - body: (string) Error message of whatever error occured
 ```
-$ curl https://couple-finder.me/api/survey
+$ curl https://couple-finder.me/api/survey -b cookie-file.txt
 ```
 
 - Description: Get profile of currently logged in user
@@ -143,7 +140,7 @@ $ curl https://couple-finder.me/api/survey
     - content-type: "text/html"
     - body: (string) Error message of whatever error occured
 ```
-$ curl https://couple-finder.me/api/profile
+$ curl https://couple-finder.me/api/profile -b cookie-file.txt
 ```
 
 - Description: Gets image file for specified image
@@ -161,7 +158,7 @@ $ curl https://couple-finder.me/api/profile
     - content-type: "text/html"
     - body: (string) Error message of whatever error occured
 ```
-$ curl https://couple-finder.me/api/pictures/5435easfdf2/picture
+$ curl https://couple-finder.me/api/pictures/b44c04fd-03c1-4b1f-9f8c-50f2cf19649b/picture -b cookie-file.txt
 ```
 
 - Description: Gets at most 10 new matches for the user based on their filters
@@ -196,7 +193,7 @@ $ curl https://couple-finder.me/api/pictures/5435easfdf2/picture
     - content-type: "text/html"
     - body: (string) Error message of whatever error occured
 ```
-$ curl https://couple-finder.me/api/new-matches
+$ curl https://couple-finder.me/api/new-matches -b cookie-file.txt
 ```
 
 - Description: Gets all incoming and outgoing match requests for the logged in user
@@ -249,7 +246,7 @@ $ curl https://couple-finder.me/api/new-matches
     - content-type: "text/html"
     - body: (string) Error message of whatever error occured
 ```
-$ curl https://couple-finder.me/api/matches
+$ curl https://couple-finder.me/api/matches -b cookie-file.txt
 ```
 
 - Description: Gets all favourite matches for the logged in user
@@ -281,7 +278,7 @@ $ curl https://couple-finder.me/api/matches
     - content-type: "text/html"
     - body: (string) Error message of whatever error occured
 ```
-$ curl https://couple-finder.me/api/favourites
+$ curl https://couple-finder.me/api/favourites -b cookie-file.txt
 ```
 
 ### Update
@@ -313,9 +310,7 @@ $ curl https://couple-finder.me/api/favourites
     - content-type: "text/html"
     - body: (string) Error message of whatever error occured
 ```
-$ curl -X PUT -H "Content-Type: application/json" 
-    -d '{"lower_age_range": 18, "upper_age_range": 45, "preferred_gender": "FEMALE", "smokes": 1}' 
-    https://couple-finder.me/api/filters
+$ curl -X PUT -H "Content-Type: application/json" -d '{"lower_age_range": 18, "upper_age_range": 45, "preferred_gender": "FEMALE", "smokes": 1}' https://couple-finder.me/api/filters -b cookie-file.txt
 ```
 
 - Description: Create or update survey responses for the logged in user
@@ -347,9 +342,7 @@ $ curl -X PUT -H "Content-Type: application/json"
     - content-type: "text/html"
     - body: (string) Error message of whatever error occured
 ```
-$ curl -X PUT -H "Content-Type: application/json" 
-    -d '{"foods_resp": 1, "music_resp": 1, "personality_resp": 1, "smokes_resp": 1, "pets_resp": 1, "traits_resp": 1}' 
-    https://couple-finder.me/api/survey
+$ curl -X PUT -H "Content-Type: application/json" -d '{"foods_resp": 1, "music_resp": 1, "personality_resp": 1, "smokes_resp": 1, "pets_resp": 1, "traits_resp": 1}' https://couple-finder.me/api/survey -b cookie-file.txt
 ```
 
 - Description: Like or dislike a potential profile
@@ -377,9 +370,7 @@ $ curl -X PUT -H "Content-Type: application/json"
     - content-type: "text/html"
     - body: (string) Error message of whatever error occured
 ```
-$ curl -X PUT -H "Content-Type: application/json" 
-    -d '{"invitee": "testemail@email.com", "status": "PENDING"}' 
-    https://couple-finder.me/api/match
+$ curl -X PUT -H "Content-Type: application/json" -d '{"invitee": "test2@gmail.com", "status": "PENDING"}' https://couple-finder.me/api/match -b cookie-file.txt
 ```
 
 
