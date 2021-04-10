@@ -25,7 +25,7 @@ const routes = [
     },
     {
         component: require('./pages/LoginRegisterPage').default,
-        name: 'SignOut',
+        name: 'Sign Out',
         path: '/',
         exact: true,
     },

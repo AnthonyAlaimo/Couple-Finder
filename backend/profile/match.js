@@ -137,7 +137,7 @@ function putMatchRequest(req, res, next) {
         let data = [];
 
         // If match request is found, need to update status of both accordingly
-        if (resp.data.data.match_requests.length > 0) {            
+        if (resp.data.data.match_requests && resp.data.data.match_requests.length > 0) {            
             let match2 = resp.data.data.match_requests[0];
             if (match1.status === "DISLIKED" || match2.status === "DISLIKED") {
                 match1.status = "DISLIKED";
@@ -159,7 +159,12 @@ function putMatchRequest(req, res, next) {
             else if (isError) {
                 return res.status(500).end(resp.message);
             }
-            return res.json(resp.data.data.insert_match_requests.returning);
+            if (resp.data.data && resp.data.data.insert_match_requests) {
+                return res.json(resp.data.data.insert_match_requests.returning);
+            }
+            else {
+                return res.status(400).end("User: " + req.body.invitee + " does not exist.");
+            }
         });
     });
 }

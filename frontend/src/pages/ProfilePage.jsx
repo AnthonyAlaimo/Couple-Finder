@@ -90,7 +90,7 @@ function ProfilePage() {
         const runFetch = async () => {
             try {
                 // TODO: Some fetch for user information
-                const user_profile = await fetchApi("/profile/", "GET", null, controller.signal);
+                const user_profile = await fetchApi("/profile/", "GET", null);
                 const survey = await fetchApi("/survey/", "GET", null);
                 let surveyResults = null;
                 if (user_profile !== null){
@@ -194,11 +194,11 @@ function ProfilePage() {
                                 as='form'
                                 p='0px'
                                 w='80%'
-                                className='lrp__card img_layout profile_info' borderRadius='md' maxW="600px" boxSize="700px">
+                                className='lrp__card img_layout profile_info' borderRadius='md' maxW="1000px" boxSize="1100px">
                         <Heading as="h3" color="white" bg="black" w="110%" borderRadius="5px" p="10px">Complete Your Matching Survey</Heading>
                         <Heading as="h2" size="md">How would you describe your personality?</Heading>
                         <RadioGroup isRequired name="q1" value={userDetails.surveyResults.personality_resp.toString()}  onChange={(q1) => {setSurveyResults(q1, "personality_resp")}}>
-                            <HStack spacing="24px">
+                            <HStack spacing="12px">
                             <Wrap>
                                 <WrapItem>
                                 <Radio value="1">Shy and naive</Radio>
@@ -213,7 +213,7 @@ function ProfilePage() {
                         </RadioGroup>
                         <Heading as="h2" size="md">What traits do you look for in a partner?</Heading>
                         <RadioGroup isRequired name="q2" value={userDetails.surveyResults.traits_resp.toString()} onChange={(q2) => {setSurveyResults(q2, "traits_resp")}}>
-                            <HStack spacing="24px">
+                            <HStack spacing="12px">
                                 <VStack>
                                 <Radio value="1" >Kind</Radio>
                                 <Radio value="2" >Energetic</Radio>
@@ -238,7 +238,7 @@ function ProfilePage() {
                         </RadioGroup>
                         <Heading as="h2" size="md">What kind of music puts you in the mood?</Heading>
                         <RadioGroup isRequired name="q3" value={userDetails.surveyResults.music_resp.toString()}  onChange={(q3) => {setSurveyResults(q3, "music_resp")}}>
-                            <HStack spacing="24px">
+                            <HStack spacing="12px">
                                 <Radio value="1" >Soul music</Radio>
                                 <Radio value="2" >Jazz</Radio>
                                 <Radio value="3">Blues</Radio>
@@ -248,7 +248,7 @@ function ProfilePage() {
                         </RadioGroup>
                         <Heading as="h2" size="md">Out of the following foods, what appeals to you the most?</Heading>
                         <RadioGroup isRequired name="q4" value={userDetails.surveyResults.foods_resp.toString()} onChange={(q4) => {setSurveyResults(q4, "foods_resp")}}>
-                            <HStack spacing="24px">
+                            <HStack spacing="12px">
                                 <Radio value="1" >Pizza</Radio>
                                 <Radio value="2" >Pasta</Radio>
                                 <Radio value="3" >Sushi</Radio>
@@ -258,7 +258,7 @@ function ProfilePage() {
                         </RadioGroup>
                         <Heading as="h2" size="md">How do you feel about pets and animals?</Heading>
                         <RadioGroup isRequired name="q5" value={userDetails.surveyResults.pets_resp.toString()} onChange={(q5) => {setSurveyResults(q5, "pets_resp")}}>
-                            <HStack spacing="24px">
+                            <HStack spacing="12px">
                                 <Radio value="1" >Not very much</Radio>
                                 <Radio value="2" >Not much</Radio>
                                 <Radio value="3" >Neutral</Radio>
@@ -268,7 +268,7 @@ function ProfilePage() {
                         </RadioGroup>
                         <Heading as="h2" size="md">Do you smoke?</Heading>
                         <RadioGroup isRequired name="q6" value={userDetails.surveyResults.smokes_resp.toString()} onChange={(q6) => {setSurveyResults(q6, "smokes_resp")}}>
-                            <HStack spacing="24px">
+                            <HStack spacing="12px">
                                 <Radio value="1" >Not at all</Radio>
                                 <Radio value="2" >Somewhat</Radio>
                                 <Radio value="3" >Frequently</Radio>
@@ -299,7 +299,7 @@ function ProfilePage() {
                 return <DashboardLayout>
                             <UserDetails user={userDetails}></UserDetails>
                             <HStack>
-                            <VStack className='lrp__card img_layout profile_info' borderRadius='md' boxSize="500px">
+                            <VStack className='lrp__card img_layout profile_info' borderRadius='md' boxSize="800px">
                             <Heading as="h3" color="white" bg="black" w="110%" borderRadius="5px" p="2px">Survey Answers</Heading>
                             {stringResponse.map((result, key) => 
                                 <VStack key={key}>
@@ -335,7 +335,7 @@ function ProfilePage() {
                                     as='form'
                                     w='80%'
                                     p='0px'
-                                    className='lrp__card img_layout profile_info' borderRadius='md' maxW="600px" boxSize="700px">
+                                    className='lrp__card img_layout profile_info' borderRadius='md' maxW="700px" boxSize="800px">
                             <Heading className='display' as="h3" color="white" bg="black" w="110%" borderRadius="5px">Edit Matching Filters</Heading>
                             <Heading as="h2" size="md">Preferred Age Range</Heading>
                             <VStack>
@@ -382,7 +382,7 @@ function ProfilePage() {
     }
     return (
         <DashboardLayout>
-            <VStack className='lrp__card' maxW='800px' w='80%' m='auto' p='8' borderRadius='md'>
+            <VStack className='lrp__card' maxW='1000px' w='80%' m='auto' p='8' borderRadius='md'>
                 <Heading as="h1" size="2xl">Create Your Profile</Heading>
                 <VStack
                     onSubmit={e => {
